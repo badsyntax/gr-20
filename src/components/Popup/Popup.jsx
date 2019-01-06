@@ -5,6 +5,7 @@ import { Map } from "ol";
 import Overlay from "ol/Overlay";
 import { toLonLat } from "ol/proj";
 import { toStringHDMS } from "ol/coordinate";
+import "./Popup.scss";
 
 const getElevation = (feature, coordinate) => {
   const geometry = feature.getGeometry();

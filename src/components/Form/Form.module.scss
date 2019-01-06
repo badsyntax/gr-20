@@ -5,3 +5,29 @@
   z-index: 1;
   padding: 0.5rem;
 }
+
+:global {
+  .dropdown-menu {
+    margin: 0;
+  }
+
+  .dropdown-item {
+    &,
+    & label,
+    & input[type="checkbox"] {
+      cursor: pointer;
+    }
+  }
+
+  .btn-toolbar {
+    border: 4px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    &:hover {
+      border: 4px solid rgba(255, 255, 255, 0.6);
+    }
+
+    > .btn-group {
+      border-radius: 4px;
+    }
+  }
+}

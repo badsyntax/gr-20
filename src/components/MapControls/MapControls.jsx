@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { Attribution, FullScreen } from "ol/control";
 import ZoomToExtent from "ol/control/ZoomToExtent";
 import ScaleLine from "ol/control/ScaleLine";
+import "./MapControls.scss";
 
 const attribution = new Attribution({
   collapsible: true

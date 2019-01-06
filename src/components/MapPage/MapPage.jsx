@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
+import { Helmet } from "react-helmet";
 import Form from "../Form/Form";
 import Map from "../Map/Map";
 import maps from "../../data/maps/maps";
@@ -23,18 +24,23 @@ class MapPage extends Component {
   render() {
     const { formValues } = this.state;
     return (
-      <div className={STYLES.MapPage}>
-        <Form
-          values={formValues}
-          mapOptions={maps}
-          routeOptions={routes}
-          onChange={this.onFormChange}
-        />
-        <Map
-          mapUrl={formValues.map}
-          showElevationProfile={formValues.showElevationProfile}
-        />
-      </div>
+      <Fragment>
+        <Helmet>
+          <title>GR-20 - The Route</title>
+        </Helmet>
+        <div className={STYLES.MapPage}>
+          <Form
+            values={formValues}
+            mapOptions={maps}
+            routeOptions={routes}
+            onChange={this.onFormChange}
+          />
+          <Map
+            mapUrl={formValues.map}
+            showElevationProfile={formValues.showElevationProfile}
+          />
+        </div>
+      </Fragment>
     );
   }
 }
