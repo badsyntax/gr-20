@@ -27,10 +27,10 @@ const IndexPage = props => (
             writer Paddy Dillon as "one of the top trails in the world".
           </p>
           <p className="lead">
-            <Link to="/map" className="btn btn-lg btn-primary">
+            <Link to="/map/" className="btn btn-lg btn-primary">
               View the Route <IoMdArrowRoundForward />
             </Link>{" "}
-            <Link to="/kit" className="btn btn-lg btn-primary">
+            <Link to="/kit/" className="btn btn-lg btn-primary">
               View the Kit <IoMdArrowRoundForward />
             </Link>
           </p>

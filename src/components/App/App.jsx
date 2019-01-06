@@ -10,7 +10,7 @@ const App = props => (
     <Router basename={process.env.PUBLIC_URL}>
       <Switch>
         <Route path="/" exact component={IndexPage} />
-        <Route path="/map" exact component={MapPage} />
+        <Route path="/map/" exact component={MapPage} />
         <Route component={NotFoundPage} />
       </Switch>
     </Router>
