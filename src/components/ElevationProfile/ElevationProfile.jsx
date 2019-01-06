@@ -1,16 +1,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-import {
-  XYPlot,
-  LineSeries,
-  // MarkSeries,
-  AreaSeries,
-  XAxis,
-  YAxis
-} from "react-vis";
+import { XYPlot, LineSeries, AreaSeries, XAxis, YAxis } from "react-vis";
 import LineString from "ol/geom/LineString";
 import VectorSource from "ol/source/Vector";
+
+import STYLES from "./ElevationProfile.module.scss";
 
 class ElevationProfile extends Component {
   constructor(props) {
@@ -18,36 +13,8 @@ class ElevationProfile extends Component {
     this.state = {
       barX: 0,
       data: this.getData(),
-      // markSeriesData: this.getMarkSeriesData(),
       showLine: false
     };
-  }
-
-  getMarkSeriesData() {
-    const { source } = this.props;
-    if (!source) {
-      return [];
-    }
-    const points = source
-      .getFeatures()
-      .filter(feature => feature.getGeometry().getType() === "Point");
-    let distanceFromStart = 0;
-    return points.map((point, i) => {
-      const coord = point.getGeometry().getCoordinates();
-      const distance =
-        i === 0
-          ? 0
-          : new LineString([
-              points[i - 1].getGeometry().getCoordinates(),
-              coord
-            ]).getLength();
-
-      distanceFromStart += distance;
-      return {
-        x: distanceFromStart / 1000,
-        y: Math.round(coord[2])
-      };
-    });
   }
 
   getData() {
@@ -107,7 +74,7 @@ class ElevationProfile extends Component {
     ];
 
     return (
-      <div className="Profile">
+      <div className={STYLES.ElevationProfile}>
         <XYPlot
           height={140}
           width={600}
@@ -128,9 +95,23 @@ class ElevationProfile extends Component {
             attrAxis="y"
             orientation="bottom"
             title="Distance (km)"
+            style={{
+              line: { stroke: "#999999", strokeWidth: 1 },
+              ticks: { stroke: "#999999", strokeWidth: 1 },
+              text: { stroke: "none", fill: "#111111" }
+            }}
           />
-          <YAxis attr="y" attrAxis="x" orientation="left" title="Height (m)" />
-          {/* <MarkSeries data={markSeriesData} /> */}
+          <YAxis
+            attr="y"
+            attrAxis="x"
+            orientation="left"
+            title="Height (m)"
+            style={{
+              line: { stroke: "#999999", strokeWidth: 1 },
+              ticks: { stroke: "#999999", strokeWidth: 1 },
+              text: { stroke: "none", fill: "#111111" }
+            }}
+          />
           <AreaSeries
             data={data}
             style={{ strokeWidth: "1" }}

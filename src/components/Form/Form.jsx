@@ -2,9 +2,21 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import Dropdown, { MenuItem } from "@trendmicro/react-dropdown";
-import "@trendmicro/react-buttons/dist/react-buttons.css";
-import "@trendmicro/react-dropdown/dist/react-dropdown.css";
+import {
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  FormGroup,
+  Label,
+  Input,
+  ButtonGroup,
+  ButtonToolbar
+} from "reactstrap";
+
+import { IoMdCheckmark } from "react-icons/io";
+
+import Dropdown from "../Dropdown/Dropdown";
+
 import STYLES from "./Form.module.scss";
 
 class Form extends Component {
@@ -33,92 +45,111 @@ class Form extends Component {
   };
 
   render() {
-    const { showElevationProfile, map } = this.state;
-    const { mapOptions } = this.props;
+    const { showElevationProfile, map, route } = this.state;
+    const { mapOptions, routeOptions } = this.props;
     return (
       <form className={STYLES.Form}>
-        <Dropdown onSelect={eventKey => {}} autoOpen pullRight>
-          <Dropdown.Toggle btnStyle="flat">Maps</Dropdown.Toggle>
-          <Dropdown.Menu>
-            {/* <MenuItem header>Header</MenuItem>
-            <MenuItem eventKey={1}>link</MenuItem>
-            <MenuItem divider />
-            <MenuItem header>Header</MenuItem>
-            <MenuItem eventKey={2}>link</MenuItem>
-            <MenuItem eventKey={3} disabled>
-              disabled
-            </MenuItem>
-            <MenuItem eventKey={4} title="link with title">
-              link with title
-            </MenuItem>
-            <MenuItem
-              eventKey={5}
-              active
-              onSelect={eventKey => {
-                alert(`Alert from menu item.\neventKey: ${eventKey}`);
-              }}
-            >
-              link that alerts
-            </MenuItem> */}
-
-            {mapOptions.map(({ name, url }) => (
-              <MenuItem
-                key={name}
-                active={map === url}
-                onSelect={eventKey => {
-                  // console.log("url", url);
-                  this.onChange({
-                    target: {
-                      name: "map",
-                      value: url
-                    }
-                  });
-                  // this.setState(({ formValues }) => ({
-                  //   formValues: {
-                  //     ...formValues,
-                  //     map: url
-                  //   }
-                  // }));
-                  // alert(`Alert from menu item.\neventKey: ${eventKey}`);
-                }}
+        <ButtonToolbar>
+          <ButtonGroup>
+            <Dropdown>
+              <DropdownToggle
+                caret
+                color="secondary"
+                className={STYLES.DropDown}
               >
-                {name}
-              </MenuItem>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
+                Routes
+              </DropdownToggle>
+              <DropdownMenu right>
+                {routeOptions.map(({ name, url }) => (
+                  <DropdownItem
+                    key={name}
+                    onClick={eventKey => {
+                      this.onChange({
+                        target: {
+                          name: "route",
+                          value: url
+                        }
+                      });
+                    }}
+                  >
+                    {route === url ? (
+                      <IoMdCheckmark />
+                    ) : (
+                      <span
+                        style={{ paddingLeft: "1em", display: "inline-block" }}
+                      />
+                    )}{" "}
+                    {name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
 
-        <Dropdown
-          onSelect={(eventKey, e) => console.log("SELECT", e)}
-          pullRight
-          onToggle={e => console.log("on toggle", e)}
-          autoOpen
-        >
-          <Dropdown.Toggle btnStyle="flat">Options</Dropdown.Toggle>
-          <Dropdown.Menu>
-            <MenuItem
-              onSelect={(evtKey, evt) => {
-                // console.log("evt", evt);
-                evt.stopPropagation();
-                return false;
-              }}
-            >
-              <label
-                onClick={event => {
-                  event.stopPropagation();
-                }}
+            <Dropdown>
+              <DropdownToggle
+                caret
+                color="secondary"
+                className={STYLES.DropDown}
               >
-                <input
-                  name="showElevationProfile"
-                  type="checkbox"
-                  checked={showElevationProfile}
-                  onChange={this.onChange}
-                />
-                Show elevation profile
-              </label>
-            </MenuItem>
-          </Dropdown.Menu>
-        </Dropdown>
+                Maps
+              </DropdownToggle>
+              <DropdownMenu right>
+                {mapOptions.map(({ name, url }) => (
+                  <DropdownItem
+                    key={name}
+                    onClick={eventKey => {
+                      this.onChange({
+                        target: {
+                          name: "map",
+                          value: url
+                        }
+                      });
+                    }}
+                  >
+                    {map === url ? (
+                      <IoMdCheckmark />
+                    ) : (
+                      <span
+                        style={{ paddingLeft: "1em", display: "inline-block" }}
+                      />
+                    )}{" "}
+                    {name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+
+            <Dropdown>
+              <DropdownToggle
+                caret
+                color="secondary"
+                className={STYLES.DropDown}
+              >
+                Options
+              </DropdownToggle>
+              <DropdownMenu right>
+                <DropdownItem>
+                  <FormGroup check>
+                    <Label
+                      check
+                      onClick={event => {
+                        event.stopPropagation();
+                      }}
+                    >
+                      <Input
+                        name="showElevationProfile"
+                        type="checkbox"
+                        checked={showElevationProfile}
+                        onChange={this.onChange}
+                      />{" "}
+                      Show elevation profile
+                    </Label>
+                  </FormGroup>
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </ButtonGroup>
+        </ButtonToolbar>
       </form>
     );
   }
@@ -131,6 +162,11 @@ Form.propTypes = {
     PropTypes.shape({
       name: PropTypes.string.isRequired,
       url: PropTypes.string.isRequired
+    })
+  ).isRequired,
+  routeOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      url: PropTypes.string
     })
   ).isRequired
 };

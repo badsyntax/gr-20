@@ -1,27 +1,23 @@
 import React, { Component } from "react";
-import Map, { maps } from "../Map/Map";
+import Map from "../Map/Map";
 import Form from "../Form/Form";
+import maps from "../../data/maps/maps";
+import routes from "../../data/routes/routes";
 
 import "./App.css";
 
 class App extends Component {
   state = {
-    source: null,
     formValues: {
-      map: maps[0].url
+      map: maps[0].url,
+      showElevationProfile: false,
+      route: routes[0].url
     }
   };
 
   onFormChange = formValues => {
-    // console.log("formValues", formValues);
     this.setState({
       formValues
-    });
-  };
-
-  onSourceReady = source => {
-    this.setState({
-      source
     });
   };
 
@@ -32,9 +28,13 @@ class App extends Component {
         <Form
           values={formValues}
           mapOptions={maps}
+          routeOptions={routes}
           onChange={this.onFormChange}
         />
-        <Map map={formValues.map} onSourceReady={this.onSourceReady} />
+        <Map
+          map={formValues.map}
+          showElevationProfile={formValues.showElevationProfile}
+        />
       </div>
     );
   }
