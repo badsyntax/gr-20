@@ -6,7 +6,7 @@ import "./App.css";
 
 const App = props => (
   <div className="App">
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <Fragment>
         <Route path="/" exact component={IndexPage} />
         <Route path="/map" component={MapPage} />
