@@ -2,7 +2,7 @@
   "name": "gr-20-in-20",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "https://badsyntax.github.io/gr-20/",
   "dependencies": {
     "@types/react": "^16.7.18",
     "bootstrap": "^4.2.1",
