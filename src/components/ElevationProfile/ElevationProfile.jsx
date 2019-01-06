@@ -1,7 +1,12 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-import { XYPlot, LineSeries, AreaSeries, XAxis, YAxis } from "react-vis";
+import XYPlot from "react-vis/es/plot/xy-plot";
+import AreaSeries from "react-vis/es/plot/series/area-series";
+import LineSeries from "react-vis/es/plot/series/line-series";
+import XAxis from "react-vis/es/plot/axis/x-axis";
+import YAxis from "react-vis/es/plot/axis/y-axis";
+
 import LineString from "ol/geom/LineString";
 import VectorSource from "ol/source/Vector";
 

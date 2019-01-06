@@ -1,7 +1,8 @@
 import { Component } from "react";
-import { Map } from "ol";
+import Map from "ol/Map";
 import PropTypes from "prop-types";
-import { Attribution, FullScreen } from "ol/control";
+import FullScreen from "ol/control/FullScreen";
+import Attribution from "ol/control/Attribution";
 import ZoomToExtent from "ol/control/ZoomToExtent";
 import ScaleLine from "ol/control/ScaleLine";
 import "./MapControls.scss";

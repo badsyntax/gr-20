@@ -2,7 +2,8 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import "ol/ol.css";
-import { Map, View } from "ol";
+import Map from "ol/Map";
+import View from "ol/View";
 import { defaults as defaultControls } from "ol/control";
 
 import { fromLonLat } from "ol/proj";

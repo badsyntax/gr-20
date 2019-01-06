@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Popover, PopoverHeader, PopoverBody } from "reactstrap";
-import { Map } from "ol";
+import Map from "ol/Map";
 import Overlay from "ol/Overlay";
 import { toLonLat } from "ol/proj";
 import { toStringHDMS } from "ol/coordinate";

@@ -1,8 +1,8 @@
 import { Component } from "react";
-import { Map } from "ol";
+import Map from "ol/Map";
 import PropTypes from "prop-types";
 import OSM from "ol/source/OSM";
-import { Tile } from "ol/layer";
+import Tile from "ol/layer/Tile";
 
 class TileLayer extends Component {
   componentDidMount() {

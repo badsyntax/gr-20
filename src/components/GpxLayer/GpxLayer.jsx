@@ -1,15 +1,20 @@
 import React, { Component } from "react";
-import { Map } from "ol";
+import Map from "ol/Map";
 import PropTypes from "prop-types";
 import { Vector as VectorLayer } from "ol/layer";
 import VectorSource from "ol/source/Vector";
-import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
+
+import Circle from "ol/style/Circle";
+import Fill from "ol/style/Fill";
+import Stroke from "ol/style/Stroke";
+import Style from "ol/style/Style";
+
 import GPX from "ol/format/GPX";
 import ElevationProfile from "../ElevationProfile/ElevationProfile";
 
 const style = {
   Point: new Style({
-    image: new CircleStyle({
+    image: new Circle({
       fill: new Fill({
         color: "rgba(255,255,0,0.8)"
       }),
