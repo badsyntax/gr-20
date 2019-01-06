@@ -33,6 +33,16 @@ class Popup extends Component {
 
   componentWillMount() {
     this.container = document.createElement("div");
+    this.container.addEventListener(
+      "click",
+      e => {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+      },
+      false
+    );
   }
 
   componentDidMount() {
@@ -51,7 +61,7 @@ class Popup extends Component {
   }
 
   componentWillUnmount() {
-    this.container = null;
+    this.container.parentNode.removeChild(this.container);
   }
 
   onMapClick = evt => {
@@ -80,9 +90,9 @@ class Popup extends Component {
   };
 
   toggle = () => {
-    this.setState(({ isOpen }) => ({
-      isOpen: !isOpen
-    }));
+    // this.setState(({ isOpen }) => ({
+    //   isOpen: !isOpen
+    // }));
   };
 
   render() {

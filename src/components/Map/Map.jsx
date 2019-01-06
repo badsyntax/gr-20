@@ -39,9 +39,7 @@ class MyMap extends React.Component {
       lat: 42.184207,
       lng: 9.1079,
       zoom: 9,
-      isPopupOpen: false,
-      map: null,
-      selectedPoint: null
+      map: null
     };
   }
 
@@ -177,14 +175,14 @@ class MyMap extends React.Component {
   };
 
   render() {
-    const { source, map, selectedPoint, isPopupOpen } = this.state;
+    const { source, map } = this.state;
     const { showElevationProfile } = this.props;
     return (
       <Fragment>
         <div ref={this.mapRef} className="Map" />
         {map && source && (
           <Fragment>
-            <Popup point={selectedPoint} map={map} isOpen={isPopupOpen} />
+            <Popup map={map} />
             {showElevationProfile && <ElevationProfile source={source} />}
           </Fragment>
         )}
