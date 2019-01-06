@@ -10,18 +10,18 @@ import STYLES from "./ElevationProfile.module.scss";
 class ElevationProfile extends Component {
   constructor(props) {
     super(props);
+    const data = this.getData();
+    const yMax = Math.max(...data.map(e => e.y)) || 0;
     this.state = {
-      barX: 0,
-      data: this.getData(),
-      showLine: false
+      data,
+      yMax,
+      showLine: false,
+      hoverLineData: []
     };
   }
 
   getData() {
     const { source, minDistanceThreshold } = this.props;
-    if (!source) {
-      return [];
-    }
     const features = source.getFeatures();
     let data = [];
     features.forEach(feature => {
@@ -32,7 +32,7 @@ class ElevationProfile extends Component {
         const points = coords
           .map((coord, i) => {
             const distance =
-              i === 0 ? 0 : new LineString([coords[i - 1], coord]).getLength();
+              i === 0 ? 0 : new LineString([coords[i - 1], coord]).getLength(); // meter
             distanceFromStart += distance;
             return {
               coord,
@@ -50,7 +50,7 @@ class ElevationProfile extends Component {
           });
         data = data.concat(
           points.map((point, i) => ({
-            x: point.distanceFromStart / 1000,
+            x: point.distanceFromStart / 1000, // km
             y: Math.round(point.coord[2])
           }))
         );
@@ -59,9 +59,9 @@ class ElevationProfile extends Component {
     return data;
   }
 
-  render() {
-    const { data, barX, showLine } = this.state;
-    const yMax = Math.max(...data.map(e => e.y)) || 0;
+  onAreaSeriesNearestX = (datapoint, event) => {
+    const { yMax } = this.state;
+    const barX = datapoint.x;
     const hoverLineData = [
       {
         x: barX,
@@ -72,23 +72,33 @@ class ElevationProfile extends Component {
         y: yMax
       }
     ];
+    this.setState({
+      hoverLineData
+    });
+  };
 
+  onMouseEnter = () => {
+    this.setState({
+      showLine: true
+    });
+  };
+
+  onMouseLeave = () => {
+    this.setState({
+      showLine: false
+    });
+  };
+
+  render() {
+    const { data, showLine, hoverLineData } = this.state;
     return (
       <div className={STYLES.ElevationProfile}>
         <XYPlot
           height={140}
           width={600}
           margin={{ left: 60, right: 20, bottom: 40 }}
-          onMouseEnter={() => {
-            this.setState({
-              showLine: true
-            });
-          }}
-          onMouseLeave={() => {
-            this.setState({
-              showLine: false
-            });
-          }}
+          onMouseEnter={this.onMouseEnter}
+          onMouseLeave={this.onMouseLeave}
         >
           <XAxis
             attr="x"
@@ -118,11 +128,7 @@ class ElevationProfile extends Component {
             strokeStyle="solid"
             color="rgba(0,60,136,0.5)"
             stroke="rgb(0,60,136)"
-            onNearestX={(datapoint, event) => {
-              this.setState({
-                barX: datapoint.x
-              });
-            }}
+            onNearestX={this.onAreaSeriesNearestX}
           />
           {showLine && <LineSeries data={hoverLineData} />}
         </XYPlot>

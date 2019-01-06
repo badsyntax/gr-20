@@ -33,16 +33,6 @@ class Popup extends Component {
 
   componentWillMount() {
     this.container = document.createElement("div");
-    this.container.addEventListener(
-      "click",
-      e => {
-        e.stopImmediatePropagation();
-        e.stopPropagation();
-        e.preventDefault();
-        return false;
-      },
-      false
-    );
   }
 
   componentDidMount() {
@@ -89,11 +79,7 @@ class Popup extends Component {
     }
   };
 
-  toggle = () => {
-    // this.setState(({ isOpen }) => ({
-    //   isOpen: !isOpen
-    // }));
-  };
+  toggle = () => {};
 
   render() {
     const { elevation, hdms, name, isOpen } = this.state;

@@ -1,0 +1,12 @@
+.Spinner {
+  &__container {
+    position: fixed;
+    z-index: 2;
+    width: 100px;
+    height: 100px;
+    margin-top: -50px;
+    margin-left: -50px;
+    left: 50%;
+    top: 50%;
+  }
+}
