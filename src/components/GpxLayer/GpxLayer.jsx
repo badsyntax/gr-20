@@ -42,42 +42,58 @@ const style = {
 class GpxLayer extends Component {
   constructor(props) {
     super(props);
+    this.vectorLayer = new VectorLayer({
+      style(feature) {
+        return style[feature.getGeometry().getType()];
+      }
+    });
     this.state = {
-      source: null
+      source: null,
+      sourceLoaded: false
     };
   }
 
   componentDidMount() {
-    const { onSourceLoad, gpxUrl, map } = this.props;
+    const { map } = this.props;
+    map.addLayer(this.vectorLayer);
+    this.setSource();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { gpxUrl } = this.props;
+    if (prevProps.gpxUrl !== gpxUrl) {
+      this.setSource();
+    }
+  }
+
+  setSource() {
+    const { onSourceChange, gpxUrl } = this.props;
 
     const source = new VectorSource({
       url: gpxUrl,
       format: new GPX()
     });
-
-    const vectorLayer = new VectorLayer({
+    this.vectorLayer.setSource(source);
+    this.setState({
       source,
-      style(feature) {
-        return style[feature.getGeometry().getType()];
-      }
+      sourceLoaded: false
     });
 
-    map.addLayer(vectorLayer);
-
+    onSourceChange(false);
     source.once("change", evt => {
       if (evt.target.getState() === "ready") {
-        onSourceLoad();
+        onSourceChange(true);
         this.setState({
-          source
+          sourceLoaded: true
         });
       }
     });
   }
 
   render() {
-    const { source } = this.state;
+    const { source, sourceLoaded } = this.state;
     const { showElevationProfile } = this.props;
-    return source && showElevationProfile ? (
+    return sourceLoaded && showElevationProfile ? (
       <ElevationProfile source={source} />
     ) : null;
   }
@@ -87,7 +103,7 @@ GpxLayer.propTypes = {
   map: PropTypes.instanceOf(Map).isRequired,
   gpxUrl: PropTypes.string.isRequired,
   showElevationProfile: PropTypes.bool.isRequired,
-  onSourceLoad: PropTypes.func.isRequired
+  onSourceChange: PropTypes.func.isRequired
 };
 
 export default GpxLayer;

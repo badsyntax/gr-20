@@ -9,9 +9,6 @@ import { defaults as defaultControls } from "ol/control";
 import { fromLonLat } from "ol/proj";
 import "./Map.css";
 import "react-vis/dist/style.css";
-
-import route1 from "../../data/routes/gr20-2018-complete-northsouth.gpx";
-
 import Popup from "../Popup/Popup";
 import Spinner from "../Spinner/Spinner";
 import MapControls from "../MapControls/MapControls";
@@ -74,15 +71,15 @@ class MyMap extends React.Component {
     });
   }
 
-  onSourceLoad = () => {
+  onSourceChange = sourceLoaded => {
     this.setState({
-      sourceLoaded: true
+      sourceLoaded
     });
   };
 
   render() {
     const { mapReady, sourceLoaded } = this.state;
-    const { showElevationProfile, mapUrl } = this.props;
+    const { showElevationProfile, mapUrl, gpxUrl } = this.props;
     return (
       <div ref={this.mapRef} className="Map">
         {!sourceLoaded && <Spinner />}
@@ -94,8 +91,8 @@ class MyMap extends React.Component {
             <GpxLayer
               map={this.map}
               showElevationProfile={showElevationProfile}
-              onSourceLoad={this.onSourceLoad}
-              gpxUrl={route1}
+              onSourceChange={this.onSourceChange}
+              gpxUrl={gpxUrl}
             />
           </Fragment>
         )}
@@ -106,6 +103,7 @@ class MyMap extends React.Component {
 
 MyMap.propTypes = {
   mapUrl: PropTypes.string.isRequired,
+  gpxUrl: PropTypes.string.isRequired,
   showElevationProfile: PropTypes.bool.isRequired
 };
 export default MyMap;

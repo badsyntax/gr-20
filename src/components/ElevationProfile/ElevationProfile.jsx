@@ -15,53 +15,69 @@ import STYLES from "./ElevationProfile.module.scss";
 class ElevationProfile extends Component {
   constructor(props) {
     super(props);
-    const data = this.getData();
-    const yMax = Math.max(...data.map(e => e.y)) || 0;
     this.state = {
-      data,
-      yMax,
+      data: [],
+      yMax: 0,
       showLine: false,
       hoverLineData: []
     };
   }
 
-  getData() {
+  componentDidMount() {
+    this.setDataFromMultiLinePoints();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { source } = this.props;
+    if (prevProps.source !== source) {
+      this.setDataFromMultiLinePoints();
+    }
+  }
+
+  setDataFromMultiLinePoints() {
     const { source, minDistanceThreshold } = this.props;
     const features = source.getFeatures();
     let data = [];
     features.forEach(feature => {
-      if (feature.getGeometry().getType() === "MultiLineString") {
-        const coords = feature.getGeometry().getCoordinates()[0];
-        let curMinDistance = 0;
-        let distanceFromStart = 0;
-        const points = coords
-          .map((coord, i) => {
-            const distance =
-              i === 0 ? 0 : new LineString([coords[i - 1], coord]).getLength(); // meter
-            distanceFromStart += distance;
-            return {
-              coord,
-              distance,
-              distanceFromStart
-            };
-          })
-          .filter((point, i) => {
-            curMinDistance += point.distance;
-            if (!i || curMinDistance > minDistanceThreshold) {
-              curMinDistance = 0;
-              return true;
-            }
-            return false;
-          });
-        data = data.concat(
-          points.map((point, i) => ({
-            x: point.distanceFromStart / 1000, // km
-            y: Math.round(point.coord[2])
-          }))
-        );
+      if (feature.getGeometry().getType() !== "MultiLineString") {
+        return;
       }
+      const coords = feature.getGeometry().getCoordinates()[0];
+      let curMinDistance = 0;
+      let distanceFromStart = 0;
+      const points = coords
+        .map((coord, i) => {
+          const distance =
+            i === 0 ? 0 : new LineString([coords[i - 1], coord]).getLength(); // meter
+          distanceFromStart += distance;
+          return {
+            coord,
+            distance,
+            distanceFromStart
+          };
+        })
+        .filter((point, i) => {
+          curMinDistance += point.distance;
+          if (!i || curMinDistance > minDistanceThreshold) {
+            curMinDistance = 0;
+            return true;
+          }
+          return false;
+        });
+      data = data.concat(
+        points.map((point, i) => ({
+          x: point.distanceFromStart / 1000, // km
+          y: Math.round(point.coord[2])
+        }))
+      );
     });
-    return data;
+
+    const yMax = Math.max(...data.map(e => e.y)) || 0;
+
+    this.setState({
+      data,
+      yMax
+    });
   }
 
   onAreaSeriesNearestX = (datapoint, event) => {

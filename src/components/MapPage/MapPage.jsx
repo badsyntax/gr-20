@@ -23,6 +23,7 @@ class MapPage extends Component {
 
   render() {
     const { formValues } = this.state;
+    const { map, route, showElevationProfile } = formValues;
     return (
       <Fragment>
         <Helmet>
@@ -36,8 +37,9 @@ class MapPage extends Component {
             onChange={this.onFormChange}
           />
           <Map
-            mapUrl={formValues.map}
-            showElevationProfile={formValues.showElevationProfile}
+            mapUrl={map}
+            gpxUrl={route}
+            showElevationProfile={showElevationProfile}
           />
         </div>
       </Fragment>
