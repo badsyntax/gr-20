@@ -16,6 +16,13 @@ const IndexPage = props => (
       className={STYLES.IndexPage__cover}
       style={{ backgroundImage: `url("${cover}")` }}
     >
+      <a href="https://github.com/badsyntax/gr-20">
+        <img
+          style={{ position: "absolute", top: 0, left: 0 }}
+          src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"
+          alt="Fork me on GitHub"
+        />
+      </a>
       <div className={STYLES["IndexPage__cover-overlay"]}>
         <div className="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
           <header className="masthead mb-auto" />
