@@ -27,6 +27,9 @@
     "analyze": "source-map-explorer build/static/js/1.*",
     "postbuild": "react-snap"
   },
+  "reactSnap": {
+    "inlineCss": true
+  },
   "eslintConfig": {
     "extends": [
       "airbnb",
