@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import MapPage from "../MapPage/MapPage";
 import IndexPage from "../IndexPage/IndexPage";
+import AboutPage from "../AboutPage/AboutPage";
 import NotFoundPage from "../NotFoundPage/NotFoundPage";
 import "./App.css";
 
@@ -11,6 +12,7 @@ const App = props => (
       <Switch>
         <Route path="/" exact component={IndexPage} />
         <Route path="/map/" exact component={MapPage} />
+        <Route path="/about/" exact component={AboutPage} />
         <Route component={NotFoundPage} />
       </Switch>
     </Router>

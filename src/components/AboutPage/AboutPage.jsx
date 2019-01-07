@@ -3,17 +3,17 @@ import { IoMdArrowRoundForward } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
-import STYLES from "./IndexPage.module.scss";
+import STYLES from "./AboutPage.module.scss";
 
-import cover from "./cover.jpg";
+import cover from "../IndexPage/cover.jpg";
 
-const IndexPage = props => (
+const AboutPage = props => (
   <Fragment>
     <Helmet>
-      <title>GR-20</title>
+      <title>GR-20 - About</title>
     </Helmet>
     <div
-      className={STYLES.IndexPage__cover}
+      className={STYLES.AboutPage__cover}
       style={{ backgroundImage: `url("${cover}")` }}
     >
       <a href="https://github.com/badsyntax/gr-20">
@@ -23,27 +23,33 @@ const IndexPage = props => (
           alt="Fork me on GitHub"
         />
       </a>
-      <div className={STYLES["IndexPage__cover-overlay"]}>
+      <div className={STYLES["AboutPage__cover-overlay"]}>
         <div className="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
           <header className="masthead mb-auto" />
 
           <main role="main" className="inner cover">
-            <h1 className="cover-heading">GR-20</h1>
+            <h1 className="cover-heading">GR-20 - About</h1>
+            <br />
             <p className="lead" style={{ textShadow: "2px 2px 1px #000" }}>
-              The GR 20 is a GR footpath that crosses the Mediterranean island
-              of Corsica running approximately north-south, described by the
-              outdoor writer Paddy Dillon as "one of the top trails in the
-              world".
+              This project uses open data from different platforms to provide
+              useful information on the GR-20 route. It uses OpenLayers to build
+              the map, various open tile servers, and open GPX routes from
+              different sources.
+              <br />
+              <br />
+              The source code for this project can be found{" "}
+              <a href="https://github.com/badsyntax/gr-20">on GitHub</a>.
             </p>
+            <br />
             <p className="lead">
+              <Link to="/" className="btn btn-lg btn-primary">
+                Home <IoMdArrowRoundForward />
+              </Link>{" "}
               <Link to="/map/" className="btn btn-lg btn-primary">
                 View Route <IoMdArrowRoundForward />
               </Link>{" "}
               <Link to="/kit/" className="btn btn-lg btn-primary">
                 View Kit <IoMdArrowRoundForward />
-              </Link>{" "}
-              <Link to="/about/" className="btn btn-lg btn-primary">
-                About <IoMdArrowRoundForward />
               </Link>
             </p>
           </main>
@@ -62,4 +68,4 @@ const IndexPage = props => (
     </div>
   </Fragment>
 );
-export default IndexPage;
+export default AboutPage;
