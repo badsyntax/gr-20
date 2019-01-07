@@ -11,11 +11,11 @@
   },
   {
     "name": "OpenTopo",
-    "url": "https://a.tile.opentopomap.org/{z}/{x}/{y}.png"
+    "url": "https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png"
   },
   {
     "name": "OpenStreetMap France",
-    "url": "https://b.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",
+    "url": "https://{a-c}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",
     "attribution": "&copy; Openstreetmap France | &copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>"
   }
 ]

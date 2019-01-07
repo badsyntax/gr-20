@@ -28,7 +28,8 @@ class Popup extends Component {
       isOpen: false,
       elevation: null,
       hdms: null,
-      name: null
+      name: null,
+      lonLat: []
     };
   }
 
@@ -52,26 +53,36 @@ class Popup extends Component {
   }
 
   componentWillUnmount() {
+    const { map } = this.props;
     this.container.parentNode.removeChild(this.container);
+    map.un("click", this.onMapClick);
   }
 
   onMapClick = evt => {
     const { map } = this.props;
     const features = map.getFeaturesAtPixel(evt.pixel);
     if (features && features.length) {
-      const { coordinate } = evt;
       const feature = features[0];
-      const elevation = getElevation(feature, coordinate);
-      const hdms = getHDMS(coordinate);
+      let coordinates;
+      if (feature.getGeometry().getType() === "MultiLineString") {
+        coordinates = evt.coordinate;
+      } else {
+        // eg Point
+        coordinates = feature.getGeometry().getCoordinates();
+      }
+      const lonLat = toLonLat(coordinates);
+      const elevation = getElevation(feature, coordinates);
+      const hdms = getHDMS(coordinates);
       const pointProps = feature.getProperties();
       this.setState(
         {
           isOpen: true,
           hdms,
           elevation,
+          lonLat,
           ...pointProps
         },
-        () => this.overlay.setPosition(coordinate)
+        () => this.overlay.setPosition(coordinates)
       );
     } else {
       this.setState({
@@ -83,7 +94,9 @@ class Popup extends Component {
   toggle = () => {};
 
   render() {
-    const { elevation, hdms, name, isOpen } = this.state;
+    const { elevation, hdms, name, isOpen, lonLat } = this.state;
+    const lon = (lonLat[0] || 0).toFixed(2);
+    const lat = (lonLat[1] || 0).toFixed(2);
     return (
       <Popover
         placement="top"
@@ -95,9 +108,9 @@ class Popup extends Component {
         <PopoverHeader>{name}</PopoverHeader>
         <PopoverBody>
           <div>Elevation: {elevation}m</div>
-          <div>
-            <code>{hdms}</code>
-          </div>
+          <div>Longitude: {lon}</div>
+          <div>Latitdue: {lat}</div>
+          <div>Coordinates: {hdms}</div>
         </PopoverBody>
       </Popover>
     );

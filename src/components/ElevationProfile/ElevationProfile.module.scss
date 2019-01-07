@@ -8,4 +8,14 @@
   border-radius: 4px;
   width: 600px;
   margin-left: -300px;
+  animation: fadein 0.15s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

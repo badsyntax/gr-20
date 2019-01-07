@@ -85,7 +85,7 @@ class MyMap extends React.Component {
         {!sourceLoaded && <Spinner />}
         {mapReady && (
           <Fragment>
-            <Popup map={this.map} />
+            {sourceLoaded && <Popup map={this.map} />}
             <MapControls map={this.map} />
             <TileLayer mapUrl={mapUrl} map={this.map} />
             <GpxLayer

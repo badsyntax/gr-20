@@ -12,7 +12,20 @@
       <name><![CDATA[GR20]]></name>
       
    </metadata>
-   
+   <wpt lat="42.510373" lon="8.850856">
+        <ele>274</ele>
+        <time>2018-09-30T07:39:37Z</time>
+        <name>Calenzana</name>
+        <cmt></cmt>
+        <desc></desc>
+    </wpt>
+    <wpt lat="41.733194" lon="9.337656">
+        <ele>250</ele>
+        <time>2018-09-30T08:56:05Z</time>
+        <name>Conca</name>
+        <cmt></cmt>
+        <desc></desc>
+    </wpt>
       <trk><name><![CDATA[GR20]]></name><trkseg>
          <trkpt lat="41.70054" lon="9.34941"><ele>40</ele></trkpt>
 <trkpt lat="41.69968" lon="9.34776"><ele>44</ele></trkpt>
