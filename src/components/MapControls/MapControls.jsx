@@ -59,7 +59,7 @@ const scaleLine = new ScaleLine({
   minWidth: 100
 });
 
-const rotateNorthControl = new RotateNorthControl();
+// const rotateNorthControl = new RotateNorthControl();
 
 class MapControls extends Component {
   componentDidMount() {
