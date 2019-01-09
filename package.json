@@ -16,6 +16,7 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.2",
     "react-topbar-progress-indicator": "^2.0.0",
+    "react-virtualized": "^9.21.0",
     "react-vis": "^1.11.5",
     "reactstrap": "^7.0.2"
   },

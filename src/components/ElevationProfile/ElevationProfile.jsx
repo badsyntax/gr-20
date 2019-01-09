@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-
+import AutoSizer from "react-virtualized/dist/es/AutoSizer/AutoSizer";
 import Map from "ol/Map";
 import XYPlot from "react-vis/es/plot/xy-plot";
 import AreaSeries from "react-vis/es/plot/series/area-series";
@@ -171,45 +171,55 @@ class ElevationProfile extends Component {
     const { data, showLine, hoverLineData } = this.state;
     return (
       <div className={STYLES.ElevationProfile}>
-        <XYPlot
-          height={140}
-          width={600}
-          margin={{ left: 60, right: 20, bottom: 40 }}
-          onMouseEnter={this.onMouseEnter}
-          onMouseLeave={this.onMouseLeave}
-        >
-          <XAxis
-            attr="x"
-            attrAxis="y"
-            orientation="bottom"
-            title="Distance (km)"
-            style={{
-              line: { stroke: "#999999", strokeWidth: 1 },
-              ticks: { stroke: "#999999", strokeWidth: 1 },
-              text: { stroke: "none", fill: "#111111" }
-            }}
-          />
-          <YAxis
-            attr="y"
-            attrAxis="x"
-            orientation="left"
-            title="Height (m)"
-            style={{
-              line: { stroke: "#999999", strokeWidth: 1 },
-              ticks: { stroke: "#999999", strokeWidth: 1 },
-              text: { stroke: "none", fill: "#111111" }
-            }}
-          />
-          <AreaSeries
-            data={data}
-            style={{ strokeWidth: "1" }}
-            strokeStyle="solid"
-            color="rgba(0,60,136,0.5)"
-            stroke="rgb(0,60,136)"
-            onNearestX={this.onAreaSeriesNearestX}
-          />
-          {showLine && <LineSeries data={hoverLineData} />}
-        </XYPlot>
+        <AutoSizer>
+          {({ height, width }) => {
+            const sampleRatio = Math.ceil(600 / window.innerWidth);
+            const sampledDataByScreenSize = data.filter(
+              (point, index) => !index || index % sampleRatio === 0
+            );
+            return (
+              <XYPlot
+                height={height}
+                width={width}
+                margin={{ left: 60, right: 20, bottom: 40 }}
+                onMouseEnter={this.onMouseEnter}
+                onMouseLeave={this.onMouseLeave}
+              >
+                <XAxis
+                  attr="x"
+                  attrAxis="y"
+                  orientation="bottom"
+                  title="Distance (km)"
+                  style={{
+                    line: { stroke: "#999999", strokeWidth: 1 },
+                    ticks: { stroke: "#999999", strokeWidth: 1 },
+                    text: { stroke: "none", fill: "#111111" }
+                  }}
+                />
+                <YAxis
+                  attr="y"
+                  attrAxis="x"
+                  orientation="left"
+                  title="Height (m)"
+                  style={{
+                    line: { stroke: "#999999", strokeWidth: 1 },
+                    ticks: { stroke: "#999999", strokeWidth: 1 },
+                    text: { stroke: "none", fill: "#111111" }
+                  }}
+                />
+                <AreaSeries
+                  data={sampledDataByScreenSize}
+                  style={{ strokeWidth: "1" }}
+                  strokeStyle="solid"
+                  color="rgba(0,60,136,0.5)"
+                  stroke="rgb(0,60,136)"
+                  onNearestX={this.onAreaSeriesNearestX}
+                />
+                {showLine && <LineSeries data={hoverLineData} />}
+              </XYPlot>
+            );
+          }}
+        </AutoSizer>
       </div>
     );
   }
