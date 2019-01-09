@@ -1,29 +1,84 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
+import Map from "ol/Map";
 import XYPlot from "react-vis/es/plot/xy-plot";
 import AreaSeries from "react-vis/es/plot/series/area-series";
 import LineSeries from "react-vis/es/plot/series/line-series";
+import { Vector as VectorLayer } from "ol/layer";
 import XAxis from "react-vis/es/plot/axis/x-axis";
 import YAxis from "react-vis/es/plot/axis/y-axis";
-
+import Icon from "ol/style/Icon";
+import Point from "ol/geom/Point";
+import Style from "ol/style/Style";
+import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import VectorSource from "ol/source/Vector";
+import markerIcon from "../GpxLayer/marker-gold.png";
 
 import STYLES from "./ElevationProfile.module.scss";
+
+const getMultiLineStringFeature = features =>
+  features.find(
+    feature => feature.getGeometry().getType() === "MultiLineString"
+  );
+
+const sampleCoordinates = (coords, minDistanceThreshold = 0) => {
+  let curMinDistance = 0;
+  let distanceFromStart = 0;
+  return coords
+    .map((coord, i) => {
+      const distance =
+        i === 0 ? 0 : new LineString([coords[i - 1], coord]).getLength(); // meter
+      distanceFromStart += distance;
+      return {
+        coord,
+        distance,
+        distanceFromStart
+      };
+    })
+    .filter((point, i) => {
+      curMinDistance += point.distance;
+      if (!i || curMinDistance > minDistanceThreshold) {
+        curMinDistance = 0;
+        return true;
+      }
+      return false;
+    });
+};
+
+const positionMarketStyle = new Style({
+  image: new Icon({
+    anchor: [0.5, 1],
+    src: markerIcon
+  })
+});
+
+const createPositionMarkerFeature = () => {
+  const feature = new Feature({
+    name: "Current position"
+  });
+  feature.setId("position");
+  feature.setStyle(positionMarketStyle);
+  return feature;
+};
 
 class ElevationProfile extends Component {
   constructor(props) {
     super(props);
+    this.positionVectorLayer = new VectorLayer();
     this.state = {
       data: [],
-      yMax: 0,
+      yMax: null,
+      yMin: null,
       showLine: false,
       hoverLineData: []
     };
   }
 
   componentDidMount() {
+    const { map } = this.props;
+    map.addLayer(this.positionVectorLayer);
     this.setDataFromMultiLinePoints();
   }
 
@@ -34,59 +89,60 @@ class ElevationProfile extends Component {
     }
   }
 
+  componentWillUnmount() {
+    const { map } = this.props;
+    map.removeLayer(this.positionVectorLayer);
+  }
+
   setDataFromMultiLinePoints() {
     const { source, minDistanceThreshold } = this.props;
-    const features = source.getFeatures();
-    let data = [];
-    features.forEach(feature => {
-      if (feature.getGeometry().getType() !== "MultiLineString") {
-        return;
-      }
-      const coords = feature.getGeometry().getCoordinates()[0];
-      let curMinDistance = 0;
-      let distanceFromStart = 0;
-      const points = coords
-        .map((coord, i) => {
-          const distance =
-            i === 0 ? 0 : new LineString([coords[i - 1], coord]).getLength(); // meter
-          distanceFromStart += distance;
-          return {
-            coord,
-            distance,
-            distanceFromStart
-          };
-        })
-        .filter((point, i) => {
-          curMinDistance += point.distance;
-          if (!i || curMinDistance > minDistanceThreshold) {
-            curMinDistance = 0;
-            return true;
-          }
-          return false;
-        });
-      data = data.concat(
-        points.map((point, i) => ({
-          x: point.distanceFromStart / 1000, // km
-          y: Math.round(point.coord[2])
-        }))
-      );
+
+    const positionSource = new VectorSource({
+      features: [createPositionMarkerFeature()]
     });
+    this.positionVectorLayer.setSource(positionSource);
+
+    const multiLineStringFeature = getMultiLineStringFeature(
+      source.getFeatures()
+    );
+    const coords = multiLineStringFeature.getGeometry().getCoordinates()[0];
+    const points = sampleCoordinates(coords, minDistanceThreshold);
+
+    const data = points.map((point, i) => ({
+      x: point.distanceFromStart / 1000, // km
+      y: point.coord[2]
+    }));
 
     const yMax = Math.max(...data.map(e => e.y)) || 0;
+    const yMin = Math.min(...data.map(e => e.y)) || 0;
 
     this.setState({
       data,
-      yMax
+      yMax,
+      yMin,
+      sampledPoints: points
     });
   }
 
+  setPositionMarkerGeometry(geometry) {
+    this.positionVectorLayer
+      .getSource()
+      .getFeatureById("position")
+      .setGeometry(geometry);
+  }
+
   onAreaSeriesNearestX = (datapoint, event) => {
-    const { yMax } = this.state;
-    const barX = datapoint.x;
+    const { yMax, yMin, data, sampledPoints } = this.state;
+
+    const foundPointIndex = data.indexOf(datapoint);
+    const { coord } = sampledPoints[foundPointIndex];
+    this.setPositionMarkerGeometry(new Point(coord));
+
+    const { x: barX } = datapoint;
     const hoverLineData = [
       {
         x: barX,
-        y: 0
+        y: yMin
       },
       {
         x: barX,
@@ -105,6 +161,7 @@ class ElevationProfile extends Component {
   };
 
   onMouseLeave = () => {
+    this.setPositionMarkerGeometry(null);
     this.setState({
       showLine: false
     });
@@ -160,6 +217,7 @@ class ElevationProfile extends Component {
 
 ElevationProfile.propTypes = {
   source: PropTypes.instanceOf(VectorSource).isRequired,
+  map: PropTypes.instanceOf(Map).isRequired,
   minDistanceThreshold: PropTypes.number
 };
 

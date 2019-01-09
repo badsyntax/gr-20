@@ -161,9 +161,9 @@ class GpxLayer extends Component {
 
   render() {
     const { source, sourceLoaded } = this.state;
-    const { showElevationProfile } = this.props;
+    const { showElevationProfile, map } = this.props;
     return sourceLoaded && showElevationProfile ? (
-      <ElevationProfile source={source} />
+      <ElevationProfile source={source} map={map} />
     ) : null;
   }
 }
