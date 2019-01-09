@@ -22,7 +22,8 @@ class MyMap extends React.Component {
     this.popupContainerRef = React.createRef();
     this.popupContentRef = React.createRef();
     this.map = new Map({
-      renderer: "canvas",
+      pixelRatio: 1,
+      renderer: "webgl",
       controls: defaultControls({ attribution: false })
     });
     this.state = {

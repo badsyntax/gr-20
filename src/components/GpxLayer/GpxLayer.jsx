@@ -8,21 +8,62 @@ import Circle from "ol/style/Circle";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
+import Text from "ol/style/Text";
+import Icon from "ol/style/Icon";
+import Point from "ol/geom/Point";
+import Feature from "ol/Feature";
 
 import GPX from "ol/format/GPX";
 import ElevationProfile from "../ElevationProfile/ElevationProfile";
 
+import startIcon from "./marker-gold.png";
+
+const createFeature = (name, id, color) => {
+  const feature = new Feature({
+    name
+  });
+  feature.setId(id);
+  feature.setStyle(
+    new Style({
+      // image: new Circle({
+      //   fill: new Fill({
+      //     color
+      //   }),
+      //   radius: 5
+      // }),
+      image: new Icon({
+        anchor: [0.5, 1],
+        src: startIcon
+        // size: "50px"
+      }),
+      text: new Text({
+        text: name,
+        fill: new Fill({ color }),
+        stroke: new Stroke({ color: "#ffffff", width: 2 }),
+        font: "bold 13px Arial",
+        offsetY: 12
+      })
+    })
+  );
+  return feature;
+};
+
+const getMultiLineStringFeature = features =>
+  features.find(
+    feature => feature.getGeometry().getType() === "MultiLineString"
+  );
+
 const style = {
   Point: new Style({
+    // image: new Icon({
+    //   src: startIcon
+    // })
     image: new Circle({
       fill: new Fill({
-        color: "rgba(255,255,0,0.8)"
+        color: "yellow"
       }),
-      radius: 5,
-      stroke: new Stroke({
-        color: "#ff0",
-        width: 1
-      })
+      stroke: new Stroke({ color: "rgba(0,60,136)", width: 1 }),
+      radius: 5
     })
   }),
   LineString: new Style({
@@ -42,11 +83,12 @@ const style = {
 class GpxLayer extends Component {
   constructor(props) {
     super(props);
-    this.vectorLayer = new VectorLayer({
+    this.gpxVectorLayer = new VectorLayer({
       style(feature) {
         return style[feature.getGeometry().getType()];
       }
     });
+    this.startEndVectorLayer = new VectorLayer();
     this.state = {
       source: null,
       sourceLoaded: false
@@ -55,7 +97,9 @@ class GpxLayer extends Component {
 
   componentDidMount() {
     const { map } = this.props;
-    map.addLayer(this.vectorLayer);
+    map.addLayer(this.gpxVectorLayer);
+    map.addLayer(this.startEndVectorLayer);
+
     this.setSource();
   }
 
@@ -73,7 +117,17 @@ class GpxLayer extends Component {
       url: gpxUrl,
       format: new GPX()
     });
-    this.vectorLayer.setSource(source);
+    this.gpxVectorLayer.setSource(source);
+
+    const startEndSource = new VectorSource({
+      features: [
+        createFeature("Start Point", "startPoint", "rgba(0,60,136)"),
+        createFeature("End Point", "endPoint", "rgba(0,60,136)")
+      ]
+    });
+
+    this.startEndVectorLayer.setSource(startEndSource);
+
     this.setState({
       source,
       sourceLoaded: false
@@ -81,7 +135,22 @@ class GpxLayer extends Component {
 
     onSourceChange(false);
     source.once("change", evt => {
-      if (evt.target.getState() === "ready") {
+      if (source.getState() === "ready") {
+        const multiLineString = getMultiLineStringFeature(source.getFeatures());
+        const coords = multiLineString
+          .getGeometry()
+          .getCoordinates()[0]
+          .slice();
+        const startCoords = coords.shift();
+        const endCoords = coords.pop();
+
+        startEndSource
+          .getFeatureById("startPoint")
+          .setGeometry(new Point(startCoords));
+        startEndSource
+          .getFeatureById("endPoint")
+          .setGeometry(new Point(endCoords));
+
         onSourceChange(true);
         this.setState({
           sourceLoaded: true
