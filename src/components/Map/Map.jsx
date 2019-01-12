@@ -13,7 +13,7 @@ import MapControls from "../MapControls/MapControls";
 import GpxLayer from "../GpxLayer/GpxLayer";
 import TileLayer from "../TileLayer/TileLayer";
 
-import "./Map.css";
+import STYLES from "./Map.module.scss";
 
 class MyMap extends Component {
   state = {
@@ -85,9 +85,16 @@ class MyMap extends Component {
 
   render() {
     const { mapReady, sourceLoaded } = this.state;
-    const { showElevationProfile, mapUrl, gpxUrl, showControls } = this.props;
+    const {
+      showElevationProfile,
+      mapUrl,
+      gpxUrl,
+      showControls,
+      showMarkers,
+      showRoute
+    } = this.props;
     return (
-      <div ref={this.mapRef} className="Map">
+      <div ref={this.mapRef} className={STYLES.Map}>
         {!sourceLoaded && <Spinner />}
         {mapReady && (
           <Fragment>
@@ -99,6 +106,8 @@ class MyMap extends Component {
               showElevationProfile={showElevationProfile}
               onSourceChange={this.onSourceChange}
               gpxUrl={gpxUrl}
+              showMarkers={showMarkers}
+              showRoute={showRoute}
             />
           </Fragment>
         )}
@@ -111,6 +120,8 @@ MyMap.propTypes = {
   mapUrl: PropTypes.string.isRequired,
   gpxUrl: PropTypes.string.isRequired,
   showElevationProfile: PropTypes.bool.isRequired,
-  showControls: PropTypes.bool.isRequired
+  showControls: PropTypes.bool.isRequired,
+  showMarkers: PropTypes.bool.isRequired,
+  showRoute: PropTypes.bool.isRequired
 };
 export default MyMap;

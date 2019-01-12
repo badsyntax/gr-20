@@ -20,40 +20,48 @@ import yellowMarker from "./baseline-location_on-24px-yellow.svg";
 // import greenMarker from "./baseline-location_on-24px-green.svg";
 // import redMarker from "./baseline-location_on-24px-red.svg";
 
-const createFeature = (name, id, color, marker) => {
+const pointTextStyle = (text, marker, color) =>
+  new Style({
+    // image: new Circle({
+    //   fill: new Fill({
+    //     color
+    //   }),
+    //   radius: 5
+    // }),
+    image: new Icon({
+      anchor: [0.5, 1],
+      src: marker
+      // size: "50px"
+    }),
+    text: new Text({
+      text,
+      fill: new Fill({ color }),
+      stroke: new Stroke({ color: "#ffffff", width: 2 }),
+      font: "bold 13px Arial",
+      offsetY: 12
+    })
+  });
+
+const createPointTextFeature = (name, id, color, marker) => {
   const feature = new Feature({
     name
   });
   feature.setId(id);
-  feature.setStyle(
-    new Style({
-      // image: new Circle({
-      //   fill: new Fill({
-      //     color
-      //   }),
-      //   radius: 5
-      // }),
-      image: new Icon({
-        anchor: [0.5, 1],
-        src: marker
-        // size: "50px"
-      }),
-      text: new Text({
-        text: name,
-        fill: new Fill({ color }),
-        stroke: new Stroke({ color: "#ffffff", width: 2 }),
-        font: "bold 13px Arial",
-        offsetY: 12
-      })
-    })
-  );
+  feature.setStyle(pointTextStyle(name, marker, color));
   return feature;
 };
 
-const getMultiLineStringFeature = features =>
-  features.find(
-    feature => feature.getGeometry().getType() === "MultiLineString"
-  );
+const getMultiLineStringFeature = layer =>
+  layer
+    .getSource()
+    .getFeatures()
+    .find(feature => feature.getGeometry().getType() === "MultiLineString");
+
+const getPointFeatures = layer =>
+  layer
+    .getSource()
+    .getFeatures()
+    .filter(feature => feature.getGeometry().getType() === "Point");
 
 const style = {
   Point: new Style({
@@ -84,6 +92,14 @@ const style = {
 };
 
 class GpxLayer extends Component {
+  state = {
+    source: null,
+    sourceLoaded: false,
+    gpxMarkers: [],
+    startEndMarkers: [],
+    multiLineFeature: null
+  };
+
   constructor(props) {
     super(props);
     this.gpxVectorLayer = new VectorLayer({
@@ -92,24 +108,25 @@ class GpxLayer extends Component {
       }
     });
     this.startEndVectorLayer = new VectorLayer();
-    this.state = {
-      source: null,
-      sourceLoaded: false
-    };
   }
 
   componentDidMount() {
     const { map } = this.props;
     map.addLayer(this.gpxVectorLayer);
     map.addLayer(this.startEndVectorLayer);
-
     this.setSource();
   }
 
   componentDidUpdate(prevProps) {
-    const { gpxUrl } = this.props;
+    const { gpxUrl, showMarkers, showRoute } = this.props;
     if (prevProps.gpxUrl !== gpxUrl) {
       this.setSource();
+    }
+    if (prevProps.showMarkers !== showMarkers) {
+      this.toggleMarkers(showMarkers);
+    }
+    if (prevProps.showRoute !== showRoute) {
+      this.toggleRoute(showRoute);
     }
   }
 
@@ -124,8 +141,18 @@ class GpxLayer extends Component {
 
     const startEndSource = new VectorSource({
       features: [
-        createFeature("Start", "startPoint", "rgba(0,60,136)", yellowMarker),
-        createFeature("Finish", "finishPoint", "rgba(0,60,136)", yellowMarker)
+        createPointTextFeature(
+          "Start",
+          "startPoint",
+          "rgba(0,60,136)",
+          yellowMarker
+        ),
+        createPointTextFeature(
+          "Finish",
+          "finishPoint",
+          "rgba(0,60,136)",
+          yellowMarker
+        )
       ]
     });
 
@@ -139,7 +166,7 @@ class GpxLayer extends Component {
     onSourceChange(false);
     source.once("change", evt => {
       if (source.getState() === "ready") {
-        const multiLineString = getMultiLineStringFeature(source.getFeatures());
+        const multiLineString = getMultiLineStringFeature(this.gpxVectorLayer);
         const coords = multiLineString
           .getGeometry()
           .getCoordinates()[0]
@@ -162,6 +189,44 @@ class GpxLayer extends Component {
     });
   }
 
+  toggleMarkers(show) {
+    if (show) {
+      const { gpxMarkers, startEndMarkers } = this.state;
+      gpxMarkers.forEach(markerPoint =>
+        this.gpxVectorLayer.getSource().addFeature(markerPoint)
+      );
+      startEndMarkers.forEach(markerPoint =>
+        this.startEndVectorLayer.getSource().addFeature(markerPoint)
+      );
+    } else {
+      const gpxMarkers = getPointFeatures(this.gpxVectorLayer);
+      const startEndMarkers = getPointFeatures(this.startEndVectorLayer);
+      this.setState({
+        gpxMarkers,
+        startEndMarkers
+      });
+      gpxMarkers.forEach(markerPoint =>
+        this.gpxVectorLayer.getSource().removeFeature(markerPoint)
+      );
+      startEndMarkers.forEach(markerPoint =>
+        this.startEndVectorLayer.getSource().removeFeature(markerPoint)
+      );
+    }
+  }
+
+  toggleRoute(show) {
+    if (show) {
+      const { multiLineFeature } = this.state;
+      this.gpxVectorLayer.getSource().addFeature(multiLineFeature);
+    } else {
+      const multiLineFeature = getMultiLineStringFeature(this.gpxVectorLayer);
+      this.setState({
+        multiLineFeature
+      });
+      this.gpxVectorLayer.getSource().removeFeature(multiLineFeature);
+    }
+  }
+
   render() {
     const { source, sourceLoaded } = this.state;
     const { showElevationProfile, map } = this.props;
@@ -175,7 +240,9 @@ GpxLayer.propTypes = {
   map: PropTypes.instanceOf(Map).isRequired,
   gpxUrl: PropTypes.string.isRequired,
   showElevationProfile: PropTypes.bool.isRequired,
-  onSourceChange: PropTypes.func.isRequired
+  onSourceChange: PropTypes.func.isRequired,
+  showMarkers: PropTypes.bool.isRequired,
+  showRoute: PropTypes.bool.isRequired
 };
 
 export default GpxLayer;

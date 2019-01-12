@@ -12,8 +12,45 @@ class MapPage extends Component {
       map: maps[0].url,
       showElevationProfile: false,
       showControls: true,
+      showMarkers: true,
+      showRoute: true,
       route: routes[0].url
-    }
+    },
+    dropdowns: [
+      {
+        label: "Routes",
+        name: "route",
+        items: routes
+      },
+      {
+        label: "Maps",
+        name: "map",
+        items: maps
+      },
+      {
+        label: "Options",
+        name: "options",
+        type: "formGroup",
+        items: [
+          {
+            name: "showElevationProfile",
+            label: "Show elevation profile"
+          },
+          {
+            name: "showControls",
+            label: "Show controls"
+          },
+          {
+            name: "showMarkers",
+            label: "Show markers"
+          },
+          {
+            name: "showRoute",
+            label: "Show route"
+          }
+        ]
+      }
+    ]
   };
 
   onDropdownChange = values => {
@@ -23,8 +60,15 @@ class MapPage extends Component {
   };
 
   render() {
-    const { values } = this.state;
-    const { map, route, showElevationProfile, showControls } = values;
+    const { values, dropdowns } = this.state;
+    const {
+      map,
+      route,
+      showElevationProfile,
+      showControls,
+      showMarkers,
+      showRoute
+    } = values;
     return (
       <Fragment>
         <Helmet>
@@ -33,8 +77,7 @@ class MapPage extends Component {
         <div className={STYLES.MapPage}>
           <DropdownGroup
             values={values}
-            mapOptions={maps}
-            routeOptions={routes}
+            dropdowns={dropdowns}
             onChange={this.onDropdownChange}
           />
           <Map
@@ -42,6 +85,8 @@ class MapPage extends Component {
             gpxUrl={route}
             showElevationProfile={showElevationProfile}
             showControls={showControls}
+            showMarkers={showMarkers}
+            showRoute={showRoute}
           />
         </div>
       </Fragment>
