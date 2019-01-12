@@ -1,51 +1,33 @@
 /* eslint-disable func-names */
-import { Component } from "react";
+import React, { Component, Fragment } from "react";
+import ReactDOM from "react-dom";
 import Map from "ol/Map";
 import PropTypes from "prop-types";
 import FullScreen from "ol/control/FullScreen";
 import Attribution from "ol/control/Attribution";
+import Zoom from "ol/control/Zoom";
 import ZoomToExtent from "ol/control/ZoomToExtent";
 import ScaleLine from "ol/control/ScaleLine";
-import Control from "ol/control/Control";
-import "./MapControls.scss";
+import { MdFullscreen, MdZoomOutMap, MdRotateLeft } from "react-icons/md";
+import RotateNorthControl from "../RotateNorthControl/RotateNorthControl";
+import STYLES from "./MapControls.module.scss";
 
-function RotateNorthControl(optOptions) {
-  const options = optOptions || {};
+const zoom = new Zoom();
 
-  const button = document.createElement("button");
-  button.innerHTML = "N";
-
-  const element = document.createElement("div");
-  element.className = "rotate-north ol-unselectable ol-control";
-  element.appendChild(button);
-
-  Control.call(this, {
-    element,
-    target: options.target
-  });
-
-  button.addEventListener("click", this.handleRotateNorth.bind(this), false);
-}
-
-// eslint-disable-next-line no-proto
-if (Control) RotateNorthControl.__proto__ = Control;
-RotateNorthControl.prototype = Object.create(Control && Control.prototype);
-RotateNorthControl.prototype.constructor = RotateNorthControl;
-
-RotateNorthControl.prototype.handleRotateNorth = function handleRotateNorth() {
-  this.getMap()
-    .getView()
-    .setRotation(0);
-};
+const zoomToExtentLabel = document.createElement("span");
 
 const attribution = new Attribution({
   collapsible: true
 });
 
-const fullScreen = new FullScreen();
+const fullScreenLabel = document.createElement("span");
+
+const fullScreen = new FullScreen({
+  label: fullScreenLabel
+});
 
 const zoomToExtent = new ZoomToExtent({
-  label: "H",
+  label: zoomToExtentLabel,
   extent: [
     978823.488305482,
     5121096.608475749,
@@ -59,20 +41,62 @@ const scaleLine = new ScaleLine({
   minWidth: 100
 });
 
-// const rotateNorthControl = new RotateNorthControl();
+const rotateNorthLabel = document.createElement("span");
+
+const rotateNorth = new RotateNorthControl({
+  label: rotateNorthLabel
+});
+
+const IconLabel = props => ReactDOM.createPortal(props.children, props.label);
 
 class MapControls extends Component {
+  constructor(props) {
+    super(props);
+    this.controlGroupRef = React.createRef();
+  }
+
   componentDidMount() {
     const { map } = this.props;
+    const { current: target } = this.controlGroupRef;
+
+    [zoom, zoomToExtent, rotateNorth, fullScreen].forEach(control => {
+      control.setTarget(target);
+      map.addControl(control);
+    });
+
     map.addControl(attribution);
-    map.addControl(fullScreen);
-    map.addControl(zoomToExtent);
     map.addControl(scaleLine);
-    // map.addControl(rotateNorthControl);
+  }
+
+  componentWillUnmount() {
+    const { map } = this.props;
+    [
+      zoom,
+      zoomToExtent,
+      rotateNorth,
+      fullScreen,
+      attribution,
+      scaleLine
+    ].forEach(control => {
+      map.removeControl(control);
+    });
   }
 
   render() {
-    return null;
+    return (
+      <Fragment>
+        <IconLabel label={zoomToExtentLabel}>
+          <MdZoomOutMap />
+        </IconLabel>
+        <IconLabel label={rotateNorthLabel}>
+          <MdRotateLeft />
+        </IconLabel>
+        <IconLabel label={fullScreenLabel}>
+          <MdFullscreen />
+        </IconLabel>
+        <div ref={this.controlGroupRef} className={STYLES.MapControls} />
+      </Fragment>
+    );
   }
 }
 

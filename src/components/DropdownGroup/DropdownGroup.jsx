@@ -15,16 +15,18 @@ import { IoMdCheckmark } from "react-icons/io";
 
 import Dropdown from "../Dropdown/Dropdown";
 
-import STYLES from "./Form.module.scss";
+import STYLES from "./DropdownGroup.module.scss";
 
-class Form extends Component {
+class DropdownGroup extends Component {
   constructor(props) {
     super(props);
     this.state = Object.assign(
       {
         showElevationProfile: false
       },
-      props.values
+      {
+        values: props.values
+      }
     );
   }
 
@@ -35,18 +37,25 @@ class Form extends Component {
     const { name } = target;
 
     this.setState(
-      {
-        [name]: value
-      },
-      () => onChange(this.state)
+      ({ values }) => ({
+        values: {
+          ...values,
+          [name]: value
+        }
+      }),
+      () => {
+        const { values } = this.state;
+        onChange(values);
+      }
     );
   };
 
   render() {
-    const { showElevationProfile, map, route } = this.state;
+    const { values } = this.state;
+    const { showElevationProfile, map, route, showControls } = values;
     const { mapOptions, routeOptions } = this.props;
     return (
-      <form className={STYLES.Form}>
+      <form className={STYLES.DropdownGroup}>
         <ButtonToolbar>
           <ButtonGroup>
             <Dropdown>
@@ -144,6 +153,24 @@ class Form extends Component {
                     </Label>
                   </FormGroup>
                 </DropdownItem>
+                <DropdownItem>
+                  <FormGroup check>
+                    <Label
+                      check
+                      onClick={event => {
+                        event.stopPropagation();
+                      }}
+                    >
+                      <Input
+                        name="showControls"
+                        type="checkbox"
+                        checked={showControls}
+                        onChange={this.onChange}
+                      />{" "}
+                      Show controls
+                    </Label>
+                  </FormGroup>
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </ButtonGroup>
@@ -153,7 +180,7 @@ class Form extends Component {
   }
 }
 
-Form.propTypes = {
+DropdownGroup.propTypes = {
   onChange: PropTypes.func.isRequired,
   values: PropTypes.shape().isRequired,
   mapOptions: PropTypes.arrayOf(
@@ -169,4 +196,4 @@ Form.propTypes = {
   ).isRequired
 };
 
-export default Form;
+export default DropdownGroup;

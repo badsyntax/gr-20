@@ -63,13 +63,16 @@ class Popup extends Component {
     const features = map.getFeaturesAtPixel(evt.pixel);
     if (features && features.length) {
       const feature = features[0];
-      let coordinates;
-      if (feature.getGeometry().getType() === "MultiLineString") {
-        coordinates = evt.coordinate;
-      } else {
-        // eg Point
-        coordinates = feature.getGeometry().getCoordinates();
-      }
+      const coordinates = evt.coordinate;
+
+      // let coordinates;
+      // if (feature.getGeometry().getType() === "MultiLineString") {
+      //   coordinates = evt.coordinate;
+      // } else {
+      //   // eg Point
+      //   coordinates = feature.getGeometry().getCoordinates();
+      // }
+
       const lonLat = toLonLat(coordinates);
       const elevation = getElevation(feature, coordinates);
       const hdms = getHDMS(coordinates);

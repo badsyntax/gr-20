@@ -1,38 +1,39 @@
-/* eslint-disable func-names */
-import React, { Fragment } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
-import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
-import { defaults as defaultControls } from "ol/control";
-
 import { fromLonLat } from "ol/proj";
-import "./Map.css";
+
+import "ol/ol.css";
 import "react-vis/dist/style.css";
+
 import Popup from "../Popup/Popup";
 import Spinner from "../Spinner/Spinner";
 import MapControls from "../MapControls/MapControls";
 import GpxLayer from "../GpxLayer/GpxLayer";
 import TileLayer from "../TileLayer/TileLayer";
 
-class MyMap extends React.Component {
-  constructor() {
-    super();
+import "./Map.css";
+
+class MyMap extends Component {
+  state = {
+    lat: 42.184207,
+    lng: 9.1079,
+    zoom: 9,
+    mapReady: false,
+    sourceLoaded: false
+  };
+
+  constructor(props) {
+    super(props);
     this.mapRef = React.createRef();
     this.popupContainerRef = React.createRef();
     this.popupContentRef = React.createRef();
     this.map = new Map({
       pixelRatio: 1,
       renderer: "webgl",
-      controls: defaultControls({ attribution: false })
+      controls: []
     });
-    this.state = {
-      lat: 42.184207,
-      lng: 9.1079,
-      zoom: 9,
-      mapReady: false,
-      sourceLoaded: false
-    };
   }
 
   componentDidMount() {
@@ -43,12 +44,27 @@ class MyMap extends React.Component {
     const view = new View({
       center: fromLonLat([lng, lat]),
       zoom
+      // rotation: Math.PI / 6
     });
 
     map.setTarget(target);
     map.setView(view);
+    map.on("pointermove", this.onMapPointerMove);
 
-    const displayFeatureInfo = function(pixel, evt) {
+    this.setState({
+      mapReady: true
+    });
+  }
+
+  componentWillUnmount() {
+    const { map } = this;
+    map.un("pointermove", this.onMapPointerMove);
+  }
+
+  onMapPointerMove = evt => {
+    const { map } = this;
+    if (evt.originalEvent.target.nodeName.toLowerCase() === "canvas") {
+      const pixel = map.getEventPixel(evt.originalEvent);
       const features = [];
       map.forEachFeatureAtPixel(pixel, feature => {
         features.push(feature);
@@ -58,19 +74,8 @@ class MyMap extends React.Component {
       } else {
         map.getTarget().style.cursor = "";
       }
-    };
-
-    map.on("pointermove", evt => {
-      if (evt.originalEvent.target.nodeName.toLowerCase() === "canvas") {
-        const pixel = map.getEventPixel(evt.originalEvent);
-        displayFeatureInfo(pixel, evt);
-      }
-    });
-
-    this.setState({
-      mapReady: true
-    });
-  }
+    }
+  };
 
   onSourceChange = sourceLoaded => {
     this.setState({
@@ -80,14 +85,14 @@ class MyMap extends React.Component {
 
   render() {
     const { mapReady, sourceLoaded } = this.state;
-    const { showElevationProfile, mapUrl, gpxUrl } = this.props;
+    const { showElevationProfile, mapUrl, gpxUrl, showControls } = this.props;
     return (
       <div ref={this.mapRef} className="Map">
         {!sourceLoaded && <Spinner />}
         {mapReady && (
           <Fragment>
             {sourceLoaded && <Popup map={this.map} />}
-            <MapControls map={this.map} />
+            {showControls && <MapControls map={this.map} />}
             <TileLayer mapUrl={mapUrl} map={this.map} />
             <GpxLayer
               map={this.map}
@@ -105,6 +110,7 @@ class MyMap extends React.Component {
 MyMap.propTypes = {
   mapUrl: PropTypes.string.isRequired,
   gpxUrl: PropTypes.string.isRequired,
-  showElevationProfile: PropTypes.bool.isRequired
+  showElevationProfile: PropTypes.bool.isRequired,
+  showControls: PropTypes.bool.isRequired
 };
 export default MyMap;

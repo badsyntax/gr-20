@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { Helmet } from "react-helmet";
-import Form from "../Form/Form";
+import DropdownGroup from "../DropdownGroup/DropdownGroup";
 import Map from "../Map/Map";
 import maps from "../../data/maps/maps";
 import routes from "../../data/routes/routes";
@@ -8,38 +8,40 @@ import STYLES from "./MapPage.module.scss";
 
 class MapPage extends Component {
   state = {
-    formValues: {
+    values: {
       map: maps[0].url,
       showElevationProfile: false,
+      showControls: true,
       route: routes[0].url
     }
   };
 
-  onFormChange = formValues => {
+  onDropdownChange = values => {
     this.setState({
-      formValues
+      values
     });
   };
 
   render() {
-    const { formValues } = this.state;
-    const { map, route, showElevationProfile } = formValues;
+    const { values } = this.state;
+    const { map, route, showElevationProfile, showControls } = values;
     return (
       <Fragment>
         <Helmet>
           <title>GR-20 - The Route</title>
         </Helmet>
         <div className={STYLES.MapPage}>
-          <Form
-            values={formValues}
+          <DropdownGroup
+            values={values}
             mapOptions={maps}
             routeOptions={routes}
-            onChange={this.onFormChange}
+            onChange={this.onDropdownChange}
           />
           <Map
             mapUrl={map}
             gpxUrl={route}
             showElevationProfile={showElevationProfile}
+            showControls={showControls}
           />
         </div>
       </Fragment>

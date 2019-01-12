@@ -16,9 +16,11 @@ import Feature from "ol/Feature";
 import GPX from "ol/format/GPX";
 import ElevationProfile from "../ElevationProfile/ElevationProfile";
 
-import startIcon from "./marker-gold.png";
+import yellowMarker from "./baseline-location_on-24px-yellow.svg";
+// import greenMarker from "./baseline-location_on-24px-green.svg";
+// import redMarker from "./baseline-location_on-24px-red.svg";
 
-const createFeature = (name, id, color) => {
+const createFeature = (name, id, color, marker) => {
   const feature = new Feature({
     name
   });
@@ -33,7 +35,7 @@ const createFeature = (name, id, color) => {
       // }),
       image: new Icon({
         anchor: [0.5, 1],
-        src: startIcon
+        src: marker
         // size: "50px"
       }),
       text: new Text({
@@ -56,7 +58,8 @@ const getMultiLineStringFeature = features =>
 const style = {
   Point: new Style({
     // image: new Icon({
-    //   src: startIcon
+    //   src: yellowMarker,
+    //   anchor: [0.5, 1]
     // })
     image: new Circle({
       fill: new Fill({
@@ -121,8 +124,8 @@ class GpxLayer extends Component {
 
     const startEndSource = new VectorSource({
       features: [
-        createFeature("Start Point", "startPoint", "rgba(0,60,136)"),
-        createFeature("End Point", "endPoint", "rgba(0,60,136)")
+        createFeature("Start", "startPoint", "rgba(0,60,136)", yellowMarker),
+        createFeature("Finish", "finishPoint", "rgba(0,60,136)", yellowMarker)
       ]
     });
 
@@ -148,7 +151,7 @@ class GpxLayer extends Component {
           .getFeatureById("startPoint")
           .setGeometry(new Point(startCoords));
         startEndSource
-          .getFeatureById("endPoint")
+          .getFeatureById("finishPoint")
           .setGeometry(new Point(endCoords));
 
         onSourceChange(true);

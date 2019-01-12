@@ -1,0 +1,20 @@
+.MapControls {
+  position: absolute;
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+:global {
+  .ol-control {
+    position: static;
+    margin-bottom: 0.5rem;
+
+    button {
+      cursor: pointer;
+    }
+
+    &.ol-attribution {
+      position: absolute;
+    }
+  }
+}
