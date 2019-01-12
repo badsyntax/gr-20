@@ -1,9 +1,10 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { Helmet } from "react-helmet";
 import DropdownGroup from "../DropdownGroup/DropdownGroup";
 import Map from "../Map/Map";
 import maps from "../../data/maps/maps";
 import routes from "../../data/routes/routes";
+import SpinnerProvider from "../Spinner/SpinnerProvider";
 import STYLES from "./MapPage.module.scss";
 
 class MapPage extends Component {
@@ -70,7 +71,7 @@ class MapPage extends Component {
       showRoute
     } = values;
     return (
-      <Fragment>
+      <SpinnerProvider>
         <Helmet>
           <title>GR-20 - The Route</title>
         </Helmet>
@@ -89,7 +90,7 @@ class MapPage extends Component {
             showRoute={showRoute}
           />
         </div>
-      </Fragment>
+      </SpinnerProvider>
     );
   }
 }

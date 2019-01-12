@@ -1,6 +1,8 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import TopBarProgress from "react-topbar-progress-indicator";
+import { SpinnerContext } from "./SpinnerProvider";
 
 TopBarProgress.config({
   barColors: {
@@ -11,6 +13,18 @@ TopBarProgress.config({
   barThickness: 3
 });
 
-const Spinner = () => <TopBarProgress />;
+const Spinner = props => {
+  const { isOpen } = props;
+  document.body.style.cursor = isOpen ? "progress" : "default";
+  return isOpen ? <TopBarProgress /> : null;
+};
 
-export default Spinner;
+Spinner.propTypes = {
+  isOpen: PropTypes.bool.isRequired
+};
+
+export default props => (
+  <SpinnerContext.Consumer>
+    {context => <Spinner isOpen={context.isOpen} />}
+  </SpinnerContext.Consumer>
+);

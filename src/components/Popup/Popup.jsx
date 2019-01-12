@@ -1,36 +1,44 @@
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import { Popover, PopoverHeader, PopoverBody } from "reactstrap";
+import { Vector as VectorLayer } from "ol/layer";
 import Map from "ol/Map";
 import Overlay from "ol/Overlay";
 import { toLonLat } from "ol/proj";
-import { toStringHDMS } from "ol/coordinate";
-import "./Popup.scss";
+import { MdHome, MdZoomIn, MdClose } from "react-icons/md";
+import { getElevation, getHDMS } from "../../util/util";
 
-const getElevation = (feature, coordinate) => {
-  const geometry = feature.getGeometry();
-  const point = geometry.getClosestPoint(coordinate);
-  const elevation = Math.round(point[2]);
-  return elevation;
-};
+import ClosePopupControl from "./ClosePopupControl";
+import ZoomInControl from "./ZoomInControl";
+import STYLES from "./Popup.module.scss";
 
-const getHDMS = coordinate => {
-  const lonLat = toLonLat(coordinate);
-  const hdms = toStringHDMS(lonLat);
-  return hdms;
-};
+const closeButtonLabel = document.createElement("span");
+const closeButton = new ClosePopupControl({
+  label: closeButtonLabel
+});
+
+const zoomInButtonLabel = document.createElement("span");
+const zoomInButton = new ZoomInControl({
+  label: zoomInButtonLabel
+});
+
+const IconLabel = ({ children, label }) =>
+  ReactDOM.createPortal(children, label);
 
 class Popup extends Component {
+  state = {
+    isOpen: false,
+    elevation: null,
+    hdms: null,
+    name: null,
+    lonLat: []
+  };
+
   constructor(props) {
     super(props);
-    this.overlay = null;
-    this.state = {
-      isOpen: false,
-      elevation: null,
-      hdms: null,
-      name: null,
-      lonLat: []
-    };
+    this.closeButtonRef = React.createRef();
+    this.zoomInButtonRef = React.createRef();
   }
 
   componentWillMount() {
@@ -43,6 +51,7 @@ class Popup extends Component {
     this.overlay = new Overlay({
       element: this.container,
       autoPan: true,
+      stopEvent: true,
       autoPanAnimation: {
         duration: 250
       }
@@ -50,6 +59,25 @@ class Popup extends Component {
 
     map.addOverlay(this.overlay);
     map.on("click", this.onMapClick);
+
+    map.addControl(closeButton);
+    map.addControl(zoomInButton);
+
+    closeButton.setOnClick(this.onCloseButtonClick);
+    zoomInButton.setOnClick(this.onZoomInButtonClick);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { isOpen } = this.state;
+    const { map } = this.props;
+    if (isOpen && prevState.isOpen !== isOpen) {
+      closeButton.setTarget(this.closeButtonRef.current);
+      zoomInButton.setTarget(this.zoomInButtonRef.current);
+      map.removeControl(closeButton);
+      map.addControl(closeButton);
+      // map.removeControl(zoomInButton);
+      // map.addControl(zoomInButton);
+    }
   }
 
   componentWillUnmount() {
@@ -63,16 +91,19 @@ class Popup extends Component {
     const features = map.getFeaturesAtPixel(evt.pixel);
     if (features && features.length) {
       const feature = features[0];
-      const coordinates = evt.coordinate;
-
-      // let coordinates;
-      // if (feature.getGeometry().getType() === "MultiLineString") {
-      //   coordinates = evt.coordinate;
-      // } else {
-      //   // eg Point
-      //   coordinates = feature.getGeometry().getCoordinates();
-      // }
-
+      let coordinates;
+      if (feature.getGeometry().getType() === "MultiLineString") {
+        coordinates = evt.coordinate;
+      } else {
+        // eg Point
+        coordinates = feature.getGeometry().getCoordinates();
+        // const multiLine = getMultiLineStringFeature(
+        //   gpxVectorLayer.getSource().getFeatures()
+        // );
+        // const closestPoint = multiLine
+        //   .getGeometry()
+        //   .getClosestPoint(evt.coordinate);
+      }
       const lonLat = toLonLat(coordinates);
       const elevation = getElevation(feature, coordinates);
       const hdms = getHDMS(coordinates);
@@ -94,7 +125,15 @@ class Popup extends Component {
     }
   };
 
-  toggle = () => {};
+  onCloseButtonClick = () => {
+    this.setState({
+      isOpen: false
+    });
+  };
+
+  onZoomInButtonClick = () => {
+    alert("zoom in");
+  };
 
   render() {
     const { elevation, hdms, name, isOpen, lonLat } = this.state;
@@ -107,13 +146,24 @@ class Popup extends Component {
         target={this.container}
         container={this.container}
         toggle={this.toggle}
+        className={STYLES.Popup}
       >
-        <PopoverHeader>{name}</PopoverHeader>
+        <PopoverHeader>
+          <IconLabel label={closeButtonLabel}>
+            <MdClose />
+          </IconLabel>
+          <span ref={this.closeButtonRef} />
+          <MdHome size={20} style={{ verticalAlign: "top" }} /> {name}
+        </PopoverHeader>
         <PopoverBody>
           <div>Elevation: {elevation}m</div>
           <div>Longitude: {lon}</div>
           <div>Latitdue: {lat}</div>
           <div>Coordinates: {hdms}</div>
+          <IconLabel label={zoomInButtonLabel}>
+            <MdZoomIn />
+          </IconLabel>
+          <span ref={this.zoomInButtonRef} />
         </PopoverBody>
       </Popover>
     );
@@ -121,6 +171,7 @@ class Popup extends Component {
 }
 
 Popup.propTypes = {
+  gpxVectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
   map: PropTypes.instanceOf(Map).isRequired
 };
 

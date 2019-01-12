@@ -12,40 +12,12 @@ import Icon from "ol/style/Icon";
 import Point from "ol/geom/Point";
 import Style from "ol/style/Style";
 import Feature from "ol/Feature";
-import LineString from "ol/geom/LineString";
 import VectorSource from "ol/source/Vector";
 import markerIcon from "../GpxLayer/marker-gold.png";
 
+import { sampleCoordinates, getMultiLineStringFeature } from "../../util/util";
+
 import STYLES from "./ElevationProfile.module.scss";
-
-const getMultiLineStringFeature = features =>
-  features.find(
-    feature => feature.getGeometry().getType() === "MultiLineString"
-  );
-
-const sampleCoordinates = (coords, minDistanceThreshold = 0) => {
-  let curMinDistance = 0;
-  let distanceFromStart = 0;
-  return coords
-    .map((coord, i) => {
-      const distance =
-        i === 0 ? 0 : new LineString([coords[i - 1], coord]).getLength(); // meter
-      distanceFromStart += distance;
-      return {
-        coord,
-        distance,
-        distanceFromStart
-      };
-    })
-    .filter((point, i) => {
-      curMinDistance += point.distance;
-      if (!i || curMinDistance > minDistanceThreshold) {
-        curMinDistance = 0;
-        return true;
-      }
-      return false;
-    });
-};
 
 const positionMarketStyle = new Style({
   image: new Icon({

@@ -1,68 +1,71 @@
-/* eslint-disable func-names */
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import Map from "ol/Map";
 import PropTypes from "prop-types";
-import FullScreen from "ol/control/FullScreen";
-import Attribution from "ol/control/Attribution";
-import Zoom from "ol/control/Zoom";
-import ZoomToExtent from "ol/control/ZoomToExtent";
-import ScaleLine from "ol/control/ScaleLine";
 import { MdFullscreen, MdZoomOutMap, MdRotateLeft } from "react-icons/md";
-import RotateNorthControl from "../RotateNorthControl/RotateNorthControl";
+import { FaFilePdf } from "react-icons/fa";
+import { Tooltip } from "reactstrap";
+import { SpinnerContext } from "../Spinner/SpinnerProvider";
+import {
+  zoom,
+  zoomToExtent,
+  zoomToExtentLabel,
+  rotateNorth,
+  rotateNorthLabel,
+  fullScreen,
+  fullScreenLabel,
+  attribution,
+  scaleLine,
+  pdfExportLabel,
+  pdfExport
+} from "./controls";
+
 import STYLES from "./MapControls.module.scss";
 
-const zoom = new Zoom();
+const tooltips = [
+  {
+    target: zoomToExtentLabel,
+    label: "Zoom to Route"
+  },
+  {
+    target: rotateNorthLabel,
+    label: "Rotate North"
+  },
+  {
+    target: fullScreenLabel,
+    label: "Fullscreen"
+  },
+  {
+    target: pdfExportLabel,
+    label: "Export to PDF"
+  }
+];
 
-const zoomToExtentLabel = document.createElement("span");
-
-const attribution = new Attribution({
-  collapsible: true
-});
-
-const fullScreenLabel = document.createElement("span");
-
-const fullScreen = new FullScreen({
-  label: fullScreenLabel
-});
-
-const zoomToExtent = new ZoomToExtent({
-  label: zoomToExtentLabel,
-  extent: [
-    978823.488305482,
-    5121096.608475749,
-    1039463.1111227559,
-    5245134.752643153
-  ]
-});
-
-const scaleLine = new ScaleLine({
-  units: "metric",
-  minWidth: 100
-});
-
-const rotateNorthLabel = document.createElement("span");
-
-const rotateNorth = new RotateNorthControl({
-  label: rotateNorthLabel
-});
-
-const IconLabel = props => ReactDOM.createPortal(props.children, props.label);
+const IconLabel = ({ children, label }) =>
+  ReactDOM.createPortal(children, label);
 
 class MapControls extends Component {
+  state = {
+    openTooltipIndex: -1
+  };
+
   constructor(props) {
     super(props);
     this.controlGroupRef = React.createRef();
   }
 
   componentDidMount() {
-    const { map } = this.props;
+    const { map, showSpinner } = this.props;
     const { current: target } = this.controlGroupRef;
 
-    [zoom, zoomToExtent, rotateNorth, fullScreen].forEach(control => {
-      control.setTarget(target);
-      map.addControl(control);
-    });
+    pdfExport.setLoadingFunc(showSpinner);
+
+    [zoom, zoomToExtent, rotateNorth, fullScreen, pdfExport].forEach(
+      control => {
+        control.setTarget(target);
+        map.addControl(control);
+      }
+    );
 
     map.addControl(attribution);
     map.addControl(scaleLine);
@@ -82,9 +85,28 @@ class MapControls extends Component {
     });
   }
 
+  tooltipToggle = i => {
+    this.setState(({ openTooltipIndex }) => ({
+      openTooltipIndex: i === openTooltipIndex ? -1 : i
+    }));
+  };
+
   render() {
+    const { openTooltipIndex } = this.state;
     return (
-      <Fragment>
+      <div ref={this.controlGroupRef} className={STYLES.MapControls}>
+        {tooltips.map((tooltip, i) => (
+          <Tooltip
+            key={tooltip.label}
+            placement="right"
+            isOpen={i === openTooltipIndex}
+            target={tooltip.target}
+            toggle={() => this.tooltipToggle(i)}
+            delay={0}
+          >
+            {tooltip.label}
+          </Tooltip>
+        ))}
         <IconLabel label={zoomToExtentLabel}>
           <MdZoomOutMap />
         </IconLabel>
@@ -94,14 +116,23 @@ class MapControls extends Component {
         <IconLabel label={fullScreenLabel}>
           <MdFullscreen />
         </IconLabel>
-        <div ref={this.controlGroupRef} className={STYLES.MapControls} />
-      </Fragment>
+        <IconLabel label={pdfExportLabel}>
+          <FaFilePdf />
+        </IconLabel>
+      </div>
     );
   }
 }
 
 MapControls.propTypes = {
-  map: PropTypes.instanceOf(Map).isRequired
+  map: PropTypes.instanceOf(Map).isRequired,
+  showSpinner: PropTypes.func.isRequired
 };
 
-export default MapControls;
+export default props => (
+  <SpinnerContext.Consumer>
+    {({ toggle: showSpinner }) => (
+      <MapControls showSpinner={showSpinner} {...props} />
+    )}
+  </SpinnerContext.Consumer>
+);

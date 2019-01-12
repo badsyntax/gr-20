@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import Map from "ol/Map";
 import View from "ol/View";
+import { Vector as VectorLayer } from "ol/layer";
 import { fromLonLat } from "ol/proj";
 
 import "ol/ol.css";
@@ -12,6 +13,8 @@ import Spinner from "../Spinner/Spinner";
 import MapControls from "../MapControls/MapControls";
 import GpxLayer from "../GpxLayer/GpxLayer";
 import TileLayer from "../TileLayer/TileLayer";
+import StartEndLayer from "../StartEndLayer/StartEndLayer";
+import { SpinnerContext } from "../Spinner/SpinnerProvider";
 
 import STYLES from "./Map.module.scss";
 
@@ -20,8 +23,7 @@ class MyMap extends Component {
     lat: 42.184207,
     lng: 9.1079,
     zoom: 9,
-    mapReady: false,
-    sourceLoaded: false
+    mapReady: false
   };
 
   constructor(props) {
@@ -29,6 +31,8 @@ class MyMap extends Component {
     this.mapRef = React.createRef();
     this.popupContainerRef = React.createRef();
     this.popupContentRef = React.createRef();
+    this.gpxVectorLayer = new VectorLayer();
+    this.startEndVectorLayer = new VectorLayer();
     this.map = new Map({
       pixelRatio: 1,
       renderer: "webgl",
@@ -78,13 +82,12 @@ class MyMap extends Component {
   };
 
   onSourceChange = sourceLoaded => {
-    this.setState({
-      sourceLoaded
-    });
+    const { onLoad } = this.props;
+    onLoad(!sourceLoaded);
   };
 
   render() {
-    const { mapReady, sourceLoaded } = this.state;
+    const { mapReady } = this.state;
     const {
       showElevationProfile,
       mapUrl,
@@ -95,19 +98,26 @@ class MyMap extends Component {
     } = this.props;
     return (
       <div ref={this.mapRef} className={STYLES.Map}>
-        {!sourceLoaded && <Spinner />}
+        <Spinner />
         {mapReady && (
           <Fragment>
-            {sourceLoaded && <Popup map={this.map} />}
+            <Popup map={this.map} gpxVectorLayer={this.gpxVectorLayer} />
             {showControls && <MapControls map={this.map} />}
             <TileLayer mapUrl={mapUrl} map={this.map} />
             <GpxLayer
+              vectorLayer={this.gpxVectorLayer}
               map={this.map}
               showElevationProfile={showElevationProfile}
               onSourceChange={this.onSourceChange}
               gpxUrl={gpxUrl}
               showMarkers={showMarkers}
               showRoute={showRoute}
+            />
+            <StartEndLayer
+              map={this.map}
+              gpxVectorLayer={this.gpxVectorLayer}
+              vectorLayer={this.startEndVectorLayer}
+              showMarkers={showMarkers}
             />
           </Fragment>
         )}
@@ -122,6 +132,16 @@ MyMap.propTypes = {
   showElevationProfile: PropTypes.bool.isRequired,
   showControls: PropTypes.bool.isRequired,
   showMarkers: PropTypes.bool.isRequired,
-  showRoute: PropTypes.bool.isRequired
+  showRoute: PropTypes.bool.isRequired,
+  onLoad: PropTypes.func
 };
-export default MyMap;
+
+MyMap.defaultProps = {
+  onLoad: () => {}
+};
+
+export default props => (
+  <SpinnerContext.Consumer>
+    {({ toggle: onLoad }) => <MyMap onLoad={onLoad} {...props} />}
+  </SpinnerContext.Consumer>
+);
