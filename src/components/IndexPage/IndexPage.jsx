@@ -1,11 +1,11 @@
-import React, { Fragment } from 'react'
-import { IoMdArrowRoundForward } from 'react-icons/io'
-import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
+import React, { Fragment } from 'react';
+import { IoMdArrowRoundForward } from 'react-icons/io';
+import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
-import STYLES from './IndexPage.module.scss'
+import STYLES from './IndexPage.module.scss';
 
-import cover from './cover.jpg'
+import cover from './cover.jpg';
 
 const IndexPage = props => (
   <Fragment>
@@ -61,5 +61,5 @@ const IndexPage = props => (
       </div>
     </div>
   </Fragment>
-)
-export default IndexPage
+);
+export default IndexPage;

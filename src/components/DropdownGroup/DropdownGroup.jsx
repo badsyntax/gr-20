@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   DropdownToggle,
   DropdownMenu,
@@ -9,17 +9,17 @@ import {
   Input,
   ButtonGroup,
   ButtonToolbar,
-} from 'reactstrap'
+} from 'reactstrap';
 
-import { IoMdCheckmark } from 'react-icons/io'
+import { IoMdCheckmark } from 'react-icons/io';
 
-import Dropdown from '../Dropdown/Dropdown'
+import Dropdown from '../Dropdown/Dropdown';
 
-import STYLES from './DropdownGroup.module.scss'
+import STYLES from './DropdownGroup.module.scss';
 
 class DropdownGroup extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = Object.assign(
       {
         showElevationProfile: false,
@@ -27,14 +27,14 @@ class DropdownGroup extends Component {
       {
         values: props.values,
       }
-    )
+    );
   }
 
   onChange = event => {
-    const { onChange } = this.props
-    const { target } = event
-    const value = target.type === 'checkbox' ? target.checked : target.value
-    const { name } = target
+    const { onChange } = this.props;
+    const { target } = event;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const { name } = target;
 
     this.setState(
       ({ values }) => ({
@@ -44,15 +44,15 @@ class DropdownGroup extends Component {
         },
       }),
       () => {
-        const { values } = this.state
-        onChange(values)
+        const { values } = this.state;
+        onChange(values);
       }
-    )
-  }
+    );
+  };
 
   render() {
-    const { values } = this.state
-    const { dropdowns } = this.props
+    const { values } = this.state;
+    const { dropdowns } = this.props;
     return (
       <form className={STYLES.DropdownGroup}>
         <ButtonToolbar>
@@ -81,7 +81,7 @@ class DropdownGroup extends Component {
                             <Label
                               check
                               onClick={event => {
-                                event.stopPropagation()
+                                event.stopPropagation();
                               }}
                             >
                               <Input
@@ -103,7 +103,7 @@ class DropdownGroup extends Component {
                                 name: dropdownName,
                                 value: url,
                               },
-                            })
+                            });
                           }}
                         >
                           {url === values[dropdownName] ? (
@@ -127,7 +127,7 @@ class DropdownGroup extends Component {
           </ButtonGroup>
         </ButtonToolbar>
       </form>
-    )
+    );
   }
 }
 
@@ -147,6 +147,6 @@ DropdownGroup.propTypes = {
       ),
     })
   ).isRequired,
-}
+};
 
-export default DropdownGroup
+export default DropdownGroup;

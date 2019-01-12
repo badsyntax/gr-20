@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
-import { Helmet } from 'react-helmet'
-import DropdownGroup from '../DropdownGroup/DropdownGroup'
-import Map from '../Map/Map'
-import maps from '../../data/maps/maps'
-import routes from '../../data/routes/routes'
-import SpinnerProvider from '../Spinner/SpinnerProvider'
-import STYLES from './MapPage.module.scss'
+import React, { Component } from 'react';
+import { Helmet } from 'react-helmet';
+import DropdownGroup from '../DropdownGroup/DropdownGroup';
+import Map from '../Map/Map';
+import maps from '../../data/maps/maps';
+import routes from '../../data/routes/routes';
+import SpinnerProvider from '../Spinner/SpinnerProvider';
+import STYLES from './MapPage.module.scss';
 
 class MapPage extends Component {
   state = {
@@ -24,7 +24,7 @@ class MapPage extends Component {
         items: routes,
       },
       {
-        label: 'Maps',
+        label: 'Layers',
         name: 'map',
         items: maps,
       },
@@ -52,16 +52,16 @@ class MapPage extends Component {
         ],
       },
     ],
-  }
+  };
 
   onDropdownChange = values => {
     this.setState({
       values,
-    })
-  }
+    });
+  };
 
   render() {
-    const { values, dropdowns } = this.state
+    const { values, dropdowns } = this.state;
     const {
       map,
       route,
@@ -69,7 +69,7 @@ class MapPage extends Component {
       showControls,
       showMarkers,
       showRoute,
-    } = values
+    } = values;
     return (
       <SpinnerProvider>
         <Helmet>
@@ -91,8 +91,8 @@ class MapPage extends Component {
           />
         </div>
       </SpinnerProvider>
-    )
+    );
   }
 }
 
-export default MapPage
+export default MapPage;

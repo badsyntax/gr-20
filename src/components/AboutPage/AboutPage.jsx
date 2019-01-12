@@ -1,11 +1,11 @@
-import React, { Fragment } from 'react'
-import { IoMdArrowRoundForward } from 'react-icons/io'
-import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
+import React, { Fragment } from 'react';
+import { IoMdArrowRoundForward } from 'react-icons/io';
+import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
-import STYLES from './AboutPage.module.scss'
+import STYLES from './AboutPage.module.scss';
 
-import cover from '../IndexPage/cover.jpg'
+import cover from '../IndexPage/cover.jpg';
 
 const AboutPage = props => (
   <Fragment>
@@ -67,5 +67,5 @@ const AboutPage = props => (
       </div>
     </div>
   </Fragment>
-)
-export default AboutPage
+);
+export default AboutPage;

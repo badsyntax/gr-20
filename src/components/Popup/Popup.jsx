@@ -1,30 +1,29 @@
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
-import { Popover, PopoverHeader, PopoverBody } from 'reactstrap'
-import { Vector as VectorLayer } from 'ol/layer'
-import Map from 'ol/Map'
-import Overlay from 'ol/Overlay'
-import { toLonLat } from 'ol/proj'
-import { MdHome, MdZoomIn, MdClose } from 'react-icons/md'
-import { getElevation, getHDMS } from '../../util/util'
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+import Map from 'ol/Map';
+import Overlay from 'ol/Overlay';
+import { toLonLat } from 'ol/proj';
+import { MdHome, MdZoomIn, MdClose } from 'react-icons/md';
+import { getElevation, getHDMS } from '../../util/util';
 
-import ClosePopupControl from './ClosePopupControl'
-import ZoomInControl from './ZoomInControl'
-import STYLES from './Popup.module.scss'
+import ClosePopupControl from './ClosePopupControl';
+import ZoomInControl from './ZoomInControl';
+import STYLES from './Popup.module.scss';
 
-const closeButtonLabel = document.createElement('span')
+const closeButtonLabel = document.createElement('span');
 const closeButton = new ClosePopupControl({
   label: closeButtonLabel,
-})
+});
 
-const zoomInButtonLabel = document.createElement('span')
+const zoomInButtonLabel = document.createElement('span');
 const zoomInButton = new ZoomInControl({
   label: zoomInButtonLabel,
-})
+});
 
 const IconLabel = ({ children, label }) =>
-  ReactDOM.createPortal(children, label)
+  ReactDOM.createPortal(children, label);
 
 class Popup extends Component {
   state = {
@@ -33,20 +32,20 @@ class Popup extends Component {
     hdms: null,
     name: null,
     lonLat: [],
-  }
+  };
 
   constructor(props) {
-    super(props)
-    this.closeButtonRef = React.createRef()
-    this.zoomInButtonRef = React.createRef()
+    super(props);
+    this.closeButtonRef = React.createRef();
+    this.zoomInButtonRef = React.createRef();
   }
 
   componentWillMount() {
-    this.container = document.createElement('div')
+    this.container = document.createElement('div');
   }
 
   componentDidMount() {
-    const { map } = this.props
+    const { map } = this.props;
 
     this.overlay = new Overlay({
       element: this.container,
@@ -55,48 +54,48 @@ class Popup extends Component {
       autoPanAnimation: {
         duration: 250,
       },
-    })
+    });
 
-    map.addOverlay(this.overlay)
-    map.on('click', this.onMapClick)
+    map.addOverlay(this.overlay);
+    map.on('click', this.onMapClick);
 
-    map.addControl(closeButton)
-    map.addControl(zoomInButton)
+    map.addControl(closeButton);
+    map.addControl(zoomInButton);
 
-    closeButton.setOnClick(this.onCloseButtonClick)
-    zoomInButton.setOnClick(this.onZoomInButtonClick)
+    closeButton.setOnClick(this.onCloseButtonClick);
+    zoomInButton.setOnClick(this.onZoomInButtonClick);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { isOpen } = this.state
-    const { map } = this.props
+    const { isOpen } = this.state;
+    const { map } = this.props;
     if (isOpen && prevState.isOpen !== isOpen) {
-      closeButton.setTarget(this.closeButtonRef.current)
-      zoomInButton.setTarget(this.zoomInButtonRef.current)
-      map.removeControl(closeButton)
-      map.addControl(closeButton)
+      closeButton.setTarget(this.closeButtonRef.current);
+      zoomInButton.setTarget(this.zoomInButtonRef.current);
+      map.removeControl(closeButton);
+      map.addControl(closeButton);
       // map.removeControl(zoomInButton);
       // map.addControl(zoomInButton);
     }
   }
 
   componentWillUnmount() {
-    const { map } = this.props
-    this.container.parentNode.removeChild(this.container)
-    map.un('click', this.onMapClick)
+    const { map } = this.props;
+    this.container.parentNode.removeChild(this.container);
+    map.un('click', this.onMapClick);
   }
 
   onMapClick = evt => {
-    const { map } = this.props
-    const features = map.getFeaturesAtPixel(evt.pixel)
+    const { map } = this.props;
+    const features = map.getFeaturesAtPixel(evt.pixel);
     if (features && features.length) {
-      const feature = features[0]
-      let coordinates
+      const feature = features[0];
+      let coordinates;
       if (feature.getGeometry().getType() === 'MultiLineString') {
-        coordinates = evt.coordinate
+        coordinates = evt.coordinate;
       } else {
         // eg Point
-        coordinates = feature.getGeometry().getCoordinates()
+        coordinates = feature.getGeometry().getCoordinates();
         // const multiLine = getMultiLineStringFeature(
         //   gpxVectorLayer.getSource().getFeatures()
         // );
@@ -104,10 +103,10 @@ class Popup extends Component {
         //   .getGeometry()
         //   .getClosestPoint(evt.coordinate);
       }
-      const lonLat = toLonLat(coordinates)
-      const elevation = getElevation(feature, coordinates)
-      const hdms = getHDMS(coordinates)
-      const pointProps = feature.getProperties()
+      const lonLat = toLonLat(coordinates);
+      const elevation = getElevation(feature, coordinates);
+      const hdms = getHDMS(coordinates);
+      const pointProps = feature.getProperties();
       this.setState(
         {
           isOpen: true,
@@ -117,28 +116,28 @@ class Popup extends Component {
           ...pointProps,
         },
         () => this.overlay.setPosition(coordinates)
-      )
+      );
     } else {
       this.setState({
         isOpen: false,
-      })
+      });
     }
-  }
+  };
 
   onCloseButtonClick = () => {
     this.setState({
       isOpen: false,
-    })
-  }
+    });
+  };
 
   onZoomInButtonClick = () => {
-    alert('zoom in')
-  }
+    alert('zoom in');
+  };
 
   render() {
-    const { elevation, hdms, name, isOpen, lonLat } = this.state
-    const lon = (lonLat[0] || 0).toFixed(2)
-    const lat = (lonLat[1] || 0).toFixed(2)
+    const { elevation, hdms, name, isOpen, lonLat } = this.state;
+    const lon = (lonLat[0] || 0).toFixed(2);
+    const lat = (lonLat[1] || 0).toFixed(2);
     return (
       <Popover
         placement="top"
@@ -166,13 +165,13 @@ class Popup extends Component {
           <span ref={this.zoomInButtonRef} />
         </PopoverBody>
       </Popover>
-    )
+    );
   }
 }
 
 Popup.propTypes = {
   // gpxVectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
   map: PropTypes.instanceOf(Map).isRequired,
-}
+};
 
-export default Popup
+export default Popup;
