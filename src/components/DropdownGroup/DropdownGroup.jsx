@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
   DropdownToggle,
   DropdownMenu,
@@ -8,51 +8,51 @@ import {
   Label,
   Input,
   ButtonGroup,
-  ButtonToolbar
-} from "reactstrap";
+  ButtonToolbar,
+} from 'reactstrap'
 
-import { IoMdCheckmark } from "react-icons/io";
+import { IoMdCheckmark } from 'react-icons/io'
 
-import Dropdown from "../Dropdown/Dropdown";
+import Dropdown from '../Dropdown/Dropdown'
 
-import STYLES from "./DropdownGroup.module.scss";
+import STYLES from './DropdownGroup.module.scss'
 
 class DropdownGroup extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = Object.assign(
       {
-        showElevationProfile: false
+        showElevationProfile: false,
       },
       {
-        values: props.values
+        values: props.values,
       }
-    );
+    )
   }
 
   onChange = event => {
-    const { onChange } = this.props;
-    const { target } = event;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    const { name } = target;
+    const { onChange } = this.props
+    const { target } = event
+    const value = target.type === 'checkbox' ? target.checked : target.value
+    const { name } = target
 
     this.setState(
       ({ values }) => ({
         values: {
           ...values,
-          [name]: value
-        }
+          [name]: value,
+        },
       }),
       () => {
-        const { values } = this.state;
-        onChange(values);
+        const { values } = this.state
+        onChange(values)
       }
-    );
-  };
+    )
+  }
 
   render() {
-    const { values } = this.state;
-    const { dropdowns } = this.props;
+    const { values } = this.state
+    const { dropdowns } = this.props
     return (
       <form className={STYLES.DropdownGroup}>
         <ButtonToolbar>
@@ -63,7 +63,7 @@ class DropdownGroup extends Component {
                 name: dropdownName,
                 type,
                 items,
-                isSelected
+                isSelected,
               }) => (
                 <Dropdown key={dropdownLabel}>
                   <DropdownToggle
@@ -75,13 +75,13 @@ class DropdownGroup extends Component {
                   </DropdownToggle>
                   <DropdownMenu right>
                     {items.map(({ name: inputName, label, url }) =>
-                      type === "formGroup" ? (
+                      type === 'formGroup' ? (
                         <DropdownItem key={inputName}>
                           <FormGroup check>
                             <Label
                               check
                               onClick={event => {
-                                event.stopPropagation();
+                                event.stopPropagation()
                               }}
                             >
                               <Input
@@ -89,7 +89,7 @@ class DropdownGroup extends Component {
                                 type="checkbox"
                                 checked={values[inputName]}
                                 onChange={this.onChange}
-                              />{" "}
+                              />{' '}
                               {label}
                             </Label>
                           </FormGroup>
@@ -101,9 +101,9 @@ class DropdownGroup extends Component {
                             this.onChange({
                               target: {
                                 name: dropdownName,
-                                value: url
-                              }
-                            });
+                                value: url,
+                              },
+                            })
                           }}
                         >
                           {url === values[dropdownName] ? (
@@ -111,11 +111,11 @@ class DropdownGroup extends Component {
                           ) : (
                             <span
                               style={{
-                                paddingLeft: "1em",
-                                display: "inline-block"
+                                paddingLeft: '1em',
+                                display: 'inline-block',
                               }}
                             />
-                          )}{" "}
+                          )}{' '}
                           {inputName}
                         </DropdownItem>
                       )
@@ -127,7 +127,7 @@ class DropdownGroup extends Component {
           </ButtonGroup>
         </ButtonToolbar>
       </form>
-    );
+    )
   }
 }
 
@@ -142,11 +142,11 @@ DropdownGroup.propTypes = {
         PropTypes.shape({
           name: PropTypes.string,
           label: PropTypes.string,
-          url: PropTypes.string
+          url: PropTypes.string,
         })
-      )
+      ),
     })
-  ).isRequired
-};
+  ).isRequired,
+}
 
-export default DropdownGroup;
+export default DropdownGroup

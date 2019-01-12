@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import { Helmet } from "react-helmet";
-import DropdownGroup from "../DropdownGroup/DropdownGroup";
-import Map from "../Map/Map";
-import maps from "../../data/maps/maps";
-import routes from "../../data/routes/routes";
-import SpinnerProvider from "../Spinner/SpinnerProvider";
-import STYLES from "./MapPage.module.scss";
+import React, { Component } from 'react'
+import { Helmet } from 'react-helmet'
+import DropdownGroup from '../DropdownGroup/DropdownGroup'
+import Map from '../Map/Map'
+import maps from '../../data/maps/maps'
+import routes from '../../data/routes/routes'
+import SpinnerProvider from '../Spinner/SpinnerProvider'
+import STYLES from './MapPage.module.scss'
 
 class MapPage extends Component {
   state = {
@@ -15,61 +15,61 @@ class MapPage extends Component {
       showControls: true,
       showMarkers: true,
       showRoute: true,
-      route: routes[0].url
+      route: routes[0].url,
     },
     dropdowns: [
       {
-        label: "Routes",
-        name: "route",
-        items: routes
+        label: 'Routes',
+        name: 'route',
+        items: routes,
       },
       {
-        label: "Maps",
-        name: "map",
-        items: maps
+        label: 'Maps',
+        name: 'map',
+        items: maps,
       },
       {
-        label: "Options",
-        name: "options",
-        type: "formGroup",
+        label: 'Options',
+        name: 'options',
+        type: 'formGroup',
         items: [
           {
-            name: "showElevationProfile",
-            label: "Show elevation profile"
+            name: 'showElevationProfile',
+            label: 'Show elevation profile',
           },
           {
-            name: "showControls",
-            label: "Show controls"
+            name: 'showControls',
+            label: 'Show controls',
           },
           {
-            name: "showMarkers",
-            label: "Show markers"
+            name: 'showMarkers',
+            label: 'Show markers',
           },
           {
-            name: "showRoute",
-            label: "Show route"
-          }
-        ]
-      }
-    ]
-  };
+            name: 'showRoute',
+            label: 'Show route',
+          },
+        ],
+      },
+    ],
+  }
 
   onDropdownChange = values => {
     this.setState({
-      values
-    });
-  };
+      values,
+    })
+  }
 
   render() {
-    const { values, dropdowns } = this.state;
+    const { values, dropdowns } = this.state
     const {
       map,
       route,
       showElevationProfile,
       showControls,
       showMarkers,
-      showRoute
-    } = values;
+      showRoute,
+    } = values
     return (
       <SpinnerProvider>
         <Helmet>
@@ -91,8 +91,8 @@ class MapPage extends Component {
           />
         </div>
       </SpinnerProvider>
-    );
+    )
   }
 }
 
-export default MapPage;
+export default MapPage

@@ -1,32 +1,32 @@
-import React, { Component } from "react";
-import { ButtonDropdown } from "reactstrap";
+import React, { Component } from 'react'
+import { ButtonDropdown } from 'reactstrap'
 
 class Dropdown extends Component {
   state = {
-    isOpen: false
-  };
+    isOpen: false,
+  }
 
   toggle = name => {
     this.setState(({ isOpen }) => ({
-      isOpen: !isOpen
-    }));
-  };
+      isOpen: !isOpen,
+    }))
+  }
 
   onMouseEnter = () => {
     this.setState({
-      isOpen: true
-    });
-  };
+      isOpen: true,
+    })
+  }
 
   onMouseLeave = () => {
     this.setState({
-      isOpen: false
-    });
-  };
+      isOpen: false,
+    })
+  }
 
   render() {
-    const { isOpen } = this.state;
-    const { children } = this.props;
+    const { isOpen } = this.state
+    const { children } = this.props
     return (
       <ButtonDropdown
         isOpen={isOpen}
@@ -36,8 +36,8 @@ class Dropdown extends Component {
       >
         {children}
       </ButtonDropdown>
-    );
+    )
   }
 }
 
-export default Dropdown;
+export default Dropdown

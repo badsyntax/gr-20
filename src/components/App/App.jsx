@@ -1,10 +1,10 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import MapPage from "../MapPage/MapPage";
-import IndexPage from "../IndexPage/IndexPage";
-import AboutPage from "../AboutPage/AboutPage";
-import NotFoundPage from "../NotFoundPage/NotFoundPage";
-import "./App.css";
+import React from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import MapPage from '../MapPage/MapPage'
+import IndexPage from '../IndexPage/IndexPage'
+import AboutPage from '../AboutPage/AboutPage'
+import NotFoundPage from '../NotFoundPage/NotFoundPage'
+import './App.css'
 
 const App = props => (
   <div className="App">
@@ -17,6 +17,6 @@ const App = props => (
       </Switch>
     </Router>
   </div>
-);
+)
 
-export default App;
+export default App
