@@ -8,7 +8,7 @@ export default class ZoomInControl extends Control {
 
     const button = document.createElement('button');
     button.appendChild(options.label);
-    button.setAttribute('title', 'Close');
+    button.setAttribute('title', 'Zoom to point');
 
     const element = document.createElement('div');
     element.className = 'ol-unselectable ol-control';

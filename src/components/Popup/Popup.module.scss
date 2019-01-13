@@ -2,6 +2,7 @@
   min-width: 300px;
   animation: fadein 0.15s;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: auto;
 
   & &__close-button {
     position: absolute;
@@ -17,6 +18,13 @@
     margin: 0;
     background-color: rgba(0, 0, 0, 0.2);
     display: inline-block;
+  }
+
+  & &__next-button {
+    margin: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    margin-left: 0.5rem;
   }
 }
 
