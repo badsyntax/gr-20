@@ -5,6 +5,7 @@ import ZoomToExtent from 'ol/control/ZoomToExtent';
 import ScaleLine from 'ol/control/ScaleLine';
 import RotateNorthControl from './RotateNorthControl';
 import PdfExportControl from './PdfExportControl';
+import DownloadControl from './DownloadControl';
 
 export const zoom = new Zoom();
 
@@ -45,4 +46,10 @@ export const pdfExportLabel = document.createElement('span');
 
 export const pdfExport = new PdfExportControl({
   label: pdfExportLabel,
+});
+
+export const downloadLabel = document.createElement('span');
+
+export const download = new DownloadControl({
+  label: downloadLabel,
 });

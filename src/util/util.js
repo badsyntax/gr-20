@@ -1,9 +1,9 @@
-import LineString from "ol/geom/LineString";
-import { toStringHDMS } from "ol/coordinate";
-import { toLonLat } from "ol/proj";
-import GeometryType from "ol/geom/GeometryType";
+import LineString from 'ol/geom/LineString';
+import { toStringHDMS } from 'ol/coordinate';
+import { toLonLat } from 'ol/proj';
+import GeometryType from 'ol/geom/GeometryType';
 
-const { MULTI_LINE_STRING } = GeometryType;
+const { MULTI_LINE_STRING, POINT } = GeometryType;
 
 export const getElevation = (feature, coordinate) => {
   const geometry = feature.getGeometry();
@@ -23,6 +23,34 @@ export const getMultiLineStringFeature = features =>
     feature => feature.getGeometry().getType() === MULTI_LINE_STRING
   );
 
+export const getPointFeatures = features =>
+  features.filter(feature => feature.getGeometry().getType() === POINT);
+
+export const getSortedPoints = vectorLayer => {
+  const points = getPointFeatures(vectorLayer.getSource().getFeatures());
+  const multiLine = getMultiLineStringFeature(
+    vectorLayer.getSource().getFeatures()
+  );
+  const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
+  const pointsInMultiLine = points.map(point => {
+    const closestPointInMultiLine = multiLine
+      .getGeometry()
+      .getClosestPoint(point.getGeometry().getCoordinates());
+    const closesPointIndex = multiLineCoords.findIndex(
+      coord => new LineString([coord, closestPointInMultiLine]).getLength() < 30
+    );
+    return {
+      featurePoint: point,
+      closestPointInMultiLine,
+      index: closesPointIndex,
+    };
+  });
+  const sortedPointsInMultiline = pointsInMultiLine.sort(
+    (a, b) => a.index - b.index
+  );
+  return sortedPointsInMultiline;
+};
+
 export const sampleCoordinates = (coords, minDistanceThreshold = 0) => {
   let curMinDistance = 0;
   let distanceFromStart = 0;
@@ -34,7 +62,7 @@ export const sampleCoordinates = (coords, minDistanceThreshold = 0) => {
       return {
         coord,
         distance,
-        distanceFromStart
+        distanceFromStart,
       };
     })
     .filter((point, i) => {

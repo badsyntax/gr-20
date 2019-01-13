@@ -5,8 +5,16 @@ import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay';
 import { toLonLat } from 'ol/proj';
+import { Vector as VectorLayer } from 'ol/layer';
 import { MdHome, MdZoomIn, MdClose } from 'react-icons/md';
-import { getElevation, getHDMS } from '../../util/util';
+import LineString from 'ol/geom/LineString';
+
+import {
+  getElevation,
+  getHDMS,
+  getMultiLineStringFeature,
+  getSortedPoints,
+} from '../../util/util';
 
 import ClosePopupControl from './ClosePopupControl';
 import ZoomInControl from './ZoomInControl';
@@ -45,7 +53,7 @@ class Popup extends Component {
   }
 
   componentDidMount() {
-    const { map } = this.props;
+    const { map, gpxVectorLayer } = this.props;
 
     this.overlay = new Overlay({
       element: this.container,
@@ -64,6 +72,15 @@ class Popup extends Component {
 
     closeButton.setOnClick(this.onCloseButtonClick);
     zoomInButton.setOnClick(this.onZoomInButtonClick);
+
+    gpxVectorLayer.on('change:source', () => {
+      gpxVectorLayer.getSource().once('change', () => {
+        const sortedPointsInMultiline = getSortedPoints(gpxVectorLayer);
+        this.setState({
+          sortedPointsInMultiline,
+        });
+      });
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -86,7 +103,8 @@ class Popup extends Component {
   }
 
   onMapClick = evt => {
-    const { map } = this.props;
+    const { map, gpxVectorLayer } = this.props;
+    const { sortedPointsInMultiline } = this.state;
     const features = map.getFeaturesAtPixel(evt.pixel);
     if (features && features.length) {
       const feature = features[0];
@@ -96,12 +114,64 @@ class Popup extends Component {
       } else {
         // eg Point
         coordinates = feature.getGeometry().getCoordinates();
-        // const multiLine = getMultiLineStringFeature(
-        //   gpxVectorLayer.getSource().getFeatures()
-        // );
-        // const closestPoint = multiLine
+
+        const multiLine = getMultiLineStringFeature(
+          gpxVectorLayer.getSource().getFeatures()
+        );
+
+        const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
+
+        // const closestPointInMultiLine = multiLine
         //   .getGeometry()
-        //   .getClosestPoint(evt.coordinate);
+        //   .getClosestPoint(coordinates);
+
+        // const closestPointIndex = multiLineCoords.findIndex(
+        //   coord =>
+        //     new LineString([coord, closestPointInMultiLine]).getLength() < 30
+        // );
+
+        // const sortedPoint = sortedPointsInMultiline.find((point =>
+        //   console.log(
+        //     new LineString([
+        //       closestPointInMultiLine,
+        //       point.closestPointInMultiLine,
+        //     ]).getLength()
+        //   )
+        // );
+
+        // console.log('closestPointInMultiLine', closestPointInMultiLine);
+
+        const sortedPoint = sortedPointsInMultiline.find(
+          ({ featurePoint }) => featurePoint === feature
+        );
+        const sortedPointIndex = sortedPointsInMultiline.indexOf(sortedPoint);
+        const nextPoint = sortedPointsInMultiline[sortedPointIndex + 1];
+
+        const coordsBetweenPoints = multiLineCoords.slice(
+          sortedPoint.index,
+          nextPoint.index
+        );
+
+        const distance = coordsBetweenPoints.reduce(
+          (accumulator, currentValue, i) => {
+            const index = i + sortedPoint.index;
+            const pointDistance =
+              i === coordsBetweenPoints.length - 1
+                ? 0
+                : new LineString([
+                    currentValue,
+                    multiLineCoords[index + 1],
+                  ]).getLength();
+            return accumulator + pointDistance;
+          },
+          0
+        );
+
+        const distanceInKm = (distance / 1000).toFixed(2);
+
+        this.setState({
+          distanceInKm,
+        });
       }
       const lonLat = toLonLat(coordinates);
       const elevation = getElevation(feature, coordinates);
@@ -135,9 +205,9 @@ class Popup extends Component {
   };
 
   render() {
-    const { elevation, hdms, name, isOpen, lonLat } = this.state;
-    const lon = (lonLat[0] || 0).toFixed(2);
-    const lat = (lonLat[1] || 0).toFixed(2);
+    const { elevation, hdms, name, isOpen, lonLat, distanceInKm } = this.state;
+    const lon = (lonLat[0] || 0).toFixed(5);
+    const lat = (lonLat[1] || 0).toFixed(5);
     return (
       <Popover
         placement="top"
@@ -159,6 +229,7 @@ class Popup extends Component {
           <div>Longitude: {lon}</div>
           <div>Latitdue: {lat}</div>
           <div>Coordinates: {hdms}</div>
+          <div>Distance to next point: {distanceInKm}km</div>
           <IconLabel label={zoomInButtonLabel}>
             <MdZoomIn />
           </IconLabel>
@@ -170,7 +241,7 @@ class Popup extends Component {
 }
 
 Popup.propTypes = {
-  // gpxVectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
+  gpxVectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
   map: PropTypes.instanceOf(Map).isRequired,
 };
 

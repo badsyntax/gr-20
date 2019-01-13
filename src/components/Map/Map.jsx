@@ -103,7 +103,12 @@ class MyMap extends Component {
         {mapReady && (
           <Fragment>
             <Popup map={this.map} gpxVectorLayer={this.gpxVectorLayer} />
-            {showControls && <MapControls map={this.map} />}
+            {showControls && (
+              <MapControls
+                map={this.map}
+                gpxVectorLayer={this.gpxVectorLayer}
+              />
+            )}
             <ElevationProfile
               vectorLayer={this.gpxVectorLayer}
               map={this.map}

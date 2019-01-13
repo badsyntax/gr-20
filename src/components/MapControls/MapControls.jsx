@@ -4,8 +4,11 @@ import Map from 'ol/Map';
 import PropTypes from 'prop-types';
 import { MdFullscreen, MdZoomOutMap, MdRotateLeft } from 'react-icons/md';
 import { FaFilePdf } from 'react-icons/fa';
+import { IoMdDownload } from 'react-icons/io';
 import { Tooltip } from 'reactstrap';
+import { Vector as VectorLayer } from 'ol/layer';
 import { SpinnerContext } from '../Spinner/SpinnerProvider';
+
 import {
   zoom,
   zoomToExtent,
@@ -18,6 +21,8 @@ import {
   scaleLine,
   pdfExportLabel,
   pdfExport,
+  downloadLabel,
+  download,
 } from './controls';
 
 import STYLES from './MapControls.module.scss';
@@ -37,7 +42,11 @@ const tooltips = [
   },
   {
     target: pdfExportLabel,
-    label: 'Export to PDF',
+    label: 'Export view to PDF',
+  },
+  {
+    target: downloadLabel,
+    label: 'Download',
   },
 ];
 
@@ -55,11 +64,14 @@ class MapControls extends Component {
   }
 
   componentDidMount() {
-    const { map, showSpinner } = this.props;
+    const { map, showSpinner, gpxVectorLayer } = this.props;
     const { current: target } = this.controlGroupRef;
 
     pdfExport.setLoadingFunc(showSpinner);
-    [zoom, zoomToExtent, rotateNorth, fullScreen, pdfExport].forEach(
+    download.setLoadingFunc(showSpinner);
+    download.setVectorLayer(gpxVectorLayer);
+
+    [zoom, zoomToExtent, rotateNorth, fullScreen, pdfExport, download].forEach(
       control => {
         control.setTarget(target);
         map.addControl(control);
@@ -118,6 +130,9 @@ class MapControls extends Component {
         <IconLabel label={pdfExportLabel}>
           <FaFilePdf />
         </IconLabel>
+        <IconLabel label={downloadLabel}>
+          <IoMdDownload />
+        </IconLabel>
       </div>
     );
   }
@@ -126,6 +141,7 @@ class MapControls extends Component {
 MapControls.propTypes = {
   map: PropTypes.instanceOf(Map).isRequired,
   showSpinner: PropTypes.func.isRequired,
+  gpxVectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
 };
 
 export default props => (
