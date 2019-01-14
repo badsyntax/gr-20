@@ -54,6 +54,9 @@ class MyMap extends Component {
 
     map.setTarget(target);
     map.setView(view);
+    map.addLayer(this.gpxVectorLayer);
+    map.addLayer(this.startEndVectorLayer);
+
     map.on('pointermove', this.onMapPointerMove);
 
     this.setState({

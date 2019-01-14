@@ -1,7 +1,7 @@
 /* eslint-disable new-cap */
 /* Based on code from the OpenLayers examples: https://github.com/openlayers/openlayers/blob/e6ca241a27c9a007395609114b98185870a356ec/examples/export-pdf.js */
 
-import Control from 'ol/control/Control';
+import ButtonControl from './ButtonControl';
 
 const dims = {
   a0: [1189, 841],
@@ -12,24 +12,14 @@ const dims = {
   a5: [210, 148],
 };
 
-export default class PdfExportControl extends Control {
-  constructor(optOptions) {
-    const options = optOptions || {};
-
-    const button = document.createElement('button');
-    button.appendChild(options.label);
-    button.setAttribute('title', 'Export to PDF');
-
-    const element = document.createElement('div');
-    element.className = 'ol-unselectable ol-control';
-    element.appendChild(button);
-
-    super({
-      element,
-      target: options.target,
-    });
-
-    button.addEventListener('click', this.onButtonCLick, false);
+export default class PdfExportControl extends ButtonControl {
+  constructor(options) {
+    super(options);
+    this.element.firstChild.addEventListener(
+      'click',
+      this.onButtonCLick,
+      false
+    );
   }
 
   setLoadingFunc(loadingFunc) {

@@ -1,7 +1,8 @@
 import { saveAs } from 'file-saver';
-import Control from 'ol/control/Control';
 import { boundingExtent } from 'ol/extent';
 import { getSortedPoints } from '../../util/util';
+
+import ButtonControl from './ButtonControl';
 
 const dims = {
   a0: [1189, 841],
@@ -12,24 +13,14 @@ const dims = {
   a5: [210, 148],
 };
 
-export default class PdfExportControl extends Control {
-  constructor(optOptions) {
-    const options = optOptions || {};
-
-    const button = document.createElement('button');
-    button.appendChild(options.label);
-    button.setAttribute('title', 'Download route and maps');
-
-    const element = document.createElement('div');
-    element.className = 'ol-unselectable ol-control';
-    element.appendChild(button);
-
-    super({
-      element,
-      target: options.target,
-    });
-
-    button.addEventListener('click', this.onButtonCLick, false);
+export default class DownloadControl extends ButtonControl {
+  constructor(options) {
+    super(options);
+    this.element.firstChild.addEventListener(
+      'click',
+      this.onButtonCLick,
+      false
+    );
   }
 
   setLoadingFunc(loadingFunc) {

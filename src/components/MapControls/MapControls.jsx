@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Map from 'ol/Map';
 import PropTypes from 'prop-types';
-import { MdFullscreen, MdZoomOutMap, MdRotateLeft } from 'react-icons/md';
+import { MdFullscreen, MdRotateLeft, MdMyLocation } from 'react-icons/md';
 import { FaFilePdf } from 'react-icons/fa';
 import { IoMdDownload } from 'react-icons/io';
 import { Tooltip } from 'reactstrap';
@@ -12,41 +12,47 @@ import { SpinnerContext } from '../Spinner/SpinnerProvider';
 import {
   zoom,
   zoomToExtent,
-  zoomToExtentLabel,
   rotateNorth,
-  rotateNorthLabel,
   fullScreen,
-  fullScreenLabel,
   attribution,
   scaleLine,
-  pdfExportLabel,
   pdfExport,
-  downloadLabel,
   download,
+  myLocation,
 } from './controls';
 
 import STYLES from './MapControls.module.scss';
 
+const { firstChild: zoomToExtentButton } = zoomToExtent.element;
+const { firstChild: rotateNorthButton } = rotateNorth.element;
+const { firstChild: pdfExportButton } = pdfExport.element;
+const { firstChild: downloadButton } = download.element;
+const { firstChild: myLocationButton } = myLocation.element;
+
 const tooltips = [
+  // {
+  //   target: zoomToExtentLabel,
+  //   label: 'Zoom to Route',
+  // },
+  // {
+  //   target: rotateNorthLabel,
+  //   label: 'Rotate North',
+  // },
+  // {
+  //   target: fullScreenLabel,
+  //   label: 'Fullscreen',
+  // },
+  // {
+  //   target: pdfExportLabel,
+  //   label: 'Export to PDF',
+  // },
+  // {
+  //   target: downloadButton,
+  //   label: 'Download Route and Maps',
+  // },
   {
-    target: zoomToExtentLabel,
-    label: 'Zoom to Route',
-  },
-  {
-    target: rotateNorthLabel,
-    label: 'Rotate North',
-  },
-  {
-    target: fullScreenLabel,
-    label: 'Fullscreen',
-  },
-  {
-    target: pdfExportLabel,
-    label: 'Export view to PDF',
-  },
-  {
-    target: downloadLabel,
-    label: 'Download',
+    target: myLocationButton,
+    label: 'Show My Location',
   },
 ];
 
@@ -67,16 +73,23 @@ class MapControls extends Component {
     const { map, showSpinner, gpxVectorLayer } = this.props;
     const { current: target } = this.controlGroupRef;
 
-    pdfExport.setLoadingFunc(showSpinner);
+    // pdfExport.setLoadingFunc(showSpinner);
     download.setLoadingFunc(showSpinner);
     download.setVectorLayer(gpxVectorLayer);
+    myLocation.setLoadingFunc(showSpinner);
 
-    [zoom, zoomToExtent, rotateNorth, fullScreen, pdfExport, download].forEach(
-      control => {
-        control.setTarget(target);
-        map.addControl(control);
-      }
-    );
+    [
+      zoom,
+      zoomToExtent,
+      rotateNorth,
+      fullScreen,
+      pdfExport,
+      download,
+      myLocation,
+    ].forEach(control => {
+      control.setTarget(target);
+      map.addControl(control);
+    });
 
     map.addControl(attribution);
     map.addControl(scaleLine);
@@ -91,6 +104,8 @@ class MapControls extends Component {
       fullScreen,
       attribution,
       scaleLine,
+      download,
+      myLocation,
     ].forEach(control => {
       map.removeControl(control);
     });
@@ -104,6 +119,7 @@ class MapControls extends Component {
 
   render() {
     const { openTooltipIndex } = this.state;
+
     return (
       <div ref={this.controlGroupRef} className={STYLES.MapControls}>
         {tooltips.map((tooltip, i) => (
@@ -118,20 +134,20 @@ class MapControls extends Component {
             {tooltip.label}
           </Tooltip>
         ))}
-        <IconLabel label={zoomToExtentLabel}>
-          <MdZoomOutMap />
-        </IconLabel>
-        <IconLabel label={rotateNorthLabel}>
-          <MdRotateLeft />
-        </IconLabel>
-        <IconLabel label={fullScreenLabel}>
+        <IconLabel label={zoomToExtentButton}>
           <MdFullscreen />
         </IconLabel>
-        <IconLabel label={pdfExportLabel}>
+        <IconLabel label={rotateNorthButton}>
+          <MdRotateLeft />
+        </IconLabel>
+        <IconLabel label={pdfExportButton}>
           <FaFilePdf />
         </IconLabel>
-        <IconLabel label={downloadLabel}>
+        <IconLabel label={downloadButton}>
           <IoMdDownload />
+        </IconLabel>
+        <IconLabel label={myLocationButton}>
+          <MdMyLocation />
         </IconLabel>
       </div>
     );

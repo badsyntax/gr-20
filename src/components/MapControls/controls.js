@@ -6,23 +6,24 @@ import ScaleLine from 'ol/control/ScaleLine';
 import RotateNorthControl from './RotateNorthControl';
 import PdfExportControl from './PdfExportControl';
 import DownloadControl from './DownloadControl';
+import MyLocationControl from './MyLocationControl';
+
+const button = title => {
+  const newButton = document.createElement('button');
+  newButton.setAttribute('title', title);
+  return newButton;
+};
 
 export const zoom = new Zoom();
-
-export const zoomToExtentLabel = document.createElement('span');
 
 export const attribution = new Attribution({
   collapsible: true,
 });
 
-export const fullScreenLabel = document.createElement('span');
-
-export const fullScreen = new FullScreen({
-  label: fullScreenLabel,
-});
+export const fullScreen = new FullScreen({});
 
 export const zoomToExtent = new ZoomToExtent({
-  label: zoomToExtentLabel,
+  label: document.createElement('span'),
   extent: [
     978823.488305482,
     5121096.608475749,
@@ -36,20 +37,18 @@ export const scaleLine = new ScaleLine({
   minWidth: 100,
 });
 
-export const rotateNorthLabel = document.createElement('span');
-
 export const rotateNorth = new RotateNorthControl({
-  label: rotateNorthLabel,
+  label: button('Rotate North'),
 });
-
-export const pdfExportLabel = document.createElement('span');
 
 export const pdfExport = new PdfExportControl({
-  label: pdfExportLabel,
+  label: button('Export to PDF'),
 });
 
-export const downloadLabel = document.createElement('span');
-
 export const download = new DownloadControl({
-  label: downloadLabel,
+  label: button('Download Route and Maps'),
+});
+
+export const myLocation = new MyLocationControl({
+  label: button('Show My Location'),
 });

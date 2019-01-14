@@ -1,26 +1,16 @@
-import Control from 'ol/control/Control';
+import ButtonControl from './ButtonControl';
 
-export default class RotateNorthControl extends Control {
-  constructor(optOptions) {
-    const options = optOptions || {};
-
-    const button = document.createElement('button');
-    button.appendChild(options.label);
-    button.setAttribute('title', 'Rotate north');
-
-    const element = document.createElement('div');
-    element.className = 'rotate-north ol-unselectable ol-control';
-    element.appendChild(button);
-
-    super({
-      element,
-      target: options.target,
-    });
-
-    button.addEventListener('click', this.handleRotateNorth, false);
+export default class RotateNorthControl extends ButtonControl {
+  constructor(options) {
+    super(options);
+    this.element.firstChild.addEventListener(
+      'click',
+      this.onButtonCLick,
+      false
+    );
   }
 
-  handleRotateNorth = () => {
+  onButtonCLick = () => {
     this.getMap()
       .getView()
       .setRotation(0);
