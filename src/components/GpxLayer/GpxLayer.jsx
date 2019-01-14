@@ -46,8 +46,9 @@ class GpxLayer extends Component {
   };
 
   componentDidMount() {
-    const { vectorLayer } = this.props;
+    const { map, vectorLayer } = this.props;
     vectorLayer.setStyle(feature => style[feature.getGeometry().getType()]);
+    map.addLayer(vectorLayer);
     this.setSource();
   }
 

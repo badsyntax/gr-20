@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import Map from 'ol/Map';
 import PropTypes from 'prop-types';
-import VectorLayer from 'ol/layer/Vector';
+import { Vector as VectorLayer } from 'ol/layer';
 import VectorSource from 'ol/source/Vector';
 
 import Fill from 'ol/style/Fill';
@@ -46,6 +46,8 @@ const getMultiLineStringFeature = layer =>
 
 class StartEndLayer extends Component {
   componentDidMount() {
+    const { map, vectorLayer } = this.props;
+    map.addLayer(vectorLayer);
     this.setLayerSource();
   }
 
