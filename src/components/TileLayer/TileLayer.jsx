@@ -15,13 +15,11 @@ class TileLayer extends Component {
     const rasterLayer = new Tile({
       source: this.xyzSource,
     });
-    console.log('map', map);
     map.addLayer(rasterLayer);
   }
 
   componentDidUpdate() {
     const { mapUrl } = this.props;
-    console.log('NEW MAP URL', mapUrl);
     this.xyzSource.setUrl(mapUrl);
   }
 

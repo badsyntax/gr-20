@@ -62,15 +62,18 @@ class StartEndLayer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { showMarkers } = this.props;
+    const { showMarkers, gpxUrl } = this.props;
     if (prevProps.showMarkers !== showMarkers) {
-      this.toggleMarkers(showMarkers);
+      this.showMarkers(showMarkers);
+    }
+    if (prevProps.gpxUrl !== gpxUrl) {
+      this.setLayerSource();
     }
   }
 
   setLayerSource() {
     const { map } = this.props;
-
+    this.showMarkers(false);
     const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
 
     const source = new VectorSource();
@@ -103,11 +106,12 @@ class StartEndLayer extends Component {
         source
           .getFeatureById('finishPoint')
           .setGeometry(new Point(multiLineStringGeometry.getLastCoordinate()));
+        this.showMarkers(true);
       }
     });
   }
 
-  toggleMarkers(show) {
+  showMarkers(show) {
     this.vectorLayer.setVisible(show);
   }
 
@@ -119,16 +123,22 @@ class StartEndLayer extends Component {
 StartEndLayer.propTypes = {
   map: PropTypes.instanceOf(Map).isRequired,
   showMarkers: PropTypes.bool.isRequired,
+  gpxUrl: PropTypes.string.isRequired,
 };
 
 export default props => (
   <OptionsContext.Consumer>
     {({ values }) => {
-      const { showMarkers } = values;
+      const { showMarkers, gpxUrl } = values;
       return (
         <MapContext.Consumer>
           {({ map }) => (
-            <StartEndLayer map={map} showMarkers={showMarkers} {...props} />
+            <StartEndLayer
+              map={map}
+              showMarkers={showMarkers}
+              gpxUrl={gpxUrl}
+              {...props}
+            />
           )}
         </MapContext.Consumer>
       );

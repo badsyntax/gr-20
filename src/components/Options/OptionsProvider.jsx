@@ -28,7 +28,6 @@ class OptionsProvider extends Component {
   }
 
   onChange = (name, value) => {
-    console.log('SET', name, value);
     this.setState(({ values }) => ({
       values: {
         ...values,

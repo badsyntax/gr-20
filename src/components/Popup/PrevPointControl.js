@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import Control from 'ol/control/Control';
 
 import STYLES from './Popup.module.scss';
