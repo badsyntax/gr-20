@@ -5,7 +5,6 @@ import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay';
 import { toLonLat, fromLonLat } from 'ol/proj';
-import { Vector as VectorLayer } from 'ol/layer';
 import { MdHome, MdZoomIn, MdClose } from 'react-icons/md';
 import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import LineString from 'ol/geom/LineString';

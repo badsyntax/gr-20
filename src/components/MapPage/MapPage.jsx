@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { Helmet } from 'react-helmet';
 import DropdownGroup from '../DropdownGroup/DropdownGroup';
 import Map from '../Map/Map';

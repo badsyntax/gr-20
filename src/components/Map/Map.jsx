@@ -16,6 +16,7 @@ const initialState = {
   map: new OLMap({
     pixelRatio: 1,
     renderer: 'webgl',
+    controls: [],
   }),
 };
 

@@ -21,6 +21,7 @@ class TileLayer extends Component {
 
   componentDidUpdate() {
     const { mapUrl } = this.props;
+    console.log('NEW MAP URL', mapUrl);
     this.xyzSource.setUrl(mapUrl);
   }
 

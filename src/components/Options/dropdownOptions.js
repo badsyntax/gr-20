@@ -4,12 +4,12 @@ import routes from '../../data/routes/routes';
 export default [
   {
     label: 'Routes',
-    name: 'route',
+    name: 'gpxUrl',
     items: routes,
   },
   {
     label: 'Layers',
-    name: 'map',
+    name: 'mapUrl',
     items: maps,
   },
   {

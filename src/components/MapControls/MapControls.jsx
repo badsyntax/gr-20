@@ -6,10 +6,11 @@ import { MdFullscreen, MdRotateLeft, MdMyLocation } from 'react-icons/md';
 import { FaFilePdf } from 'react-icons/fa';
 import { IoMdDownload } from 'react-icons/io';
 import { Tooltip } from 'reactstrap';
-import { Vector as VectorLayer } from 'ol/layer';
 import { SpinnerContext } from '../Spinner/SpinnerProvider';
 import { MapContext } from '../Map/Map';
 import { getLayerById } from '../../util/util';
+import { OptionsContext } from '../Options/OptionsProvider';
+
 import {
   zoom,
   zoomToExtent,
@@ -160,17 +161,25 @@ class MapControls extends Component {
 MapControls.propTypes = {
   map: PropTypes.instanceOf(Map).isRequired,
   showSpinner: PropTypes.func.isRequired,
-  // gpxVectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
 };
 
 export default props => (
-  <MapContext.Consumer>
-    {({ map }) => (
-      <SpinnerContext.Consumer>
-        {({ toggle: showSpinner }) => (
-          <MapControls showSpinner={showSpinner} map={map} {...props} />
-        )}
-      </SpinnerContext.Consumer>
-    )}
-  </MapContext.Consumer>
+  <OptionsContext.Consumer>
+    {({ values }) => {
+      const { showControls } = values;
+      return (
+        <MapContext.Consumer>
+          {({ map }) => (
+            <SpinnerContext.Consumer>
+              {({ toggle: showSpinner }) =>
+                showControls ? (
+                  <MapControls showSpinner={showSpinner} map={map} {...props} />
+                ) : null
+              }
+            </SpinnerContext.Consumer>
+          )}
+        </MapContext.Consumer>
+      );
+    }}
+  </OptionsContext.Consumer>
 );
