@@ -8,7 +8,8 @@ import { IoMdDownload } from 'react-icons/io';
 import { Tooltip } from 'reactstrap';
 import { Vector as VectorLayer } from 'ol/layer';
 import { SpinnerContext } from '../Spinner/SpinnerProvider';
-
+import { MapContext } from '../Map/Map';
+import { getLayerById } from '../../util/util';
 import {
   zoom,
   zoomToExtent,
@@ -70,8 +71,10 @@ class MapControls extends Component {
   }
 
   componentDidMount() {
-    const { map, showSpinner, gpxVectorLayer } = this.props;
+    const { map, showSpinner } = this.props;
     const { current: target } = this.controlGroupRef;
+
+    const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
 
     // pdfExport.setLoadingFunc(showSpinner);
     download.setLoadingFunc(showSpinner);
@@ -157,13 +160,17 @@ class MapControls extends Component {
 MapControls.propTypes = {
   map: PropTypes.instanceOf(Map).isRequired,
   showSpinner: PropTypes.func.isRequired,
-  gpxVectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
+  // gpxVectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
 };
 
 export default props => (
-  <SpinnerContext.Consumer>
-    {({ toggle: showSpinner }) => (
-      <MapControls showSpinner={showSpinner} {...props} />
+  <MapContext.Consumer>
+    {({ map }) => (
+      <SpinnerContext.Consumer>
+        {({ toggle: showSpinner }) => (
+          <MapControls showSpinner={showSpinner} map={map} {...props} />
+        )}
+      </SpinnerContext.Consumer>
     )}
-  </SpinnerContext.Consumer>
+  </MapContext.Consumer>
 );

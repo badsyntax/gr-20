@@ -47,7 +47,7 @@ export default class DownloadControl extends ButtonControl {
 
     const {
       default: JSZip,
-    } = await import(/* webpackChunkName: "jspdf" */ 'jszip');
+    } = await import(/* webpackChunkName: "jszip" */ 'jszip');
 
     const map = this.getMap();
     const source = this.getVectorLayer().getSource();

@@ -1,8 +1,10 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import Map from 'ol/Map';
 import PropTypes from 'prop-types';
 import OSM from 'ol/source/OSM';
 import Tile from 'ol/layer/Tile';
+import { MapContext } from '../Map/Map';
+import { OptionsContext } from '../Options/OptionsProvider';
 
 class TileLayer extends Component {
   componentDidMount() {
@@ -13,6 +15,7 @@ class TileLayer extends Component {
     const rasterLayer = new Tile({
       source: this.xyzSource,
     });
+    console.log('map', map);
     map.addLayer(rasterLayer);
   }
 
@@ -31,4 +34,15 @@ TileLayer.propTypes = {
   mapUrl: PropTypes.string.isRequired,
 };
 
-export default TileLayer;
+export default props => (
+  <OptionsContext.Consumer>
+    {({ values }) => {
+      const { mapUrl } = values;
+      return (
+        <MapContext.Consumer>
+          {({ map }) => <TileLayer map={map} mapUrl={mapUrl} {...props} />}
+        </MapContext.Consumer>
+      );
+    }}
+  </OptionsContext.Consumer>
+);

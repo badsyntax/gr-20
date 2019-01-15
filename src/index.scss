@@ -1,8 +1,8 @@
 $theme-colors: (
-  "secondary": #385a84
+  'secondary': #385a84,
 );
 
-@import "node_modules/bootstrap/scss/bootstrap";
+@import 'node_modules/bootstrap/scss/bootstrap';
 
 body,
 html {
@@ -11,4 +11,12 @@ html {
 
 #root {
   height: 100%;
+}
+
+:global {
+  .ol-control {
+    button {
+      cursor: pointer;
+    }
+  }
 }

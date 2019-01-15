@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import Map from 'ol/Map';
 import PropTypes from 'prop-types';
 import { Vector as VectorLayer } from 'ol/layer';
@@ -11,6 +11,11 @@ import Text from 'ol/style/Text';
 import Icon from 'ol/style/Icon';
 import Point from 'ol/geom/Point';
 import Feature from 'ol/Feature';
+import STATE from 'ol/source/State';
+
+import { MapContext } from '../Map/Map';
+import { OptionsContext } from '../Options/OptionsProvider';
+import { getLayerById } from '../../util/util';
 
 import yellowMarker from './baseline-location_on-24px-yellow.svg';
 
@@ -45,9 +50,14 @@ const getMultiLineStringFeature = layer =>
     .find(feature => feature.getGeometry().getType() === 'MultiLineString');
 
 class StartEndLayer extends Component {
+  constructor(props) {
+    super(props);
+    this.vectorLayer = new VectorLayer();
+  }
+
   componentDidMount() {
-    const { map, vectorLayer } = this.props;
-    map.addLayer(vectorLayer);
+    const { map } = this.props;
+    map.addLayer(this.vectorLayer);
     this.setLayerSource();
   }
 
@@ -59,7 +69,9 @@ class StartEndLayer extends Component {
   }
 
   setLayerSource() {
-    const { gpxVectorLayer, vectorLayer } = this.props;
+    const { map } = this.props;
+
+    const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
 
     const source = new VectorSource();
     source.addFeature(
@@ -78,26 +90,25 @@ class StartEndLayer extends Component {
         yellowMarker
       )
     );
-    vectorLayer.setSource(source);
+    this.vectorLayer.setSource(source);
 
     gpxVectorLayer.getSource().once('change', evt => {
-      if (gpxVectorLayer.getSource().getState() === 'ready') {
-        const multiLineString = getMultiLineStringFeature(gpxVectorLayer);
-        const coords = multiLineString
-          .getGeometry()
-          .getCoordinates()[0]
-          .slice();
-        const startCoords = coords.shift();
-        const endCoords = coords.pop();
-        source.getFeatureById('startPoint').setGeometry(new Point(startCoords));
-        source.getFeatureById('finishPoint').setGeometry(new Point(endCoords));
+      if (gpxVectorLayer.getSource().getState() === STATE.READY) {
+        const multiLineStringGeometry = getMultiLineStringFeature(
+          gpxVectorLayer
+        ).getGeometry();
+        source
+          .getFeatureById('startPoint')
+          .setGeometry(new Point(multiLineStringGeometry.getFirstCoordinate()));
+        source
+          .getFeatureById('finishPoint')
+          .setGeometry(new Point(multiLineStringGeometry.getLastCoordinate()));
       }
     });
   }
 
   toggleMarkers(show) {
-    const { vectorLayer } = this.props;
-    vectorLayer.setVisible(show);
+    this.vectorLayer.setVisible(show);
   }
 
   render() {
@@ -107,9 +118,20 @@ class StartEndLayer extends Component {
 
 StartEndLayer.propTypes = {
   map: PropTypes.instanceOf(Map).isRequired,
-  vectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
-  gpxVectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
   showMarkers: PropTypes.bool.isRequired,
 };
 
-export default StartEndLayer;
+export default props => (
+  <OptionsContext.Consumer>
+    {({ values }) => {
+      const { showMarkers } = values;
+      return (
+        <MapContext.Consumer>
+          {({ map }) => (
+            <StartEndLayer map={map} showMarkers={showMarkers} {...props} />
+          )}
+        </MapContext.Consumer>
+      );
+    }}
+  </OptionsContext.Consumer>
+);

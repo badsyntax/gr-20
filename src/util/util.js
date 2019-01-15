@@ -5,6 +5,12 @@ import GeometryType from 'ol/geom/GeometryType';
 
 const { MULTI_LINE_STRING, POINT } = GeometryType;
 
+export const getLayerById = (map, id) =>
+  map
+    .getLayers()
+    .getArray()
+    .find(layer => layer.get('id') === id);
+
 export const getElevation = (feature, coordinate) => {
   const geometry = feature.getGeometry();
   const point = geometry.getClosestPoint(coordinate);
@@ -36,8 +42,10 @@ export const getSortedPoints = vectorLayer => {
     const closestPointInMultiLine = multiLine
       .getGeometry()
       .getClosestPoint(point.getGeometry().getCoordinates());
+    const margin = 50; // meters
     const closesPointIndex = multiLineCoords.findIndex(
-      coord => new LineString([coord, closestPointInMultiLine]).getLength() < 30
+      coord =>
+        new LineString([coord, closestPointInMultiLine]).getLength() < margin
     );
     return {
       featurePoint: point,

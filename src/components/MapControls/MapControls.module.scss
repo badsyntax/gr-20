@@ -2,22 +2,18 @@
   position: absolute;
   left: 0.5rem;
   top: 0.5rem;
+  z-index: 1;
 
   :global {
     .ol-control {
       margin-bottom: 0.5rem;
+      position: static;
     }
   }
 }
 
 :global {
   .ol-control {
-    position: static;
-
-    button {
-      cursor: pointer;
-    }
-
     &.ol-attribution {
       position: absolute;
     }

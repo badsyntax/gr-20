@@ -1,13 +1,17 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import Map from 'ol/Map';
 import PropTypes from 'prop-types';
 import { Vector as VectorLayer } from 'ol/layer';
 import VectorSource from 'ol/source/Vector';
+import STATE from 'ol/source/State';
 import Circle from 'ol/style/Circle';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
 import GPX from 'ol/format/GPX';
+import { MapContext } from '../Map/Map';
+import { OptionsContext } from '../Options/OptionsProvider';
+import { SpinnerContext } from '../Spinner/SpinnerProvider';
 
 const getMultiLineStringFeature = layer =>
   layer
@@ -45,10 +49,18 @@ class GpxLayer extends Component {
     multiLineFeature: null,
   };
 
+  constructor(props) {
+    super(props);
+    this.vectorLayer = new VectorLayer();
+    this.vectorLayer.set('id', 'gpxvectorlayer');
+    this.vectorLayer.setStyle(
+      feature => style[feature.getGeometry().getType()]
+    );
+  }
+
   componentDidMount() {
-    const { map, vectorLayer } = this.props;
-    vectorLayer.setStyle(feature => style[feature.getGeometry().getType()]);
-    map.addLayer(vectorLayer);
+    const { map } = this.props;
+    map.addLayer(this.vectorLayer);
     this.setSource();
   }
 
@@ -66,47 +78,47 @@ class GpxLayer extends Component {
   }
 
   setSource() {
-    const { onSourceChange, vectorLayer, gpxUrl } = this.props;
+    const { gpxUrl, onSourceLoadStart, onSourceLoadEnd } = this.props;
     const source = new VectorSource({
       url: gpxUrl,
       format: new GPX(),
     });
-    vectorLayer.setSource(source);
-    onSourceChange(false);
+    this.vectorLayer.setSource(source);
+    onSourceLoadStart();
     source.once('change', evt => {
-      onSourceChange(source.getState() === 'ready');
+      if (source.getState() === STATE.READY) {
+        onSourceLoadEnd();
+      }
     });
   }
 
   toggleMarkers(show) {
-    const { vectorLayer } = this.props;
     if (show) {
       const { gpxMarkers } = this.state;
       gpxMarkers.forEach(markerPoint =>
-        vectorLayer.getSource().addFeature(markerPoint)
+        this.vectorLayer.getSource().addFeature(markerPoint)
       );
     } else {
-      const gpxMarkers = getPointFeatures(vectorLayer);
+      const gpxMarkers = getPointFeatures(this.vectorLayer);
       this.setState({
         gpxMarkers,
       });
       gpxMarkers.forEach(markerPoint =>
-        vectorLayer.getSource().removeFeature(markerPoint)
+        this.vectorLayer.getSource().removeFeature(markerPoint)
       );
     }
   }
 
   toggleRoute(show) {
-    const { vectorLayer } = this.props;
     if (show) {
       const { multiLineFeature } = this.state;
-      vectorLayer.getSource().addFeature(multiLineFeature);
+      this.vectorLayer.getSource().addFeature(multiLineFeature);
     } else {
-      const multiLineFeature = getMultiLineStringFeature(vectorLayer);
+      const multiLineFeature = getMultiLineStringFeature(this.vectorLayer);
       this.setState({
         multiLineFeature,
       });
-      vectorLayer.getSource().removeFeature(multiLineFeature);
+      this.vectorLayer.getSource().removeFeature(multiLineFeature);
     }
   }
 
@@ -117,11 +129,36 @@ class GpxLayer extends Component {
 
 GpxLayer.propTypes = {
   map: PropTypes.instanceOf(Map).isRequired,
-  vectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
   gpxUrl: PropTypes.string.isRequired,
-  onSourceChange: PropTypes.func.isRequired,
   showMarkers: PropTypes.bool.isRequired,
   showRoute: PropTypes.bool.isRequired,
+  onSourceLoadStart: PropTypes.func.isRequired,
+  onSourceLoadEnd: PropTypes.func.isRequired,
 };
 
-export default GpxLayer;
+export default props => (
+  <SpinnerContext.Consumer>
+    {({ toggle: showSpinner }) => (
+      <OptionsContext.Consumer>
+        {({ values }) => {
+          const { showMarkers, showRoute, gpxUrl } = values;
+          return (
+            <MapContext.Consumer>
+              {({ map }) => (
+                <GpxLayer
+                  map={map}
+                  gpxUrl={gpxUrl}
+                  showRoute={showRoute}
+                  showMarkers={showMarkers}
+                  onSourceLoadStart={() => showSpinner(true)}
+                  onSourceLoadEnd={() => showSpinner(false)}
+                  {...props}
+                />
+              )}
+            </MapContext.Consumer>
+          );
+        }}
+      </OptionsContext.Consumer>
+    )}
+  </SpinnerContext.Consumer>
+);

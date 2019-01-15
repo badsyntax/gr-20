@@ -13,6 +13,8 @@ import Point from 'ol/geom/Point';
 import Style from 'ol/style/Style';
 import Feature from 'ol/Feature';
 import VectorSource from 'ol/source/Vector';
+import 'react-vis/dist/style.css';
+
 import markerIcon from '../GpxLayer/marker-gold.png';
 
 import { sampleCoordinates, getMultiLineStringFeature } from '../../util/util';

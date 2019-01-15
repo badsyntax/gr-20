@@ -9,80 +9,22 @@ import { Vector as VectorLayer } from 'ol/layer';
 import { MdHome, MdZoomIn, MdClose } from 'react-icons/md';
 import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import LineString from 'ol/geom/LineString';
-import Control from 'ol/control/Control';
 import { easeOut } from 'ol/easing';
 import {
   getElevation,
   getHDMS,
   getMultiLineStringFeature,
   getSortedPoints,
+  getLayerById,
 } from '../../util/util';
 
 import ClosePopupControl from './ClosePopupControl';
 import ZoomInControl from './ZoomInControl';
+import NextPointControl from './NextPointControl';
+import PrevPointControl from './PrevPointControl';
+import { MapContext } from '../Map/Map';
+
 import STYLES from './Popup.module.scss';
-
-class PrevPointControl extends Control {
-  constructor(optOptions) {
-    const options = optOptions || {};
-
-    const button = document.createElement('button');
-    button.appendChild(options.label);
-    button.setAttribute('title', 'Close');
-
-    const element = document.createElement('div');
-    element.className = 'ol-unselectable ol-control';
-    element.classList.add(STYLES['Popup__next-button']);
-    element.appendChild(button);
-
-    super({
-      element,
-      target: options.target,
-    });
-
-    this._onClick = () => {};
-    button.addEventListener('click', this.onClick, false);
-  }
-
-  onClick = e => {
-    this._onClick(e);
-  };
-
-  setOnClick(func) {
-    this._onClick = func;
-  }
-}
-
-class NextPointControl extends Control {
-  constructor(optOptions) {
-    const options = optOptions || {};
-
-    const button = document.createElement('button');
-    button.appendChild(options.label);
-    button.setAttribute('title', 'Close');
-
-    const element = document.createElement('div');
-    element.className = 'ol-unselectable ol-control';
-    element.classList.add(STYLES['Popup__next-button']);
-    element.appendChild(button);
-
-    super({
-      element,
-      target: options.target,
-    });
-
-    this._onClick = () => {};
-    button.addEventListener('click', this.onClick, false);
-  }
-
-  onClick = e => {
-    this._onClick(e);
-  };
-
-  setOnClick(func) {
-    this._onClick = func;
-  }
-}
 
 const closeButtonLabel = document.createElement('span');
 const closeButton = new ClosePopupControl({
@@ -115,6 +57,8 @@ class Popup extends Component {
     name: null,
     lonLat: [],
     sortedPointsInMultiline: [],
+    sortedPoint: null,
+    distanceInKm: null,
   };
 
   constructor(props) {
@@ -130,7 +74,7 @@ class Popup extends Component {
   }
 
   componentDidMount() {
-    const { map, gpxVectorLayer } = this.props;
+    const { map } = this.props;
 
     this.overlay = new Overlay({
       element: this.container,
@@ -151,12 +95,12 @@ class Popup extends Component {
     prevPointButton.setOnClick(this.onPrevPointButtonClick);
     nextPointButton.setOnClick(this.onNextPointButtonClick);
 
-    gpxVectorLayer.on('change:source', () => {
-      gpxVectorLayer.getSource().once('change', () => {
-        const sortedPointsInMultiline = getSortedPoints(gpxVectorLayer);
-        this.setState({
-          sortedPointsInMultiline,
-        });
+    const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
+
+    gpxVectorLayer.getSource().once('change', () => {
+      const sortedPointsInMultiline = getSortedPoints(gpxVectorLayer);
+      this.setState({
+        sortedPointsInMultiline,
       });
     });
   }
@@ -235,9 +179,14 @@ class Popup extends Component {
 
   openPopup(evt, feature, setCenter = false) {
     const { sortedPointsInMultiline } = this.state;
-    const { map, gpxVectorLayer } = this.props;
+    const { map } = this.props;
 
-    let coordinates;
+    const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
+
+    let coordinates = null;
+    let distanceInKm = null;
+    let sortedPoint = null;
+
     if (feature.getGeometry().getType() === 'MultiLineString') {
       coordinates = evt.coordinate;
     } else {
@@ -250,27 +199,7 @@ class Popup extends Component {
 
       const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
 
-      // const closestPointInMultiLine = multiLine
-      //   .getGeometry()
-      //   .getClosestPoint(coordinates);
-
-      // const closestPointIndex = multiLineCoords.findIndex(
-      //   coord =>
-      //     new LineString([coord, closestPointInMultiLine]).getLength() < 30
-      // );
-
-      // const sortedPoint = sortedPointsInMultiline.find((point =>
-      //   console.log(
-      //     new LineString([
-      //       closestPointInMultiLine,
-      //       point.closestPointInMultiLine,
-      //     ]).getLength()
-      //   )
-      // );
-
-      // console.log('closestPointInMultiLine', closestPointInMultiLine);
-
-      const sortedPoint = sortedPointsInMultiline.find(
+      sortedPoint = sortedPointsInMultiline.find(
         ({ featurePoint }) => featurePoint === feature
       );
       const sortedPointIndex = sortedPointsInMultiline.indexOf(sortedPoint);
@@ -296,17 +225,7 @@ class Popup extends Component {
           },
           0
         );
-
-        const distanceInKm = (distance / 1000).toFixed(2);
-
-        this.setState({
-          distanceInKm,
-          sortedPoint,
-        });
-      } else {
-        this.setState({
-          sortedPoint,
-        });
+        distanceInKm = (distance / 1000).toFixed(2);
       }
     }
 
@@ -314,12 +233,15 @@ class Popup extends Component {
     const elevation = getElevation(feature, coordinates);
     const hdms = getHDMS(coordinates);
     const pointProps = feature.getProperties();
+
     this.setState(
       {
         isOpen: false,
         hdms,
         elevation,
         lonLat,
+        distanceInKm,
+        sortedPoint,
         ...pointProps,
       },
       () => {
@@ -369,7 +291,7 @@ class Popup extends Component {
           <div>Longitude: {lon}</div>
           <div>Latitdue: {lat}</div>
           <div>Coordinates: {hdms}</div>
-          <div>Distance to next point: {distanceInKm}km</div>
+          {distanceInKm && <div>Distance to next point: {distanceInKm}km</div>}
           <div style={{ paddingTop: '0.5rem' }}>
             <IconLabel label={zoomInButtonLabel}>
               <MdZoomIn />
@@ -399,8 +321,11 @@ class Popup extends Component {
 }
 
 Popup.propTypes = {
-  gpxVectorLayer: PropTypes.instanceOf(VectorLayer).isRequired,
   map: PropTypes.instanceOf(Map).isRequired,
 };
 
-export default Popup;
+export default props => (
+  <MapContext.Consumer>
+    {({ map }) => <Popup map={map} {...props} />}
+  </MapContext.Consumer>
+);

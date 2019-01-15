@@ -1,74 +1,54 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Map from 'ol/Map';
+import OLMap from 'ol/Map';
 import View from 'ol/View';
-import { Vector as VectorLayer } from 'ol/layer';
 import { fromLonLat } from 'ol/proj';
 
 import 'ol/ol.css';
-import 'react-vis/dist/style.css';
-
-import Popup from '../Popup/Popup';
-import Spinner from '../Spinner/Spinner';
-import MapControls from '../MapControls/MapControls';
-import GpxLayer from '../GpxLayer/GpxLayer';
-import TileLayer from '../TileLayer/TileLayer';
-import StartEndLayer from '../StartEndLayer/StartEndLayer';
-import ElevationProfile from '../ElevationProfile/ElevationProfile';
-import { SpinnerContext } from '../Spinner/SpinnerProvider';
 
 import STYLES from './Map.module.scss';
 
-class MyMap extends Component {
-  state = {
-    lat: 42.184207,
-    lng: 9.1079,
-    zoom: 9,
-    mapReady: false,
-  };
+const initialState = {
+  lat: 42.184207,
+  lng: 9.1079,
+  zoom: 9,
+  mapReady: false,
+  map: new OLMap({
+    pixelRatio: 1,
+    renderer: 'webgl',
+  }),
+};
 
+export const MapContext = React.createContext(initialState);
+
+class Map extends Component {
   constructor(props) {
     super(props);
     this.mapRef = React.createRef();
-    this.popupContainerRef = React.createRef();
-    this.popupContentRef = React.createRef();
-    this.gpxVectorLayer = new VectorLayer();
-    this.startEndVectorLayer = new VectorLayer();
-    this.map = new Map({
-      pixelRatio: 1,
-      renderer: 'webgl',
-      controls: [],
-    });
+    this.state = {
+      ...initialState,
+    };
   }
 
   componentDidMount() {
-    const { map } = this;
-    const { lat, lng, zoom } = this.state;
+    const { lat, lng, zoom, map } = this.state;
     const target = this.mapRef.current;
-
     const view = new View({
       center: fromLonLat([lng, lat]),
       zoom,
-      // rotation: Math.PI / 6
     });
-
     map.setTarget(target);
     map.setView(view);
-
     map.on('pointermove', this.onMapPointerMove);
-
-    this.setState({
-      mapReady: true,
-    });
   }
 
   componentWillUnmount() {
-    const { map } = this;
+    const { map } = this.state;
     map.un('pointermove', this.onMapPointerMove);
   }
 
   onMapPointerMove = evt => {
-    const { map } = this;
+    const { map } = this.state;
     if (evt.originalEvent.target.nodeName.toLowerCase() === 'canvas') {
       const pixel = map.getEventPixel(evt.originalEvent);
       const features = [];
@@ -83,77 +63,24 @@ class MyMap extends Component {
     }
   };
 
-  onSourceChange = sourceLoaded => {
-    const { onLoad } = this.props;
-    onLoad(!sourceLoaded);
-  };
-
   render() {
-    const { mapReady } = this.state;
-    const {
-      showElevationProfile,
-      mapUrl,
-      gpxUrl,
-      showControls,
-      showMarkers,
-      showRoute,
-    } = this.props;
+    const { children } = this.props;
     return (
-      <div ref={this.mapRef} className={STYLES.Map}>
-        <Spinner />
-        {mapReady && (
-          <Fragment>
-            <Popup map={this.map} gpxVectorLayer={this.gpxVectorLayer} />
-            {showControls && (
-              <MapControls
-                map={this.map}
-                gpxVectorLayer={this.gpxVectorLayer}
-              />
-            )}
-            <ElevationProfile
-              vectorLayer={this.gpxVectorLayer}
-              map={this.map}
-              isOpen={showElevationProfile}
-            />
-            <TileLayer mapUrl={mapUrl} map={this.map} />
-            <GpxLayer
-              vectorLayer={this.gpxVectorLayer}
-              map={this.map}
-              showElevationProfile={showElevationProfile}
-              onSourceChange={this.onSourceChange}
-              gpxUrl={gpxUrl}
-              showMarkers={showMarkers}
-              showRoute={showRoute}
-            />
-            <StartEndLayer
-              map={this.map}
-              gpxVectorLayer={this.gpxVectorLayer}
-              vectorLayer={this.startEndVectorLayer}
-              showMarkers={showMarkers}
-            />
-          </Fragment>
-        )}
-      </div>
+      <MapContext.Provider value={this.state}>
+        <div className={STYLES.Map} ref={this.mapRef}>
+          {children}
+        </div>
+      </MapContext.Provider>
     );
   }
 }
 
-MyMap.propTypes = {
-  mapUrl: PropTypes.string.isRequired,
-  gpxUrl: PropTypes.string.isRequired,
-  showElevationProfile: PropTypes.bool.isRequired,
-  showControls: PropTypes.bool.isRequired,
-  showMarkers: PropTypes.bool.isRequired,
-  showRoute: PropTypes.bool.isRequired,
-  onLoad: PropTypes.func,
+Map.propTypes = {
+  children: PropTypes.node,
 };
 
-MyMap.defaultProps = {
-  onLoad: () => {},
+Map.defaultProps = {
+  children: null,
 };
 
-export default props => (
-  <SpinnerContext.Consumer>
-    {({ toggle: onLoad }) => <MyMap onLoad={onLoad} {...props} />}
-  </SpinnerContext.Consumer>
-);
+export default Map;

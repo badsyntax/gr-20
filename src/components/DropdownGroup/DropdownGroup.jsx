@@ -10,54 +10,27 @@ import {
   ButtonGroup,
   ButtonToolbar,
 } from 'reactstrap';
-
 import { IoMdCheckmark } from 'react-icons/io';
-
 import Dropdown from '../Dropdown/Dropdown';
+import { OptionsContext } from '../Options/OptionsProvider';
 
 import STYLES from './DropdownGroup.module.scss';
 
 class DropdownGroup extends Component {
-  constructor(props) {
-    super(props);
-    this.state = Object.assign(
-      {
-        showElevationProfile: false,
-      },
-      {
-        values: props.values,
-      }
-    );
-  }
-
-  onChange = event => {
+  onChange = ({ target }) => {
+    const { name, type, checked, value: targetValue } = target;
+    const value = type === 'checkbox' ? checked : targetValue;
     const { onChange } = this.props;
-    const { target } = event;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const { name } = target;
-
-    this.setState(
-      ({ values }) => ({
-        values: {
-          ...values,
-          [name]: value,
-        },
-      }),
-      () => {
-        const { values } = this.state;
-        onChange(values);
-      }
-    );
+    onChange(name, value);
   };
 
   render() {
-    const { values } = this.state;
-    const { dropdowns } = this.props;
+    const { options, values } = this.props;
     return (
       <form className={STYLES.DropdownGroup}>
         <ButtonToolbar>
           <ButtonGroup>
-            {dropdowns.map(
+            {options.map(
               ({
                 label: dropdownLabel,
                 name: dropdownName,
@@ -134,7 +107,7 @@ class DropdownGroup extends Component {
 DropdownGroup.propTypes = {
   onChange: PropTypes.func.isRequired,
   values: PropTypes.shape().isRequired,
-  dropdowns: PropTypes.arrayOf(
+  options: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,
       name: PropTypes.string,
@@ -149,4 +122,15 @@ DropdownGroup.propTypes = {
   ).isRequired,
 };
 
-export default DropdownGroup;
+export default props => (
+  <OptionsContext.Consumer>
+    {({ dropdownOptions, values, onChange }) => (
+      <DropdownGroup
+        options={dropdownOptions}
+        values={values}
+        onChange={onChange}
+        {...props}
+      />
+    )}
+  </OptionsContext.Consumer>
+);

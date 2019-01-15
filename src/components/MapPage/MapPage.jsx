@@ -1,98 +1,49 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Helmet } from 'react-helmet';
 import DropdownGroup from '../DropdownGroup/DropdownGroup';
 import Map from '../Map/Map';
 import maps from '../../data/maps/maps';
 import routes from '../../data/routes/routes';
 import SpinnerProvider from '../Spinner/SpinnerProvider';
+import Spinner from '../Spinner/Spinner';
+import OptionsProvider from '../Options/OptionsProvider';
+
+import MapControls from '../MapControls/MapControls';
+import ElevationProfile from '../ElevationProfile/ElevationProfile';
+import Popup from '../Popup/Popup';
+import GpxLayer from '../GpxLayer/GpxLayer';
+import TileLayer from '../TileLayer/TileLayer';
+import StartEndLayer from '../StartEndLayer/StartEndLayer';
+
 import STYLES from './MapPage.module.scss';
 
-class MapPage extends Component {
-  state = {
-    values: {
-      map: maps[0].url,
-      showElevationProfile: false,
-      showControls: true,
-      showMarkers: true,
-      showRoute: true,
-      route: routes[0].url,
-    },
-    dropdowns: [
-      {
-        label: 'Routes',
-        name: 'route',
-        items: routes,
-      },
-      {
-        label: 'Layers',
-        name: 'map',
-        items: maps,
-      },
-      {
-        label: 'Options',
-        name: 'options',
-        type: 'formGroup',
-        items: [
-          {
-            name: 'showElevationProfile',
-            label: 'Show elevation profile',
-          },
-          {
-            name: 'showControls',
-            label: 'Show controls',
-          },
-          {
-            name: 'showMarkers',
-            label: 'Show markers',
-          },
-          {
-            name: 'showRoute',
-            label: 'Show route',
-          },
-        ],
-      },
-    ],
-  };
+const initialOptions = {
+  mapUrl: maps[0].url,
+  gpxUrl: routes[0].url,
+};
 
-  onDropdownChange = values => {
-    this.setState({
-      values,
-    });
-  };
-
-  render() {
-    const { values, dropdowns } = this.state;
-    const {
-      map,
-      route,
-      showElevationProfile,
-      showControls,
-      showMarkers,
-      showRoute,
-    } = values;
-    return (
+const MapPage = props => (
+  <Fragment>
+    <Helmet>
+      <title>GR-20 - The Route</title>
+    </Helmet>
+    <div className={STYLES.MapPage}>
       <SpinnerProvider>
-        <Helmet>
-          <title>GR-20 - The Route</title>
-        </Helmet>
-        <div className={STYLES.MapPage}>
-          <DropdownGroup
-            values={values}
-            dropdowns={dropdowns}
-            onChange={this.onDropdownChange}
-          />
-          <Map
-            mapUrl={map}
-            gpxUrl={route}
-            showElevationProfile={showElevationProfile}
-            showControls={showControls}
-            showMarkers={showMarkers}
-            showRoute={showRoute}
-          />
-        </div>
+        <OptionsProvider values={initialOptions}>
+          <Spinner />
+          <DropdownGroup />
+          <Map>
+            <TileLayer />
+            <GpxLayer />
+            <Popup />
+            <StartEndLayer />
+            <MapControls />
+            {/* <ElevationProfile /> */}
+          </Map>
+        </OptionsProvider>
       </SpinnerProvider>
-    );
-  }
-}
+    </div>
+  </Fragment>
+);
 
 export default MapPage;
