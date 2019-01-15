@@ -9,7 +9,7 @@ import Spinner from '../Spinner/Spinner';
 import OptionsProvider from '../Options/OptionsProvider';
 
 import MapControls from '../MapControls/MapControls';
-import ElevationProfile from '../ElevationProfile/ElevationProfile';
+// import ElevationProfile from '../ElevationProfile/ElevationProfile';
 import Popup from '../Popup/Popup';
 import GpxLayer from '../GpxLayer/GpxLayer';
 import TileLayer from '../TileLayer/TileLayer';
