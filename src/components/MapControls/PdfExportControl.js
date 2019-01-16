@@ -30,8 +30,12 @@ export default class PdfExportControl extends ButtonControl {
     return this.loadingFunc;
   }
 
+  isLoading(isLoading) {
+    return this.getLoadingFunc()(isLoading);
+  }
+
   onButtonCLick = async () => {
-    this.getLoadingFunc()(true);
+    this.isLoading(true);
     const {
       default: jsPDF,
     } = await import(/* webpackChunkName: "jspdf" */ 'jspdf');
@@ -54,7 +58,7 @@ export default class PdfExportControl extends ButtonControl {
         // Reset original map size
         map.setSize(size);
         map.getView().fit(extent, { size });
-        this.getLoadingFunc()(false);
+        this.isLoading(false);
       });
 
       // Set print size

@@ -35,7 +35,13 @@
     "deploy": "gh-pages -d build",
     "lint": "eslint src"
   },
-  "reactSnap": {},
+  "reactSnap": {
+    "skipThirdPartyRequests": true,
+    "inlineCss": false,
+    "minifyHtml": {
+      "collapseWhitespace": false
+    }
+  },
   "eslintConfig": {
     "extends": [
       "airbnb",

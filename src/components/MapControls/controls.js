@@ -16,12 +16,6 @@ const button = title => {
 
 export const zoom = new Zoom();
 
-export const attribution = new Attribution({
-  collapsible: true,
-});
-
-export const fullScreen = new FullScreen({});
-
 export const zoomToExtent = new ZoomToExtent({
   label: document.createElement('span'),
   extent: [
@@ -31,6 +25,12 @@ export const zoomToExtent = new ZoomToExtent({
     5245134.752643153,
   ],
 });
+
+export const attribution = new Attribution({
+  collapsible: true,
+});
+
+export const fullScreen = new FullScreen({});
 
 export const scaleLine = new ScaleLine({
   units: 'metric',
@@ -52,3 +52,15 @@ export const download = new DownloadControl({
 export const myLocation = new MyLocationControl({
   label: button('Show My Location'),
 });
+
+export const allControls = [
+  zoom,
+  zoomToExtent,
+  attribution,
+  fullScreen,
+  scaleLine,
+  rotateNorth,
+  pdfExport,
+  download,
+  myLocation,
+];

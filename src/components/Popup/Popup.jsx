@@ -22,6 +22,7 @@ import ZoomInControl from './ZoomInControl';
 import NextPointControl from './NextPointControl';
 import PrevPointControl from './PrevPointControl';
 import { MapContext } from '../Map/Map';
+import { OptionsContext } from '../Options/OptionsProvider';
 
 import STYLES from './Popup.module.scss';
 
@@ -94,19 +95,12 @@ class Popup extends Component {
     prevPointButton.setOnClick(this.onPrevPointButtonClick);
     nextPointButton.setOnClick(this.onNextPointButtonClick);
 
-    const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
-
-    gpxVectorLayer.getSource().once('change', () => {
-      const sortedPointsInMultiline = getSortedPoints(gpxVectorLayer);
-      this.setState({
-        sortedPointsInMultiline,
-      });
-    });
+    this.setSortedPoints();
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { isOpen, lonLat } = this.state;
-    const { map } = this.props;
+    const { map, gpxUrl } = this.props;
     if (
       isOpen &&
       (prevState.isOpen !== isOpen || prevState.lonLat !== lonLat)
@@ -124,12 +118,26 @@ class Popup extends Component {
       map.removeControl(prevPointButton);
       map.addControl(prevPointButton);
     }
+    if (prevProps.gpxUrl !== gpxUrl) {
+      this.setSortedPoints();
+    }
   }
 
   componentWillUnmount() {
     const { map } = this.props;
     this.container.parentNode.removeChild(this.container);
     map.un('click', this.onMapClick);
+  }
+
+  setSortedPoints() {
+    const { map } = this.props;
+    const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
+    gpxVectorLayer.getSource().once('change', () => {
+      const sortedPointsInMultiline = getSortedPoints(gpxVectorLayer);
+      this.setState({
+        sortedPointsInMultiline,
+      });
+    });
   }
 
   onMapClick = evt => {
@@ -321,10 +329,18 @@ class Popup extends Component {
 
 Popup.propTypes = {
   map: PropTypes.instanceOf(Map).isRequired,
+  gpxUrl: PropTypes.string.isRequired,
 };
 
 export default props => (
-  <MapContext.Consumer>
-    {({ map }) => <Popup map={map} {...props} />}
-  </MapContext.Consumer>
+  <OptionsContext.Consumer>
+    {({ values }) => {
+      const { gpxUrl } = values;
+      return (
+        <MapContext.Consumer>
+          {({ map }) => <Popup map={map} gpxUrl={gpxUrl} {...props} />}
+        </MapContext.Consumer>
+      );
+    }}
+  </OptionsContext.Consumer>
 );

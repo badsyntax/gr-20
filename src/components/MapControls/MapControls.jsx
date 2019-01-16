@@ -21,6 +21,7 @@ import {
   pdfExport,
   download,
   myLocation,
+  allControls,
 } from './controls';
 
 import STYLES from './MapControls.module.scss';
@@ -30,33 +31,20 @@ const { firstChild: rotateNorthButton } = rotateNorth.element;
 const { firstChild: pdfExportButton } = pdfExport.element;
 const { firstChild: downloadButton } = download.element;
 const { firstChild: myLocationButton } = myLocation.element;
+const { firstChild: fullScreenButton } = fullScreen.element;
 
-const tooltips = [
-  // {
-  //   target: zoomToExtentLabel,
-  //   label: 'Zoom to Route',
-  // },
-  // {
-  //   target: rotateNorthLabel,
-  //   label: 'Rotate North',
-  // },
-  // {
-  //   target: fullScreenLabel,
-  //   label: 'Fullscreen',
-  // },
-  // {
-  //   target: pdfExportLabel,
-  //   label: 'Export to PDF',
-  // },
-  // {
-  //   target: downloadButton,
-  //   label: 'Download Route and Maps',
-  // },
-  {
-    target: myLocationButton,
-    label: 'Show My Location',
-  },
+const controlButtons = [
+  zoomToExtentButton,
+  rotateNorthButton,
+  fullScreenButton,
+  pdfExportButton,
+  downloadButton,
+  myLocationButton,
 ];
+
+const tooltipTitles = controlButtons.map(button =>
+  button.getAttribute('title')
+);
 
 const IconLabel = ({ children, label }) =>
   ReactDOM.createPortal(children, label);
@@ -77,10 +65,11 @@ class MapControls extends Component {
 
     const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
 
-    // pdfExport.setLoadingFunc(showSpinner);
-    download.setLoadingFunc(showSpinner);
+    [pdfExport, download, myLocation].forEach(control =>
+      control.setLoadingFunc(showSpinner)
+    );
+
     download.setVectorLayer(gpxVectorLayer);
-    myLocation.setLoadingFunc(showSpinner);
 
     [
       zoom,
@@ -101,16 +90,7 @@ class MapControls extends Component {
 
   componentWillUnmount() {
     const { map } = this.props;
-    [
-      zoom,
-      zoomToExtent,
-      rotateNorth,
-      fullScreen,
-      attribution,
-      scaleLine,
-      download,
-      myLocation,
-    ].forEach(control => {
+    allControls.forEach(control => {
       map.removeControl(control);
     });
   }
@@ -126,16 +106,16 @@ class MapControls extends Component {
 
     return (
       <div ref={this.controlGroupRef} className={STYLES.MapControls}>
-        {tooltips.map((tooltip, i) => (
+        {controlButtons.map((button, i) => (
           <Tooltip
-            key={tooltip.label}
+            key={tooltipTitles[i]}
             placement="right"
             isOpen={i === openTooltipIndex}
-            target={tooltip.target}
+            target={button}
             toggle={() => this.tooltipToggle(i)}
             delay={0}
           >
-            {tooltip.label}
+            {tooltipTitles[i]}
           </Tooltip>
         ))}
         <IconLabel label={zoomToExtentButton}>
