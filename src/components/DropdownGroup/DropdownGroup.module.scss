@@ -4,6 +4,19 @@
   right: 0;
   z-index: 1;
   padding: 0.5rem;
+
+  &__form-item {
+    padding: 0;
+  }
+
+  &__form-group {
+    padding: 0;
+  }
+
+  &__form-label {
+    padding: 0.25rem 1.5rem 0.25rem 2.75rem;
+    display: block;
+  }
 }
 
 :global {

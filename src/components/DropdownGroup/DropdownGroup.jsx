@@ -49,13 +49,20 @@ class DropdownGroup extends Component {
                   <DropdownMenu right>
                     {items.map(({ name: inputName, label, url }) =>
                       type === 'formGroup' ? (
-                        <DropdownItem key={inputName}>
-                          <FormGroup check>
+                        <DropdownItem
+                          key={inputName}
+                          className={STYLES['DropdownGroup__form-item']}
+                        >
+                          <FormGroup
+                            check
+                            className={STYLES['DropdownGroup__form-group']}
+                          >
                             <Label
                               check
                               onClick={event => {
                                 event.stopPropagation();
                               }}
+                              className={STYLES['DropdownGroup__form-label']}
                             >
                               <Input
                                 name={inputName}
