@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+import { Popover, PopoverHeader, PopoverBody, Tooltip } from 'reactstrap';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay';
 import { toLonLat, fromLonLat } from 'ol/proj';
@@ -9,6 +9,7 @@ import { MdHome, MdZoomIn, MdClose } from 'react-icons/md';
 import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import LineString from 'ol/geom/LineString';
 import { easeOut } from 'ol/easing';
+
 import {
   getElevation,
   getHDMS,
@@ -17,37 +18,36 @@ import {
   getLayerById,
 } from '../../util/util';
 
-import ClosePopupControl from './ClosePopupControl';
-import ZoomInControl from './ZoomInControl';
-import NextPointControl from './NextPointControl';
-import PrevPointControl from './PrevPointControl';
 import { MapContext } from '../Map/Map';
 import { OptionsContext } from '../Options/OptionsProvider';
 
 import STYLES from './Popup.module.scss';
 
-const closeButtonLabel = document.createElement('span');
-const closeButton = new ClosePopupControl({
-  label: closeButtonLabel,
-});
+import {
+  closeControl,
+  zoomInControl,
+  prevPointControl,
+  nextPointControl,
+} from './controls';
 
-const zoomInButtonLabel = document.createElement('span');
-const zoomInButton = new ZoomInControl({
-  label: zoomInButtonLabel,
-});
+const { firstChild: closeControlButton } = closeControl.element;
+const { firstChild: zoomInControlButton } = zoomInControl.element;
+const { firstChild: prevPointControlButton } = prevPointControl.element;
+const { firstChild: nextPointControlButton } = nextPointControl.element;
 
-const prevPointButtonLabel = document.createElement('span');
-const prevPointButton = new NextPointControl({
-  label: prevPointButtonLabel,
-});
+const controlButtons = [
+  closeControlButton,
+  zoomInControlButton,
+  prevPointControlButton,
+  nextPointControlButton,
+];
 
-const nextPointButtonLabel = document.createElement('span');
-const nextPointButton = new PrevPointControl({
-  label: nextPointButtonLabel,
-});
+const tooltipTitles = controlButtons.map(button =>
+  button.getAttribute('title')
+);
 
-const IconLabel = ({ children, label }) =>
-  ReactDOM.createPortal(children, label);
+const ControlIcon = ({ children, target }) =>
+  ReactDOM.createPortal(children, target);
 
 class Popup extends Component {
   state = {
@@ -59,6 +59,7 @@ class Popup extends Component {
     sortedPointsInMultiline: [],
     sortedPoint: null,
     distanceInKm: null,
+    openTooltipIndex: -1,
   };
 
   constructor(props) {
@@ -85,38 +86,30 @@ class Popup extends Component {
     map.addOverlay(this.overlay);
     map.on('click', this.onMapClick);
 
-    map.addControl(closeButton);
-    map.addControl(zoomInButton);
-    map.addControl(prevPointButton);
-    map.addControl(nextPointButton);
-
-    closeButton.setOnClick(this.onCloseButtonClick);
-    zoomInButton.setOnClick(this.onZoomInButtonClick);
-    prevPointButton.setOnClick(this.onPrevPointButtonClick);
-    nextPointButton.setOnClick(this.onNextPointButtonClick);
+    closeControl.setOnClick(this.onCloseButtonClick);
+    zoomInControl.setOnClick(this.onZoomInButtonClick);
+    prevPointControl.setOnClick(this.onPrevPointButtonClick);
+    nextPointControl.setOnClick(this.onNextPointButtonClick);
 
     this.setSortedPoints();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { isOpen, lonLat } = this.state;
+    const { isOpen } = this.state;
     const { map, gpxUrl } = this.props;
-    if (
-      isOpen &&
-      (prevState.isOpen !== isOpen || prevState.lonLat !== lonLat)
-    ) {
-      closeButton.setTarget(this.closeButtonRef.current);
-      zoomInButton.setTarget(this.zoomInButtonRef.current);
-      nextPointButton.setTarget(this.nextButtonRef.current);
-      prevPointButton.setTarget(this.prevButtonRef.current);
-      map.removeControl(closeButton);
-      map.addControl(closeButton);
-      map.removeControl(zoomInButton);
-      map.addControl(zoomInButton);
-      map.removeControl(nextPointButton);
-      map.addControl(nextPointButton);
-      map.removeControl(prevPointButton);
-      map.addControl(prevPointButton);
+    if (isOpen && prevState.isOpen !== isOpen) {
+      closeControl.setTarget(this.closeButtonRef.current);
+      zoomInControl.setTarget(this.zoomInButtonRef.current);
+      nextPointControl.setTarget(this.nextButtonRef.current);
+      prevPointControl.setTarget(this.prevButtonRef.current);
+      [closeControl, zoomInControl, nextPointControl, prevPointControl].forEach(
+        control => map.addControl(control)
+      );
+    }
+    if (!isOpen && prevState.isOpen !== isOpen) {
+      [closeControl, zoomInControl, nextPointControl, prevPointControl].forEach(
+        control => map.removeControl(control)
+      );
     }
     if (prevProps.gpxUrl !== gpxUrl) {
       this.setSortedPoints();
@@ -182,6 +175,12 @@ class Popup extends Component {
     const sortedPointIndex = sortedPointsInMultiline.indexOf(sortedPoint);
     const prevPoint = sortedPointsInMultiline[sortedPointIndex - 1];
     this.openPopup(null, prevPoint.featurePoint, true);
+  };
+
+  tooltipToggle = i => {
+    this.setState(({ openTooltipIndex }) => ({
+      openTooltipIndex: i === openTooltipIndex ? -1 : i,
+    }));
   };
 
   openPopup(evt, feature, setCenter = false) {
@@ -273,6 +272,7 @@ class Popup extends Component {
       distanceInKm,
       sortedPointsInMultiline,
       sortedPoint,
+      openTooltipIndex,
     } = this.state;
     const lon = (lonLat[0] || 0).toFixed(5);
     const lat = (lonLat[1] || 0).toFixed(5);
@@ -286,10 +286,22 @@ class Popup extends Component {
         toggle={this.toggle}
         className={STYLES.Popup}
       >
+        {controlButtons.map((button, i) => (
+          <Tooltip
+            key={tooltipTitles[i]}
+            placement="bottom"
+            isOpen={i === openTooltipIndex}
+            target={button}
+            toggle={() => this.tooltipToggle(i)}
+            delay={0}
+          >
+            {tooltipTitles[i]}
+          </Tooltip>
+        ))}
         <PopoverHeader>
-          <IconLabel label={closeButtonLabel}>
+          <ControlIcon target={closeControlButton}>
             <MdClose />
-          </IconLabel>
+          </ControlIcon>
           <span ref={this.closeButtonRef} />
           <MdHome size={20} style={{ verticalAlign: 'top' }} /> {name}
         </PopoverHeader>
@@ -300,23 +312,23 @@ class Popup extends Component {
           <div>Coordinates: {hdms}</div>
           {distanceInKm && <div>Distance to next point: {distanceInKm}km</div>}
           <div style={{ paddingTop: '0.5rem' }}>
-            <IconLabel label={zoomInButtonLabel}>
+            <ControlIcon target={zoomInControlButton}>
               <MdZoomIn />
-            </IconLabel>
+            </ControlIcon>
             <span ref={this.zoomInButtonRef} />
             {sortedPointIndex > 0 && (
               <Fragment>
-                <IconLabel label={prevPointButtonLabel}>
+                <ControlIcon target={prevPointControlButton}>
                   <FaCaretLeft />
-                </IconLabel>
+                </ControlIcon>
                 <span ref={this.prevButtonRef} />
               </Fragment>
             )}
             {sortedPointIndex < sortedPointsInMultiline.length - 1 && (
               <Fragment>
-                <IconLabel label={nextPointButtonLabel}>
+                <ControlIcon target={nextPointControlButton}>
                   <FaCaretRight />
-                </IconLabel>
+                </ControlIcon>
                 <span ref={this.nextButtonRef} />
               </Fragment>
             )}

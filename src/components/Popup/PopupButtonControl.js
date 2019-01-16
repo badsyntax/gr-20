@@ -1,6 +1,6 @@
 import ButtonControl from '../ButtonControl/ButtonControl';
 
-export default class RotateNorthControl extends ButtonControl {
+export default class PopupButtonControl extends ButtonControl {
   constructor(options) {
     super(options);
     this.element.firstChild.addEventListener(
@@ -10,9 +10,11 @@ export default class RotateNorthControl extends ButtonControl {
     );
   }
 
-  onButtonCLick = () => {
-    this.getMap()
-      .getView()
-      .setRotation(0);
+  onButtonCLick = e => {
+    this.onClick(e);
   };
+
+  setOnClick(func) {
+    this.onClick = func;
+  }
 }

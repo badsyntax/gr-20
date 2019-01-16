@@ -7,7 +7,7 @@ import Icon from 'ol/style/Icon';
 import Point from 'ol/geom/Point';
 
 import { getLayerById } from '../../util/util';
-import ButtonControl from './ButtonControl';
+import ButtonControl from '../ButtonControl/ButtonControl';
 
 import marker from './baseline-my_location-24px-yellow.svg';
 

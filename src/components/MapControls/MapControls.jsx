@@ -46,8 +46,8 @@ const tooltipTitles = controlButtons.map(button =>
   button.getAttribute('title')
 );
 
-const IconLabel = ({ children, label }) =>
-  ReactDOM.createPortal(children, label);
+const ControlIcon = ({ children, target }) =>
+  ReactDOM.createPortal(children, target);
 
 class MapControls extends Component {
   state = {
@@ -118,21 +118,21 @@ class MapControls extends Component {
             {tooltipTitles[i]}
           </Tooltip>
         ))}
-        <IconLabel label={zoomToExtentButton}>
+        <ControlIcon target={zoomToExtentButton}>
           <MdFullscreen />
-        </IconLabel>
-        <IconLabel label={rotateNorthButton}>
+        </ControlIcon>
+        <ControlIcon target={rotateNorthButton}>
           <MdRotateLeft />
-        </IconLabel>
-        <IconLabel label={pdfExportButton}>
+        </ControlIcon>
+        <ControlIcon target={pdfExportButton}>
           <FaFilePdf />
-        </IconLabel>
-        <IconLabel label={downloadButton}>
+        </ControlIcon>
+        <ControlIcon target={downloadButton}>
           <IoMdDownload />
-        </IconLabel>
-        <IconLabel label={myLocationButton}>
+        </ControlIcon>
+        <ControlIcon target={myLocationButton}>
           <MdMyLocation />
-        </IconLabel>
+        </ControlIcon>
       </div>
     );
   }

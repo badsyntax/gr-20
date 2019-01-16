@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import Map from 'ol/Map';
 import PropTypes from 'prop-types';
+
+import Map from 'ol/Map';
 import { Vector as VectorLayer } from 'ol/layer';
 import VectorSource from 'ol/source/Vector';
-
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
@@ -15,7 +15,7 @@ import STATE from 'ol/source/State';
 
 import { MapContext } from '../Map/Map';
 import { OptionsContext } from '../Options/OptionsProvider';
-import { getLayerById } from '../../util/util';
+import { getLayerById, getMultiLineStringFeature } from '../../util/util';
 
 import yellowMarker from './baseline-location_on-24px-yellow.svg';
 
@@ -42,12 +42,6 @@ const createPointTextFeature = (name, id, color, marker) => {
   feature.setStyle(pointTextStyle(name, marker, color));
   return feature;
 };
-
-const getMultiLineStringFeature = layer =>
-  layer
-    .getSource()
-    .getFeatures()
-    .find(feature => feature.getGeometry().getType() === 'MultiLineString');
 
 class StartEndLayer extends Component {
   constructor(props) {
@@ -98,7 +92,7 @@ class StartEndLayer extends Component {
     gpxVectorLayer.getSource().once('change', evt => {
       if (gpxVectorLayer.getSource().getState() === STATE.READY) {
         const multiLineStringGeometry = getMultiLineStringFeature(
-          gpxVectorLayer
+          gpxVectorLayer.getSource().getFeatures()
         ).getGeometry();
         source
           .getFeatureById('startPoint')

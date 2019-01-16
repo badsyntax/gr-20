@@ -2,7 +2,7 @@ import { saveAs } from 'file-saver';
 import { boundingExtent } from 'ol/extent';
 import { getSortedPoints } from '../../util/util';
 
-import ButtonControl from './ButtonControl';
+import ButtonControl from '../ButtonControl/ButtonControl';
 
 const dims = {
   a0: [1189, 841],

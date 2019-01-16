@@ -22,7 +22,8 @@
     display: inline-block;
   }
 
-  & &__next-button {
+  & &__next-button,
+  & &__prev-button {
     display: inline-block;
     margin-left: 0.5rem;
   }

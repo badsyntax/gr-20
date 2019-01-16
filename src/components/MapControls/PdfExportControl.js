@@ -1,7 +1,7 @@
 /* eslint-disable new-cap */
 /* Based on code from the OpenLayers examples: https://github.com/openlayers/openlayers/blob/e6ca241a27c9a007395609114b98185870a356ec/examples/export-pdf.js */
 
-import ButtonControl from './ButtonControl';
+import ButtonControl from '../ButtonControl/ButtonControl';
 
 const dims = {
   a0: [1189, 841],
