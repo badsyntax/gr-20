@@ -11,6 +11,8 @@ import { OptionsContext } from '../Options/OptionsProvider';
 
 import maps from '../../data/maps/maps';
 
+const urls = maps.map(({ url }) => expandUrl(url)).flat();
+
 class TileLayer extends Component {
   componentDidMount() {
     const { map, mapUrl } = this.props;
@@ -29,7 +31,6 @@ class TileLayer extends Component {
   }
 
   render() {
-    const urls = maps.map(({ url }) => expandUrl(url)).flat();
     return (
       <Helmet>
         {urls.map(url => (
