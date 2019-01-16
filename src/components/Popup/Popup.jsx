@@ -242,12 +242,12 @@ class Popup extends Component {
 
     this.setState(
       {
-        isOpen: false,
         hdms,
         elevation,
         lonLat,
         distanceInKm,
         sortedPoint,
+        isOpen: true,
         ...pointProps,
       },
       () => {
@@ -255,9 +255,6 @@ class Popup extends Component {
           map.getView().setCenter(coordinates);
         }
         this.overlay.setPosition(coordinates);
-        this.setState({
-          isOpen: true,
-        });
       }
     );
   }
