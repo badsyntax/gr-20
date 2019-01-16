@@ -14,9 +14,18 @@ html {
 }
 
 :global {
+  $control-button-font-size: 1.14em;
   .ol-control {
     button {
+      font-size: $control-button-font-size;
       cursor: pointer;
+    }
+  }
+  .ol-touch {
+    .ol-control {
+      button {
+        font-size: $control-button-font-size !important;
+      }
     }
   }
 }

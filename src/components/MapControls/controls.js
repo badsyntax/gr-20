@@ -7,6 +7,7 @@ import RotateNorthControl from './RotateNorthControl';
 import PdfExportControl from './PdfExportControl';
 import DownloadControl from './DownloadControl';
 import MyLocationControl from './MyLocationControl';
+import GetLinkControl from './GetLinkControl';
 
 const button = title => {
   const newButton = document.createElement('button');
@@ -14,9 +15,9 @@ const button = title => {
   return newButton;
 };
 
-export const zoom = new Zoom();
+export const zoomControl = new Zoom();
 
-export const zoomToExtent = new ZoomToExtent({
+export const zoomToExtentControl = new ZoomToExtent({
   label: document.createElement('span'),
   extent: [
     978823.488305482,
@@ -26,41 +27,46 @@ export const zoomToExtent = new ZoomToExtent({
   ],
 });
 
-export const attribution = new Attribution({
+export const attributionControl = new Attribution({
   collapsible: true,
 });
 
-export const fullScreen = new FullScreen({});
+export const fullScreenControl = new FullScreen({});
 
-export const scaleLine = new ScaleLine({
+export const scaleLineControl = new ScaleLine({
   units: 'metric',
   minWidth: 100,
 });
 
-export const rotateNorth = new RotateNorthControl({
+export const rotateNorthControl = new RotateNorthControl({
   label: button('Rotate North'),
 });
 
-export const pdfExport = new PdfExportControl({
+export const pdfExportControl = new PdfExportControl({
   label: button('Export to PDF'),
 });
 
-export const download = new DownloadControl({
+export const downloadControl = new DownloadControl({
   label: button('Download Route and Maps'),
 });
 
-export const myLocation = new MyLocationControl({
+export const myLocationControl = new MyLocationControl({
   label: button('Show My Location'),
 });
 
+export const linkControl = new GetLinkControl({
+  label: button('Get Shareable Link'),
+});
+
 export const allControls = [
-  zoom,
-  zoomToExtent,
-  attribution,
-  fullScreen,
-  scaleLine,
-  rotateNorth,
-  pdfExport,
-  download,
-  myLocation,
+  zoomControl,
+  zoomToExtentControl,
+  attributionControl,
+  fullScreenControl,
+  scaleLineControl,
+  rotateNorthControl,
+  pdfExportControl,
+  downloadControl,
+  myLocationControl,
+  linkControl,
 ];

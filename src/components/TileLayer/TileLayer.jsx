@@ -22,6 +22,7 @@ class TileLayer extends Component {
     const rasterLayer = new Tile({
       source: this.xyzSource,
     });
+    rasterLayer.set('id', 'osmtilelayer');
     map.addLayer(rasterLayer);
   }
 

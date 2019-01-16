@@ -2,7 +2,12 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Map from 'ol/Map';
 import PropTypes from 'prop-types';
-import { MdFullscreen, MdRotateLeft, MdMyLocation } from 'react-icons/md';
+import {
+  MdFullscreen,
+  MdRotateLeft,
+  MdMyLocation,
+  MdLink,
+} from 'react-icons/md';
 import { FaFilePdf } from 'react-icons/fa';
 import { IoMdDownload } from 'react-icons/io';
 import { Tooltip } from 'reactstrap';
@@ -12,26 +17,28 @@ import { getLayerById } from '../../util/util';
 import { OptionsContext } from '../Options/OptionsProvider';
 
 import {
-  zoom,
-  zoomToExtent,
-  rotateNorth,
-  fullScreen,
-  attribution,
-  scaleLine,
-  pdfExport,
-  download,
-  myLocation,
+  zoomControl,
+  zoomToExtentControl,
+  rotateNorthControl,
+  fullScreenControl,
+  attributionControl,
+  scaleLineControl,
+  pdfExportControl,
+  downloadControl,
+  myLocationControl,
+  linkControl,
   allControls,
 } from './controls';
 
 import STYLES from './MapControls.module.scss';
 
-const { firstChild: zoomToExtentButton } = zoomToExtent.element;
-const { firstChild: rotateNorthButton } = rotateNorth.element;
-const { firstChild: pdfExportButton } = pdfExport.element;
-const { firstChild: downloadButton } = download.element;
-const { firstChild: myLocationButton } = myLocation.element;
-const { firstChild: fullScreenButton } = fullScreen.element;
+const { firstChild: zoomToExtentButton } = zoomToExtentControl.element;
+const { firstChild: rotateNorthButton } = rotateNorthControl.element;
+const { firstChild: pdfExportButton } = pdfExportControl.element;
+const { firstChild: downloadButton } = downloadControl.element;
+const { firstChild: myLocationButton } = myLocationControl.element;
+const { firstChild: fullScreenButton } = fullScreenControl.element;
+const { firstChild: linkButton } = linkControl.element;
 
 const controlButtons = [
   zoomToExtentButton,
@@ -40,6 +47,7 @@ const controlButtons = [
   pdfExportButton,
   downloadButton,
   myLocationButton,
+  linkButton,
 ];
 
 const tooltipTitles = controlButtons.map(button =>
@@ -65,27 +73,28 @@ class MapControls extends Component {
 
     const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
 
-    [pdfExport, download, myLocation].forEach(control =>
+    [pdfExportControl, downloadControl, myLocationControl].forEach(control =>
       control.setLoadingFunc(showSpinner)
     );
 
-    download.setVectorLayer(gpxVectorLayer);
+    downloadControl.setVectorLayer(gpxVectorLayer);
 
     [
-      zoom,
-      zoomToExtent,
-      rotateNorth,
-      fullScreen,
-      pdfExport,
-      download,
-      myLocation,
+      zoomControl,
+      zoomToExtentControl,
+      rotateNorthControl,
+      fullScreenControl,
+      pdfExportControl,
+      downloadControl,
+      linkControl,
+      myLocationControl,
     ].forEach(control => {
       control.setTarget(target);
       map.addControl(control);
     });
 
-    map.addControl(attribution);
-    map.addControl(scaleLine);
+    map.addControl(attributionControl);
+    map.addControl(scaleLineControl);
   }
 
   componentWillUnmount() {
@@ -132,6 +141,9 @@ class MapControls extends Component {
         </ControlIcon>
         <ControlIcon target={myLocationButton}>
           <MdMyLocation />
+        </ControlIcon>
+        <ControlIcon target={linkButton}>
+          <MdLink />
         </ControlIcon>
       </div>
     );
