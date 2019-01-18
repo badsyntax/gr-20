@@ -7,7 +7,7 @@ import STYLES from './ButtonControl.module.scss';
 
 const c = classNames.bind(STYLES);
 
-class ControlButton extends Component {
+class ButtonControl extends Component {
   state = {
     tooltipOpen: false,
   };
@@ -49,14 +49,14 @@ class ControlButton extends Component {
   }
 }
 
-ControlButton.propTypes = {
+ButtonControl.propTypes = {
   className: PropTypes.string,
   tooltip: PropTypes.string,
 };
 
-ControlButton.defaultProps = {
+ButtonControl.defaultProps = {
   className: null,
   tooltip: null,
 };
 
-export default ControlButton;
+export default ButtonControl;

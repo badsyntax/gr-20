@@ -1,18 +1,14 @@
-import ButtonControl from '../ButtonControl/ButtonControl';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Map from 'ol/Map';
+import { MdLink } from 'react-icons/md';
 import { getLayerById } from '../../util/util';
 
-export default class GetLinkControl extends ButtonControl {
-  constructor(options) {
-    super(options);
-    this.element.firstChild.addEventListener(
-      'click',
-      this.onButtonCLick,
-      false
-    );
-  }
+import ButtonControl from '../ButtonControl/ButtonControl';
 
+class GetLinkButtonControl extends Component {
   onButtonCLick = () => {
-    const map = this.getMap();
+    const { map } = this.props;
 
     const gpxSource = getLayerById(map, 'gpxvectorlayer').getSource();
     const gpxUrl = gpxSource.getUrl();
@@ -30,4 +26,19 @@ export default class GetLinkControl extends ButtonControl {
 
     window.location = url;
   };
+
+  render() {
+    const { map, showSpinner, vectorLayer, ...rest } = this.props;
+    return (
+      <ButtonControl onClick={this.onButtonCLick} {...rest}>
+        <MdLink />
+      </ButtonControl>
+    );
+  }
 }
+
+GetLinkButtonControl.propTypes = {
+  map: PropTypes.instanceOf(Map).isRequired,
+};
+
+export default GetLinkButtonControl;

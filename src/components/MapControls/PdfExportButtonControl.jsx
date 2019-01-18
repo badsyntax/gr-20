@@ -1,5 +1,8 @@
-/* eslint-disable new-cap */
-/* Based on code from the OpenLayers examples: https://github.com/openlayers/openlayers/blob/e6ca241a27c9a007395609114b98185870a356ec/examples/export-pdf.js */
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { FaFilePdf } from 'react-icons/fa';
+
+import Map from 'ol/Map';
 
 import ButtonControl from '../ButtonControl/ButtonControl';
 
@@ -12,35 +15,14 @@ const dims = {
   a5: [210, 148],
 };
 
-export default class PdfExportControl extends ButtonControl {
-  constructor(options) {
-    super(options);
-    this.element.firstChild.addEventListener(
-      'click',
-      this.onButtonCLick,
-      false
-    );
-  }
-
-  setLoadingFunc(loadingFunc) {
-    this.loadingFunc = loadingFunc;
-  }
-
-  getLoadingFunc() {
-    return this.loadingFunc;
-  }
-
-  isLoading(isLoading) {
-    return this.getLoadingFunc()(isLoading);
-  }
-
+class PdfExportButtonControl extends Component {
   onButtonCLick = async () => {
-    this.isLoading(true);
+    const { map, showSpinner } = this.props;
+    showSpinner(true);
     const {
-      default: jsPDF,
+      default: JSPDF,
     } = await import(/* webpackChunkName: "jspdf" */ 'jspdf');
     setTimeout(() => {
-      const map = this.getMap();
       const format = 'a4';
       const resolution = 150; // dpi
       const dim = dims[format];
@@ -52,13 +34,13 @@ export default class PdfExportControl extends ButtonControl {
       map.once('rendercomplete', event => {
         const { canvas } = event.context;
         const data = canvas.toDataURL('image/jpeg');
-        const pdf = new jsPDF('landscape', undefined, format);
+        const pdf = new JSPDF('landscape', undefined, format);
         pdf.addImage(data, 'JPEG', 0, 0, dim[0], dim[1]);
         pdf.save('map.pdf');
         // Reset original map size
         map.setSize(size);
         map.getView().fit(extent, { size });
-        this.isLoading(false);
+        showSpinner(false);
       });
 
       // Set print size
@@ -67,4 +49,20 @@ export default class PdfExportControl extends ButtonControl {
       map.getView().fit(extent, { size: printSize });
     }, 200);
   };
+
+  render() {
+    const { map, showSpinner, vectorLayer, ...rest } = this.props;
+    return (
+      <ButtonControl onClick={this.onButtonCLick} {...rest}>
+        <FaFilePdf />
+      </ButtonControl>
+    );
+  }
 }
+
+PdfExportButtonControl.propTypes = {
+  showSpinner: PropTypes.func.isRequired,
+  map: PropTypes.instanceOf(Map).isRequired,
+};
+
+export default PdfExportButtonControl;

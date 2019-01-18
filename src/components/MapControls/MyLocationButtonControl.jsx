@@ -1,3 +1,7 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { MdMyLocation } from 'react-icons/md';
+import Map from 'ol/Map';
 import { fromLonLat } from 'ol/proj';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -7,6 +11,7 @@ import Icon from 'ol/style/Icon';
 import Point from 'ol/geom/Point';
 
 import { getLayerById } from '../../util/util';
+
 import ButtonControl from '../ButtonControl/ButtonControl';
 
 import marker from './baseline-my_location-24px-yellow.svg';
@@ -14,10 +19,9 @@ import marker from './baseline-my_location-24px-yellow.svg';
 const LAYER_ID = 'mylocation_layer';
 const FEATURE_ID = 'mylocation_feature';
 
-export default class MyLocationControl extends ButtonControl {
-  constructor(options) {
-    super(options);
-
+class FullScreenButtonControl extends Component {
+  constructor(props) {
+    super(props);
     const feature = new Feature({
       name: 'My Location',
     });
@@ -37,30 +41,17 @@ export default class MyLocationControl extends ButtonControl {
       }),
     });
     this.vectorLayer.set('id', LAYER_ID);
-
-    this.element.firstChild.addEventListener(
-      'click',
-      this.onButtonCLick,
-      false
-    );
   }
 
-  setLoadingFunc(loadingFunc) {
-    this.loadingFunc = loadingFunc;
-  }
-
-  getLoadingFunc() {
-    return this.loadingFunc;
-  }
-
-  isLoading(isLoading) {
-    return this.getLoadingFunc()(isLoading);
+  componentWillUnmount() {
+    const { map } = this.props;
+    map.removeLayer(this.vectorLayer);
   }
 
   onButtonCLick = () => {
+    const { showSpinner, map } = this.props;
     if ('geolocation' in navigator) {
-      const map = this.getMap();
-      this.isLoading(true);
+      showSpinner(true);
       if (!getLayerById(map, LAYER_ID)) {
         map.addLayer(this.vectorLayer);
       }
@@ -72,19 +63,34 @@ export default class MyLocationControl extends ButtonControl {
   };
 
   onGetCurrentPosition = position => {
-    this.isLoading(false);
+    const { showSpinner, map } = this.props;
+    showSpinner(false);
     const coords = fromLonLat([
       position.coords.longitude,
       position.coords.latitude,
     ]);
 
-    this.getMap()
-      .getView()
-      .setCenter(coords);
+    map.getView().setCenter(coords);
 
     this.vectorLayer
       .getSource()
       .getFeatureById(FEATURE_ID)
       .setGeometry(new Point(coords));
   };
+
+  render() {
+    const { map, showSpinner, ...rest } = this.props;
+    return (
+      <ButtonControl onClick={this.onButtonCLick} {...rest}>
+        <MdMyLocation />
+      </ButtonControl>
+    );
+  }
 }
+
+FullScreenButtonControl.propTypes = {
+  showSpinner: PropTypes.func.isRequired,
+  map: PropTypes.instanceOf(Map).isRequired,
+};
+
+export default FullScreenButtonControl;

@@ -1,107 +1,40 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import classNames from 'classnames/bind';
 import Map from 'ol/Map';
 import PropTypes from 'prop-types';
-import {
-  MdFullscreen,
-  MdRotateLeft,
-  MdMyLocation,
-  MdLink,
-} from 'react-icons/md';
-import { FaFilePdf } from 'react-icons/fa';
-import { IoMdDownload } from 'react-icons/io';
-import { Tooltip } from 'reactstrap';
 import { SpinnerContext } from '../Spinner/SpinnerProvider';
 import { MapContext } from '../Map/Map';
 import { getLayerById } from '../../util/util';
 import { OptionsContext } from '../Options/OptionsProvider';
 
-import {
-  zoomControl,
-  zoomToExtentControl,
-  rotateNorthControl,
-  fullScreenControl,
-  attributionControl,
-  scaleLineControl,
-  pdfExportControl,
-  downloadControl,
-  myLocationControl,
-  linkControl,
-  allControls,
-} from './controls';
+import FullScreenButtonControl from './FullScreenButtonControl';
+import MyLocationButtonControl from './MyLocationButtonControl';
+import DownloadButtonControl from './DownloadButtonControl';
+import ZoomToExtentButtonControl from './ZoomToExtentButtonControl';
+import GetLinkButtonControl from './GetLinkButtonControl';
+import PdfExportButtonControl from './PdfExportButtonControl';
+
+import { zoomControl } from './controls';
 
 import STYLES from './MapControls.module.scss';
 
-const { firstChild: zoomToExtentButton } = zoomToExtentControl.element;
-const { firstChild: rotateNorthButton } = rotateNorthControl.element;
-const { firstChild: pdfExportButton } = pdfExportControl.element;
-const { firstChild: downloadButton } = downloadControl.element;
-const { firstChild: myLocationButton } = myLocationControl.element;
-const { firstChild: fullScreenButton } = fullScreenControl.element;
-const { firstChild: linkButton } = linkControl.element;
-
-const controlButtons = [
-  zoomToExtentButton,
-  rotateNorthButton,
-  fullScreenButton,
-  pdfExportButton,
-  downloadButton,
-  myLocationButton,
-  linkButton,
-];
-
-const tooltipTitles = controlButtons.map(button =>
-  button.getAttribute('title')
-);
-
-const ControlIcon = ({ children, target }) =>
-  ReactDOM.createPortal(children, target);
+const c = classNames.bind(STYLES);
 
 class MapControls extends Component {
-  state = {
-    openTooltipIndex: -1,
-  };
-
   constructor(props) {
     super(props);
-    this.controlGroupRef = React.createRef();
+    this.zoomContainerRef = React.createRef();
   }
 
   componentDidMount() {
-    const { map, showSpinner } = this.props;
-    const { current: target } = this.controlGroupRef;
-
-    const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
-
-    [pdfExportControl, downloadControl, myLocationControl].forEach(control =>
-      control.setLoadingFunc(showSpinner)
-    );
-
-    downloadControl.setVectorLayer(gpxVectorLayer);
-
-    [
-      zoomControl,
-      zoomToExtentControl,
-      rotateNorthControl,
-      fullScreenControl,
-      pdfExportControl,
-      downloadControl,
-      linkControl,
-      myLocationControl,
-    ].forEach(control => {
-      control.setTarget(target);
-      map.addControl(control);
-    });
-
-    map.addControl(attributionControl);
-    map.addControl(scaleLineControl);
+    const { map } = this.props;
+    zoomControl.setTarget(this.zoomContainerRef.current);
+    map.addControl(zoomControl);
   }
 
   componentWillUnmount() {
     const { map } = this.props;
-    allControls.forEach(control => {
-      map.removeControl(control);
-    });
+    map.removeControl(zoomControl);
   }
 
   tooltipToggle = i => {
@@ -111,40 +44,40 @@ class MapControls extends Component {
   };
 
   render() {
-    const { openTooltipIndex } = this.state;
-
+    const { showSpinner, map } = this.props;
+    const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
+    const buttonProps = {
+      map,
+      className: c('MapControls__button-control'),
+    };
     return (
-      <div ref={this.controlGroupRef} className={STYLES.MapControls}>
-        {controlButtons.map((button, i) => (
-          <Tooltip
-            key={tooltipTitles[i]}
-            placement="right"
-            isOpen={i === openTooltipIndex}
-            target={button}
-            toggle={() => this.tooltipToggle(i)}
-            delay={0}
-          >
-            {tooltipTitles[i]}
-          </Tooltip>
-        ))}
-        <ControlIcon target={zoomToExtentButton}>
-          <MdFullscreen />
-        </ControlIcon>
-        <ControlIcon target={rotateNorthButton}>
+      <div className={STYLES.MapControls}>
+        <div ref={this.zoomContainerRef} />
+        <ZoomToExtentButtonControl tooltip="Fit Extent" {...buttonProps} />
+        <FullScreenButtonControl
+          tooltip="Toggle full-screen"
+          {...buttonProps}
+        />
+        <PdfExportButtonControl
+          tooltip="Export to PDF"
+          showSpinner={showSpinner}
+          {...buttonProps}
+        />
+        <DownloadButtonControl
+          tooltip="Download Route and Maps"
+          vectorLayer={gpxVectorLayer}
+          showSpinner={showSpinner}
+          {...buttonProps}
+        />
+        <GetLinkButtonControl tooltip="Get Shareable Link" {...buttonProps} />
+        <MyLocationButtonControl
+          tooltip="Show My Location"
+          showSpinner={showSpinner}
+          {...buttonProps}
+        />
+        {/* <ControlIcon target={rotateNorthButton}>
           <MdRotateLeft />
-        </ControlIcon>
-        <ControlIcon target={pdfExportButton}>
-          <FaFilePdf />
-        </ControlIcon>
-        <ControlIcon target={downloadButton}>
-          <IoMdDownload />
-        </ControlIcon>
-        <ControlIcon target={myLocationButton}>
-          <MdMyLocation />
-        </ControlIcon>
-        <ControlIcon target={linkButton}>
-          <MdLink />
-        </ControlIcon>
+        </ControlIcon> */}
       </div>
     );
   }

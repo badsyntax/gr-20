@@ -1,6 +1,10 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { IoMdDownload } from 'react-icons/io';
+import Map from 'ol/Map';
 import { saveAs } from 'file-saver';
 import { boundingExtent } from 'ol/extent';
-import { getSortedPoints } from '../../util/util';
+import { getSortedPoints, getLayerById } from '../../util/util';
 
 import ButtonControl from '../ButtonControl/ButtonControl';
 
@@ -13,34 +17,13 @@ const dims = {
   a5: [210, 148],
 };
 
-export default class DownloadControl extends ButtonControl {
-  constructor(options) {
-    super(options);
-    this.element.firstChild.addEventListener(
-      'click',
-      this.onButtonCLick,
-      false
-    );
-  }
-
-  setLoadingFunc(loadingFunc) {
-    this.loadingFunc = loadingFunc;
-  }
-
-  setVectorLayer(vectorLayer) {
-    this.vectorLayer = vectorLayer;
-  }
-
-  getVectorLayer() {
-    return this.vectorLayer;
-  }
-
-  getLoadingFunc() {
-    return this.loadingFunc;
-  }
-
+class DownloadButtonControl extends Component {
   onButtonCLick = async () => {
-    this.getLoadingFunc()(true);
+    const { map, showSpinner } = this.props;
+    const vectorLayer = getLayerById(map, 'gpxvectorlayer');
+
+    showSpinner(true);
+
     const {
       default: JSPDF,
     } = await import(/* webpackChunkName: "jspdf" */ 'jspdf');
@@ -49,9 +32,8 @@ export default class DownloadControl extends ButtonControl {
       default: JSZip,
     } = await import(/* webpackChunkName: "jszip" */ 'jszip');
 
-    const map = this.getMap();
-    const source = this.getVectorLayer().getSource();
-    const sortedPoints = getSortedPoints(this.getVectorLayer());
+    const source = vectorLayer.getSource();
+    const sortedPoints = getSortedPoints(vectorLayer);
     const size = map.getSize();
     const initialExtent = map.getView().calculateExtent(size);
 
@@ -77,7 +59,7 @@ export default class DownloadControl extends ButtonControl {
         promise.then(
           result =>
             new Promise(resolve => {
-              this.getLoadingFunc()(true);
+              showSpinner(true);
               const extent = boundingExtent([
                 sortedPoint.featurePoint.getGeometry().getCoordinates(),
                 sortedPoints[index + 1].featurePoint
@@ -127,7 +109,7 @@ export default class DownloadControl extends ButtonControl {
                   pdf.addPage();
                 }
                 resolve();
-                this.getLoadingFunc()(false);
+                showSpinner(false);
               });
 
               // Set print size
@@ -147,6 +129,22 @@ export default class DownloadControl extends ButtonControl {
 
     map.setSize(size);
     map.getView().fit(initialExtent, { size });
-    this.getLoadingFunc()(false);
+    showSpinner(false);
   };
+
+  render() {
+    const { map, showSpinner, vectorLayer, ...rest } = this.props;
+    return (
+      <ButtonControl onClick={this.onButtonCLick} {...rest}>
+        <IoMdDownload />
+      </ButtonControl>
+    );
+  }
 }
+
+DownloadButtonControl.propTypes = {
+  showSpinner: PropTypes.func.isRequired,
+  map: PropTypes.instanceOf(Map).isRequired,
+};
+
+export default DownloadButtonControl;
