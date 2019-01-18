@@ -14,7 +14,7 @@ import ZoomToExtentButtonControl from './ZoomToExtentButtonControl';
 import GetLinkButtonControl from './GetLinkButtonControl';
 import PdfExportButtonControl from './PdfExportButtonControl';
 
-import { zoomControl } from './controls';
+import { zoomControl, attributionControl, scaleLineControl } from './controls';
 
 import STYLES from './MapControls.module.scss';
 
@@ -29,12 +29,16 @@ class MapControls extends Component {
   componentDidMount() {
     const { map } = this.props;
     zoomControl.setTarget(this.zoomContainerRef.current);
-    map.addControl(zoomControl);
+    [zoomControl, attributionControl, scaleLineControl].forEach(control =>
+      map.addControl(control)
+    );
   }
 
   componentWillUnmount() {
     const { map } = this.props;
-    map.removeControl(zoomControl);
+    [zoomControl, attributionControl, scaleLineControl].forEach(control =>
+      map.removeControl(control)
+    );
   }
 
   tooltipToggle = i => {
