@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import OLMap from 'ol/Map';
 import View from 'ol/View';
 import { fromLonLat } from 'ol/proj';
+// import sync from 'ol-hashed';
 
 import 'ol/ol.css';
 
@@ -41,6 +42,7 @@ class Map extends Component {
     map.setTarget(target);
     map.setView(view);
     map.on('pointermove', this.onMapPointerMove);
+    // sync(map);
   }
 
   componentWillUnmount() {

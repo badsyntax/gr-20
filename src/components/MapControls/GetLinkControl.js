@@ -13,19 +13,20 @@ export default class GetLinkControl extends ButtonControl {
 
   onButtonCLick = () => {
     const map = this.getMap();
+
     const gpxSource = getLayerById(map, 'gpxvectorlayer').getSource();
     const gpxUrl = gpxSource.getUrl();
 
     const tileLayerSource = getLayerById(map, 'osmtilelayer').getSource();
     const tileLayerUrl = tileLayerSource.getUrls()[0];
 
-    const { origin, pathname } = new URL(window.location);
+    const { origin, pathname, hash } = new URL(window.location);
 
     const searchParams = new URLSearchParams();
     searchParams.append('route', gpxUrl);
     searchParams.append('layer', tileLayerUrl);
 
-    const url = `${origin}${pathname}?${searchParams.toString()}`;
+    const url = `${origin}${pathname}?${searchParams.toString()}${hash}`;
 
     window.location = url;
   };

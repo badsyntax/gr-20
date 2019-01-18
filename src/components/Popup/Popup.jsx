@@ -1,14 +1,17 @@
-import React, { Component, Fragment } from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Popover, PopoverHeader, PopoverBody, Tooltip } from 'reactstrap';
+import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay';
 import { toLonLat, fromLonLat } from 'ol/proj';
-import { MdHome, MdZoomIn, MdClose } from 'react-icons/md';
-import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
-import LineString from 'ol/geom/LineString';
 import { easeOut } from 'ol/easing';
+import { MdHome } from 'react-icons/md';
+import LineString from 'ol/geom/LineString';
+
+import CloseButtonControl from './CloseButtonControl';
+import ZoomInButtonControl from './ZoomInButtonControl';
+import PrevPointButtonControl from './PrevPointButtonControl';
+import NextPointButtonControl from './NextPointButtonControl';
 
 import {
   getElevation,
@@ -23,32 +26,6 @@ import { OptionsContext } from '../Options/OptionsProvider';
 
 import STYLES from './Popup.module.scss';
 
-import {
-  closeControl,
-  zoomInControl,
-  prevPointControl,
-  nextPointControl,
-} from './controls';
-
-const { firstChild: closeControlButton } = closeControl.element;
-const { firstChild: zoomInControlButton } = zoomInControl.element;
-const { firstChild: prevPointControlButton } = prevPointControl.element;
-const { firstChild: nextPointControlButton } = nextPointControl.element;
-
-const controlButtons = [
-  closeControlButton,
-  zoomInControlButton,
-  prevPointControlButton,
-  nextPointControlButton,
-];
-
-const tooltipTitles = controlButtons.map(button =>
-  button.getAttribute('title')
-);
-
-const ControlIcon = ({ children, target }) =>
-  ReactDOM.createPortal(children, target);
-
 class Popup extends Component {
   state = {
     isOpen: false,
@@ -59,58 +36,26 @@ class Popup extends Component {
     sortedPointsInMultiline: [],
     sortedPoint: null,
     distanceInKm: null,
-    openTooltipIndex: -1,
   };
 
-  constructor(props) {
-    super(props);
-    this.closeButtonRef = React.createRef();
-    this.zoomInButtonRef = React.createRef();
-    this.nextButtonRef = React.createRef();
-    this.prevButtonRef = React.createRef();
-  }
-
-  componentWillMount() {
-    this.container = document.createElement('div');
-  }
+  containerRef = React.createRef();
 
   componentDidMount() {
     const { map } = this.props;
 
     this.overlay = new Overlay({
-      element: this.container,
+      element: this.containerRef.current,
       autoPan: false,
-      stopEvent: true,
+      stopEvent: false,
     });
 
     map.addOverlay(this.overlay);
     map.on('click', this.onMapClick);
-
-    closeControl.setOnClick(this.onCloseButtonClick);
-    zoomInControl.setOnClick(this.onZoomInButtonClick);
-    prevPointControl.setOnClick(this.onPrevPointButtonClick);
-    nextPointControl.setOnClick(this.onNextPointButtonClick);
-
     this.setSortedPoints();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { isOpen } = this.state;
-    const { map, gpxUrl } = this.props;
-    if (isOpen && prevState.isOpen !== isOpen) {
-      closeControl.setTarget(this.closeButtonRef.current);
-      zoomInControl.setTarget(this.zoomInButtonRef.current);
-      nextPointControl.setTarget(this.nextButtonRef.current);
-      prevPointControl.setTarget(this.prevButtonRef.current);
-      [closeControl, zoomInControl, nextPointControl, prevPointControl].forEach(
-        control => map.addControl(control)
-      );
-    }
-    if (!isOpen && prevState.isOpen !== isOpen) {
-      [closeControl, zoomInControl, nextPointControl, prevPointControl].forEach(
-        control => map.removeControl(control)
-      );
-    }
+    const { gpxUrl } = this.props;
     if (prevProps.gpxUrl !== gpxUrl) {
       this.setSortedPoints();
     }
@@ -118,7 +63,6 @@ class Popup extends Component {
 
   componentWillUnmount() {
     const { map } = this.props;
-    this.container.parentNode.removeChild(this.container);
     map.un('click', this.onMapClick);
   }
 
@@ -139,7 +83,7 @@ class Popup extends Component {
     if (features && features.length) {
       const feature = features[0];
       this.openPopup(evt, feature);
-    } else {
+    } else if (evt.originalEvent.target.nodeName.toLowerCase() === 'canvas') {
       this.setState({
         isOpen: false,
       });
@@ -149,17 +93,6 @@ class Popup extends Component {
   onCloseButtonClick = () => {
     this.setState({
       isOpen: false,
-    });
-  };
-
-  onZoomInButtonClick = () => {
-    const { lonLat } = this.state;
-    const { map } = this.props;
-    map.getView().animate({
-      center: fromLonLat(lonLat),
-      zoom: 18,
-      duration: 1000,
-      easing: easeOut,
     });
   };
 
@@ -177,10 +110,15 @@ class Popup extends Component {
     this.openPopup(null, prevPoint.featurePoint, true);
   };
 
-  tooltipToggle = i => {
-    this.setState(({ openTooltipIndex }) => ({
-      openTooltipIndex: i === openTooltipIndex ? -1 : i,
-    }));
+  onZoomInButotnClick = () => {
+    const { lonLat } = this.state;
+    const { map } = this.props;
+    map.getView().animate({
+      center: fromLonLat(lonLat),
+      zoom: 18,
+      duration: 1000,
+      easing: easeOut,
+    });
   };
 
   openPopup(evt, feature, setCenter = false) {
@@ -269,69 +207,56 @@ class Popup extends Component {
       distanceInKm,
       sortedPointsInMultiline,
       sortedPoint,
-      openTooltipIndex,
     } = this.state;
-    const lon = (lonLat[0] || 0).toFixed(5);
-    const lat = (lonLat[1] || 0).toFixed(5);
+    const lon = (lonLat[0] || 0).toFixed(6);
+    const lat = (lonLat[1] || 0).toFixed(6);
     const sortedPointIndex = sortedPointsInMultiline.indexOf(sortedPoint);
     return (
-      <Popover
-        placement="top"
-        isOpen={isOpen}
-        target={this.container}
-        container={this.container}
-        toggle={this.toggle}
-        className={STYLES.Popup}
-      >
-        {controlButtons.map((button, i) => (
-          <Tooltip
-            key={tooltipTitles[i]}
-            placement="bottom"
-            isOpen={i === openTooltipIndex}
-            target={button}
-            toggle={() => this.tooltipToggle(i)}
-            delay={0}
-          >
-            {tooltipTitles[i]}
-          </Tooltip>
-        ))}
-        <PopoverHeader>
-          <ControlIcon target={closeControlButton}>
-            <MdClose />
-          </ControlIcon>
-          <span ref={this.closeButtonRef} />
-          <MdHome size={20} style={{ verticalAlign: 'top' }} /> {name}
-        </PopoverHeader>
-        <PopoverBody>
-          <div>Elevation: {elevation}m</div>
-          <div>Longitude: {lon}</div>
-          <div>Latitdue: {lat}</div>
-          <div>Coordinates: {hdms}</div>
-          {distanceInKm && <div>Distance to next point: {distanceInKm}km</div>}
-          <div style={{ paddingTop: '0.5rem' }}>
-            <ControlIcon target={zoomInControlButton}>
-              <MdZoomIn />
-            </ControlIcon>
-            <span ref={this.zoomInButtonRef} />
-            {sortedPointIndex > 0 && (
-              <Fragment>
-                <ControlIcon target={prevPointControlButton}>
-                  <FaCaretLeft />
-                </ControlIcon>
-                <span ref={this.prevButtonRef} />
-              </Fragment>
+      <div ref={this.containerRef}>
+        <Popover
+          placement="top"
+          isOpen={isOpen}
+          target={() => this.containerRef.current}
+          container={() => this.containerRef.current}
+          toggle={this.toggle}
+          className={STYLES.Popup}
+        >
+          <PopoverHeader>
+            <CloseButtonControl
+              onClick={this.onCloseButtonClick}
+              tooltip="Close"
+            />
+            <MdHome size={20} style={{ verticalAlign: 'top' }} /> {name}
+          </PopoverHeader>
+          <PopoverBody>
+            <div>Elevation: {elevation}m</div>
+            <div>Longitude: {lon}</div>
+            <div>Latitdue: {lat}</div>
+            <div>Coordinates: {hdms}</div>
+            {distanceInKm && (
+              <div>Distance to next point: {distanceInKm}km</div>
             )}
-            {sortedPointIndex < sortedPointsInMultiline.length - 1 && (
-              <Fragment>
-                <ControlIcon target={nextPointControlButton}>
-                  <FaCaretRight />
-                </ControlIcon>
-                <span ref={this.nextButtonRef} />
-              </Fragment>
-            )}
-          </div>
-        </PopoverBody>
-      </Popover>
+            <div style={{ paddingTop: '0.5rem' }}>
+              <ZoomInButtonControl
+                onClick={this.onZoomInButotnClick}
+                tooltip="Zoom to Point"
+              />
+              {sortedPointIndex > 0 && (
+                <PrevPointButtonControl
+                  onClick={this.onPrevPointButtonClick}
+                  tooltip="Previous Point"
+                />
+              )}
+              {sortedPointIndex < sortedPointsInMultiline.length - 1 && (
+                <NextPointButtonControl
+                  onClick={this.onNextPointButtonClick}
+                  tooltip="Next Point"
+                />
+              )}
+            </div>
+          </PopoverBody>
+        </Popover>
+      </div>
     );
   }
 }

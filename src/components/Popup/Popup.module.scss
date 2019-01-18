@@ -3,6 +3,7 @@
   animation: fadein 0.15s;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
   cursor: auto;
+  z-index: 1;
 
   :global {
     .ol-control {
@@ -10,22 +11,6 @@
       margin: 0;
       background-color: rgba(0, 0, 0, 0.2);
     }
-  }
-
-  & &__close-button {
-    position: absolute;
-    right: 0.3rem;
-    top: 0.2rem;
-  }
-
-  & &__zoom-button {
-    display: inline-block;
-  }
-
-  & &__next-button,
-  & &__prev-button {
-    display: inline-block;
-    margin-left: 0.5rem;
   }
 }
 

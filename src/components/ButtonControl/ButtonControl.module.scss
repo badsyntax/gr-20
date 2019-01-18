@@ -1,0 +1,39 @@
+.ButtonControl {
+  display: block;
+  margin: 1px;
+  padding: 0;
+  color: #fff;
+  font-size: 1.14em;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  height: 1.375em;
+  width: 1.375em;
+  line-height: 0.4em;
+  background-color: rgba(0, 60, 136, 0.5);
+  border: none;
+  border-radius: 2px;
+  font-size: 1.14em;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+    background-color: rgba(0, 60, 136, 0.7);
+  }
+
+  &__container {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 2px;
+    position: static;
+    display: inline-block;
+    margin: 0;
+  }
+
+  &__close {
+    position: absolute;
+    right: 0.3rem;
+    top: 0.2rem;
+  }
+}
