@@ -24,6 +24,8 @@ import { OptionsContext } from '../Options/OptionsProvider';
 
 import STYLES from './Popup.module.scss';
 
+const ANIMATION_DURATION = 1000;
+
 class Popup extends Component {
   state = {
     isOpen: false,
@@ -46,7 +48,12 @@ class Popup extends Component {
     this.overlay = new Overlay({
       element: this.containerRef.current,
       autoPan: true,
+      autoPanAnimation: {
+        duration: ANIMATION_DURATION,
+      },
+      autoPanMargin: 50,
       stopEvent: false,
+      positioning: 'top-center',
     });
 
     map.addOverlay(this.overlay);
@@ -116,7 +123,7 @@ class Popup extends Component {
     map.getView().animate({
       center: fromLonLat(lonLat),
       zoom: 18,
-      duration: 1000,
+      duration: ANIMATION_DURATION,
       easing: easeOut,
     });
   };
@@ -148,6 +155,7 @@ class Popup extends Component {
       nextState.distanceInKm = (nextState.distance / 1000).toFixed(2);
     }
     Object.assign(nextState, getDataFromCoords(coordinates));
+
     this.setState(nextState, () => this.overlay.setPosition(coordinates));
   }
 
@@ -174,12 +182,17 @@ class Popup extends Component {
     return (
       <div ref={this.containerRef}>
         <Popover
-          placement="top"
+          placement="bottom"
           isOpen={isOpen}
           target={() => this.containerRef.current}
           container={() => this.containerRef.current}
           toggle={this.toggle}
           className={STYLES.Popup}
+          modifiers={{
+            hide: { enabled: false },
+            flip: { enabled: false },
+            preventOverflow: { enabled: false },
+          }}
         >
           <PopoverHeader>
             <CloseButtonControl onClick={this.onCloseButtonClick} />
