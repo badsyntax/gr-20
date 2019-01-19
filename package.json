@@ -34,7 +34,8 @@
     "analyze": "source-map-explorer build/static/js/1.*",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "postbuild": "react-snap"
   },
   "reactSnap": {
     "skipThirdPartyRequests": true,
