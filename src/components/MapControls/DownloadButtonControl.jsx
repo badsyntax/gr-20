@@ -4,7 +4,7 @@ import { IoMdDownload } from 'react-icons/io';
 import Map from 'ol/Map';
 import { saveAs } from 'file-saver';
 import { boundingExtent } from 'ol/extent';
-import { getSortedPoints, getLayerById } from '../../util/util';
+import { getSortedPointFeatures, getLayerById } from '../../util/util';
 
 import ButtonControl from '../ButtonControl/ButtonControl';
 
@@ -33,7 +33,7 @@ class DownloadButtonControl extends Component {
     } = await import(/* webpackChunkName: "jszip" */ 'jszip');
 
     const source = vectorLayer.getSource();
-    const sortedPoints = getSortedPoints(vectorLayer);
+    const sortedPointsFeatures = getSortedPointFeatures(vectorLayer);
     const size = map.getSize();
     const initialExtent = map.getView().calculateExtent(size);
 
@@ -54,7 +54,7 @@ class DownloadButtonControl extends Component {
     const rootZipDir = zip.folder(fileName);
     rootZipDir.file(fileName, gpxText);
 
-    await sortedPoints.slice(0, sortedPoints.length - 1).reduce(
+    await sortedPointsFeatures.slice(0, sortedPointsFeatures.length - 1).reduce(
       (promise, sortedPoint, index) =>
         promise.then(
           result =>
@@ -62,7 +62,7 @@ class DownloadButtonControl extends Component {
               showSpinner(true);
               const extent = boundingExtent([
                 sortedPoint.featurePoint.getGeometry().getCoordinates(),
-                sortedPoints[index + 1].featurePoint
+                sortedPointsFeatures[index + 1].featurePoint
                   .getGeometry()
                   .getCoordinates(),
               ]);
@@ -96,7 +96,8 @@ class DownloadButtonControl extends Component {
                 context.fillStyle = 'white';
                 context.fillText(
                   `${sortedPoint.featurePoint.getProperties().name} to ${
-                    sortedPoints[index + 1].featurePoint.getProperties().name
+                    sortedPointsFeatures[index + 1].featurePoint.getProperties()
+                      .name
                   }`,
                   5,
                   20
@@ -105,7 +106,7 @@ class DownloadButtonControl extends Component {
                 const data = canvas.toDataURL('image/jpeg');
                 pdf.text(0, 0, 'page ');
                 pdf.addImage(data, 'JPEG', 0, 0, dim[0], dim[1]);
-                if (index < sortedPoints.length - 2) {
+                if (index < sortedPointsFeatures.length - 2) {
                   pdf.addPage();
                 }
                 resolve();

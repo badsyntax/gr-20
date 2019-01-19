@@ -5,24 +5,93 @@ import GeometryType from 'ol/geom/GeometryType';
 
 const { MULTI_LINE_STRING, POINT } = GeometryType;
 
+export const getHDMS = coords => {
+  const lonLat = toLonLat(coords);
+  const hdms = toStringHDMS(lonLat);
+  return hdms;
+};
+
+export const getElevation = coords => {
+  const elevation = Math.round(coords[2]);
+  return elevation;
+};
+
+export const getDataFromMultiCoords = multiCoords => {
+  const data = multiCoords.reduce(
+    (accumulator, currentValue, i) => {
+      if (i === multiCoords.length - 1) {
+        return accumulator;
+      }
+      const nextValue = multiCoords[i + 1];
+
+      accumulator.distance += new LineString([
+        currentValue,
+        nextValue,
+      ]).getLength();
+
+      const currentElevation = getElevation(currentValue);
+      const nextElevation = getElevation(nextValue);
+      const elevation = nextElevation - currentElevation;
+
+      if (elevation < 0) {
+        accumulator.elevationGainDown += Math.abs(elevation);
+      } else {
+        accumulator.elevationGainUp += elevation;
+      }
+
+      return accumulator;
+    },
+    {
+      distance: 0,
+      elevationGainUp: 0,
+      elevationGainDown: 0,
+    }
+  );
+  return data;
+};
+
+export const getDataFromCoords = coords => {
+  const lonLat = toLonLat(coords);
+  const hdms = getHDMS(coords);
+  const elevation = getElevation(coords);
+  return { lonLat, hdms, elevation };
+};
+
+export const getDataFromPointFeature = (
+  feature,
+  gpxVectorLayer,
+  sortedPointFeatures
+) => {
+  const multiLine = getMultiLineStringFeature(
+    gpxVectorLayer.getSource().getFeatures()
+  );
+
+  const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
+
+  const sortedPoint = sortedPointFeatures.find(
+    ({ featurePoint }) => featurePoint === feature
+  );
+
+  const sortedPointIndex = sortedPointFeatures.indexOf(sortedPoint);
+  const nextPoint = sortedPointFeatures[sortedPointIndex + 1];
+
+  if (nextPoint) {
+    const coords = multiLineCoords.slice(sortedPoint.index, nextPoint.index);
+    return {
+      sortedPoint,
+      ...getDataFromMultiCoords(coords),
+    };
+  }
+  return {
+    sortedPoint,
+  };
+};
+
 export const getLayerById = (map, id) =>
   map
     .getLayers()
     .getArray()
     .find(layer => layer.get('id') === id);
-
-export const getElevation = (feature, coordinate) => {
-  const geometry = feature.getGeometry();
-  const point = geometry.getClosestPoint(coordinate);
-  const elevation = Math.round(point[2]);
-  return elevation;
-};
-
-export const getHDMS = coordinate => {
-  const lonLat = toLonLat(coordinate);
-  const hdms = toStringHDMS(lonLat);
-  return hdms;
-};
 
 export const getMultiLineStringFeature = features =>
   features.find(
@@ -32,7 +101,7 @@ export const getMultiLineStringFeature = features =>
 export const getPointFeatures = features =>
   features.filter(feature => feature.getGeometry().getType() === POINT);
 
-export const getSortedPoints = vectorLayer => {
+export const getSortedPointFeatures = vectorLayer => {
   const points = getPointFeatures(vectorLayer.getSource().getFeatures());
   const multiLine = getMultiLineStringFeature(
     vectorLayer.getSource().getFeatures()

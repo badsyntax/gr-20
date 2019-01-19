@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay';
-import { toLonLat, fromLonLat } from 'ol/proj';
+import { fromLonLat } from 'ol/proj';
 import { easeOut } from 'ol/easing';
 import { MdHome } from 'react-icons/md';
-import LineString from 'ol/geom/LineString';
 
 import CloseButtonControl from './CloseButtonControl';
 import ZoomInButtonControl from './ZoomInButtonControl';
@@ -14,11 +13,10 @@ import PrevPointButtonControl from './PrevPointButtonControl';
 import NextPointButtonControl from './NextPointButtonControl';
 
 import {
-  getElevation,
-  getHDMS,
-  getMultiLineStringFeature,
-  getSortedPoints,
   getLayerById,
+  getSortedPointFeatures,
+  getDataFromCoords,
+  getDataFromPointFeature,
 } from '../../util/util';
 
 import { MapContext } from '../Map/Map';
@@ -33,9 +31,11 @@ class Popup extends Component {
     hdms: null,
     name: null,
     lonLat: [],
-    sortedPointsInMultiline: [],
+    sortedPointFeatures: [],
     sortedPoint: null,
     distanceInKm: null,
+    elevationGainUp: null,
+    elevationGainDown: null,
   };
 
   containerRef = React.createRef();
@@ -45,7 +45,7 @@ class Popup extends Component {
 
     this.overlay = new Overlay({
       element: this.containerRef.current,
-      autoPan: false,
+      autoPan: true,
       stopEvent: false,
     });
 
@@ -70,9 +70,9 @@ class Popup extends Component {
     const { map } = this.props;
     const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
     gpxVectorLayer.getSource().once('change', () => {
-      const sortedPointsInMultiline = getSortedPoints(gpxVectorLayer);
+      const sortedPointFeatures = getSortedPointFeatures(gpxVectorLayer);
       this.setState({
-        sortedPointsInMultiline,
+        sortedPointFeatures,
       });
     });
   }
@@ -97,17 +97,17 @@ class Popup extends Component {
   };
 
   onNextPointButtonClick = () => {
-    const { sortedPointsInMultiline, sortedPoint } = this.state;
-    const sortedPointIndex = sortedPointsInMultiline.indexOf(sortedPoint);
-    const nextPoint = sortedPointsInMultiline[sortedPointIndex + 1];
-    this.openPopup(null, nextPoint.featurePoint, true);
+    const { sortedPointFeatures, sortedPoint } = this.state;
+    const sortedPointFeatureIndex = sortedPointFeatures.indexOf(sortedPoint);
+    const nextPoint = sortedPointFeatures[sortedPointFeatureIndex + 1];
+    this.openPopup(null, nextPoint.featurePoint);
   };
 
   onPrevPointButtonClick = () => {
-    const { sortedPointsInMultiline, sortedPoint } = this.state;
-    const sortedPointIndex = sortedPointsInMultiline.indexOf(sortedPoint);
-    const prevPoint = sortedPointsInMultiline[sortedPointIndex - 1];
-    this.openPopup(null, prevPoint.featurePoint, true);
+    const { sortedPointFeatures, sortedPoint } = this.state;
+    const sortedPointFeatureIndex = sortedPointFeatures.indexOf(sortedPoint);
+    const prevPoint = sortedPointFeatures[sortedPointFeatureIndex - 1];
+    this.openPopup(null, prevPoint.featurePoint);
   };
 
   onZoomInButotnClick = () => {
@@ -121,80 +121,34 @@ class Popup extends Component {
     });
   };
 
-  openPopup(evt, feature, setCenter = false) {
-    const { sortedPointsInMultiline } = this.state;
+  openPopup(evt, feature) {
+    const { sortedPointFeatures } = this.state;
     const { map } = this.props;
-
     const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
+    const { name } = feature.getProperties();
+
+    const nextState = {
+      name,
+      isOpen: true,
+      distanceInKm: null,
+      sortedPoint: null,
+      elevationGainUp: null,
+      elevationGainDown: null,
+    };
 
     let coordinates = null;
-    let distanceInKm = null;
-    let sortedPoint = null;
-
     if (feature.getGeometry().getType() === 'MultiLineString') {
       coordinates = evt.coordinate;
     } else {
-      // eg Point
       coordinates = feature.getGeometry().getCoordinates();
-
-      const multiLine = getMultiLineStringFeature(
-        gpxVectorLayer.getSource().getFeatures()
+      Object.assign(
+        nextState,
+        getDataFromPointFeature(feature, gpxVectorLayer, sortedPointFeatures)
       );
-
-      const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
-
-      sortedPoint = sortedPointsInMultiline.find(
-        ({ featurePoint }) => featurePoint === feature
-      );
-      const sortedPointIndex = sortedPointsInMultiline.indexOf(sortedPoint);
-      const nextPoint = sortedPointsInMultiline[sortedPointIndex + 1];
-
-      if (sortedPoint && nextPoint) {
-        const coordsBetweenPoints = multiLineCoords.slice(
-          sortedPoint.index,
-          nextPoint.index
-        );
-
-        const distance = coordsBetweenPoints.reduce(
-          (accumulator, currentValue, i) => {
-            const index = i + sortedPoint.index;
-            const pointDistance =
-              i === coordsBetweenPoints.length - 1
-                ? 0
-                : new LineString([
-                    currentValue,
-                    multiLineCoords[index + 1],
-                  ]).getLength();
-            return accumulator + pointDistance;
-          },
-          0
-        );
-        distanceInKm = (distance / 1000).toFixed(2);
-      }
+      nextState.distanceInKm = (nextState.distance / 1000).toFixed(2);
     }
-
-    const lonLat = toLonLat(coordinates);
-    const elevation = getElevation(feature, coordinates);
-    const hdms = getHDMS(coordinates);
-    const pointProps = feature.getProperties();
-
-    this.setState(
-      {
-        hdms,
-        elevation,
-        lonLat,
-        distanceInKm,
-        sortedPoint,
-        isOpen: true,
-        ...pointProps,
-      },
-      () => {
-        if (setCenter) {
-          map.getView().setCenter(coordinates);
-        }
-        this.overlay.setPosition(coordinates);
-      }
-    );
+    Object.assign(nextState, getDataFromCoords(coordinates));
+    this.setState(nextState, () => this.overlay.setPosition(coordinates));
   }
 
   render() {
@@ -205,12 +159,18 @@ class Popup extends Component {
       isOpen,
       lonLat,
       distanceInKm,
-      sortedPointsInMultiline,
+      elevationGainUp,
+      elevationGainDown,
+      sortedPointFeatures,
       sortedPoint,
     } = this.state;
     const lon = (lonLat[0] || 0).toFixed(6);
     const lat = (lonLat[1] || 0).toFixed(6);
-    const sortedPointIndex = sortedPointsInMultiline.indexOf(sortedPoint);
+    const sortedPointFeatureIndex = sortedPointFeatures.indexOf(sortedPoint);
+    const isPointFeature = sortedPointFeatureIndex !== -1;
+    const hasNextPoint =
+      isPointFeature &&
+      sortedPointFeatureIndex < sortedPointFeatures.length - 1;
     return (
       <div ref={this.containerRef}>
         <Popover
@@ -222,10 +182,7 @@ class Popup extends Component {
           className={STYLES.Popup}
         >
           <PopoverHeader>
-            <CloseButtonControl
-              onClick={this.onCloseButtonClick}
-              tooltip="Close"
-            />
+            <CloseButtonControl onClick={this.onCloseButtonClick} />
             <MdHome size={20} style={{ verticalAlign: 'top' }} /> {name}
           </PopoverHeader>
           <PopoverBody>
@@ -233,21 +190,30 @@ class Popup extends Component {
             <div>Longitude: {lon}</div>
             <div>Latitdue: {lat}</div>
             <div>Coordinates: {hdms}</div>
-            {distanceInKm && (
-              <div>Distance to next point: {distanceInKm}km</div>
+            {hasNextPoint && (
+              <Fragment>
+                <strong>Next Point</strong>
+                {distanceInKm && <div>Distance: {distanceInKm}km</div>}
+                {elevationGainUp && (
+                  <div>Elevation gain up: {elevationGainUp}m</div>
+                )}
+                {elevationGainDown && (
+                  <div>Elevation gain down: {elevationGainDown}m</div>
+                )}
+              </Fragment>
             )}
             <div style={{ paddingTop: '0.5rem' }}>
               <ZoomInButtonControl
                 onClick={this.onZoomInButotnClick}
                 tooltip="Zoom to Point"
               />
-              {sortedPointIndex > 0 && (
+              {sortedPointFeatureIndex > 0 && (
                 <PrevPointButtonControl
                   onClick={this.onPrevPointButtonClick}
                   tooltip="Previous Point"
                 />
               )}
-              {sortedPointIndex < sortedPointsInMultiline.length - 1 && (
+              {hasNextPoint && (
                 <NextPointButtonControl
                   onClick={this.onNextPointButtonClick}
                   tooltip="Next Point"
