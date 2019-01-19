@@ -53,7 +53,11 @@ class PdfExportButtonControl extends Component {
   render() {
     const { map, showSpinner, vectorLayer, ...rest } = this.props;
     return (
-      <ButtonControl onClick={this.onButtonCLick} {...rest}>
+      <ButtonControl
+        tooltipPlacement="right"
+        onClick={this.onButtonCLick}
+        {...rest}
+      >
         <FaFilePdf />
       </ButtonControl>
     );

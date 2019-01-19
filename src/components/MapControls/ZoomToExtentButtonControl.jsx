@@ -20,7 +20,11 @@ class ZoomToExtentButtonControl extends Component {
   render() {
     const { map, vectorLayer, ...rest } = this.props;
     return (
-      <ButtonControl onClick={this.onButtonCLick} {...rest}>
+      <ButtonControl
+        tooltipPlacement="right"
+        onClick={this.onButtonCLick}
+        {...rest}
+      >
         <MdFullscreen />
       </ButtonControl>
     );

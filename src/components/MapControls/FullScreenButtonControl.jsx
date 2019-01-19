@@ -4,7 +4,7 @@ import { MdZoomOutMap } from 'react-icons/md';
 import ButtonControl from '../ButtonControl/ButtonControl';
 
 const FullScreenButtonControl = props => (
-  <ButtonControl {...props}>
+  <ButtonControl tooltipPlacement="right" {...props}>
     <MdZoomOutMap />
   </ButtonControl>
 );

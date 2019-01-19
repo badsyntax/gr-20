@@ -7,6 +7,10 @@
   position: relative !important;
   transform: none !important;
 
+  &__button-control {
+    margin-right: 0.5rem;
+  }
+
   :global {
     .ol-control {
       position: static;

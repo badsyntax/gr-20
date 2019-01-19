@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames/bind';
 import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay';
@@ -24,7 +25,9 @@ import { OptionsContext } from '../Options/OptionsProvider';
 
 import STYLES from './Popup.module.scss';
 
-const ANIMATION_DURATION = 1000;
+const c = classNames.bind(STYLES);
+
+const ANIMATION_DURATION = 800;
 
 class Popup extends Component {
   state = {
@@ -179,6 +182,9 @@ class Popup extends Component {
     const hasNextPoint =
       isPointFeature &&
       sortedPointFeatureIndex < sortedPointFeatures.length - 1;
+    const buttonProps = {
+      className: c('Popup__button-control'),
+    };
     return (
       <div ref={this.containerRef}>
         <Popover
@@ -187,7 +193,7 @@ class Popup extends Component {
           target={() => this.containerRef.current}
           container={() => this.containerRef.current}
           toggle={this.toggle}
-          className={STYLES.Popup}
+          className={c('Popup')}
           modifiers={{
             hide: { enabled: false },
             flip: { enabled: false },
@@ -219,17 +225,20 @@ class Popup extends Component {
               <ZoomInButtonControl
                 onClick={this.onZoomInButotnClick}
                 tooltip="Zoom to Point"
+                {...buttonProps}
               />
               {sortedPointFeatureIndex > 0 && (
                 <PrevPointButtonControl
                   onClick={this.onPrevPointButtonClick}
                   tooltip="Previous Point"
+                  {...buttonProps}
                 />
               )}
               {hasNextPoint && (
                 <NextPointButtonControl
                   onClick={this.onNextPointButtonClick}
                   tooltip="Next Point"
+                  {...buttonProps}
                 />
               )}
             </div>

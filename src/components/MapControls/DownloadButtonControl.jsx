@@ -136,7 +136,11 @@ class DownloadButtonControl extends Component {
   render() {
     const { map, showSpinner, vectorLayer, ...rest } = this.props;
     return (
-      <ButtonControl onClick={this.onButtonCLick} {...rest}>
+      <ButtonControl
+        onClick={this.onButtonCLick}
+        tooltipPlacement="right"
+        {...rest}
+      >
         <IoMdDownload />
       </ButtonControl>
     );

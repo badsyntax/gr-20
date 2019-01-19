@@ -22,7 +22,13 @@ class ButtonControl extends Component {
 
   render() {
     const { tooltipOpen } = this.state;
-    const { children, className, tooltip, ...rest } = this.props;
+    const {
+      children,
+      className,
+      tooltip,
+      tooltipPlacement,
+      ...rest
+    } = this.props;
     return (
       <div className={c(STYLES.ButtonControl__container, className)}>
         <button
@@ -35,7 +41,7 @@ class ButtonControl extends Component {
         </button>
         {tooltip && this.buttonRef.current && (
           <Tooltip
-            placement="bottom"
+            placement={tooltipPlacement}
             isOpen={tooltipOpen}
             target={this.buttonRef.current}
             toggle={this.toggleTooltip}
@@ -52,11 +58,13 @@ class ButtonControl extends Component {
 ButtonControl.propTypes = {
   className: PropTypes.string,
   tooltip: PropTypes.string,
+  tooltipPlacement: PropTypes.string,
 };
 
 ButtonControl.defaultProps = {
   className: null,
   tooltip: null,
+  tooltipPlacement: 'bottom',
 };
 
 export default ButtonControl;

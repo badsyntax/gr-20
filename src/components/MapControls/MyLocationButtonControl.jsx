@@ -81,7 +81,11 @@ class FullScreenButtonControl extends Component {
   render() {
     const { map, showSpinner, ...rest } = this.props;
     return (
-      <ButtonControl onClick={this.onButtonCLick} {...rest}>
+      <ButtonControl
+        tooltipPlacement="right"
+        onClick={this.onButtonCLick}
+        {...rest}
+      >
         <MdMyLocation />
       </ButtonControl>
     );
