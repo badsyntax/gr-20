@@ -18,10 +18,11 @@ import {
 
 import ButtonControl from '../ButtonControl/ButtonControl';
 
-import { downloadZipFile } from '../../util/downloadUtil';
-
-const PDF_OPTION_ALL = 'all';
-const PDF_OPTION_CURRENT = 'current';
+import {
+  downloadZipFile,
+  PDF_OPTION_ALL,
+  PDF_OPTION_CURRENT,
+} from '../../util/downloadUtil';
 
 class DownloadButtonControl extends Component {
   state = {
@@ -74,16 +75,23 @@ class DownloadButtonControl extends Component {
   async download() {
     const { map, showSpinner } = this.props;
     const { values } = this.state;
-    const { pdfFormat, pdfResolution, includePDF, includeGPX } = values;
-    showSpinner(true);
+    const {
+      pdfFormat,
+      pdfResolution,
+      includePDF,
+      includeGPX,
+      pdfOption,
+    } = values;
     await downloadZipFile(
       map,
       includeGPX,
       includePDF,
       pdfFormat,
-      pdfResolution
+      pdfResolution,
+      pdfOption,
+      () => showSpinner(true),
+      () => showSpinner(false)
     );
-    showSpinner(false);
   }
 
   render() {

@@ -3,6 +3,9 @@ import { boundingExtent } from 'ol/extent';
 
 import { exportMapToPDF, getSortedPointFeatures, getLayerById } from './util';
 
+export const PDF_OPTION_ALL = 'all';
+export const PDF_OPTION_CURRENT = 'current';
+
 export const addGPXToZip = async (source, zip) => {
   const gpxFileUrl = source.getUrl();
   const gpxFileResponse = await fetch(gpxFileUrl);
@@ -51,57 +54,85 @@ export const addPDFTextToCanvas = (
   );
 };
 
+export const getMultiStagePDF = (
+  map,
+  format,
+  resolution,
+  stageFeatures,
+  onLoadStart,
+  onLoadEnd
+) =>
+  stageFeatures.slice(0, -1).reduce(async (promise, stageFeature, index) => {
+    let pdf = await promise;
+    onLoadStart();
+
+    const extent = boundingExtent([
+      stageFeature.featurePoint.getGeometry().getCoordinates(),
+      stageFeatures[index + 1].featurePoint.getGeometry().getCoordinates(),
+    ]);
+
+    pdf = await exportMapToPDF(
+      map,
+      format,
+      resolution,
+      false,
+      extent,
+      pdf,
+      canvas => {
+        addPDFTextToCanvas(canvas, stageFeature, stageFeatures, index);
+      }
+    );
+    if (index < stageFeatures.length - 2) {
+      pdf.addPage();
+    }
+    onLoadEnd();
+    return pdf;
+  }, Promise.resolve(null));
+
+export const getCurrentViewPDF = async (
+  map,
+  format,
+  resolution,
+  sortedPointsFeatures,
+  onLoadStart,
+  onLoadEnd
+) => {
+  onLoadStart();
+  const size = map.getSize();
+  const extent = map.getView().calculateExtent(size);
+  const pdf = await exportMapToPDF(map, format, resolution, false, extent);
+  onLoadEnd();
+  return pdf;
+};
+
 export const addPDFToZip = async (
   map,
   format = 'a4',
   resolution = 150,
-  zip
+  option = PDF_OPTION_ALL,
+  zip,
+  onLoadStart,
+  onLoadEnd,
+  fileName = 'map.pdf'
 ) => {
   const vectorLayer = getLayerById(map, 'gpxvectorlayer');
   const sortedPointsFeatures = getSortedPointFeatures(vectorLayer);
 
-  const finalPDF = await sortedPointsFeatures
-    .slice(0, sortedPointsFeatures.length - 1)
-    .reduce(
-      (promise, sortedPoint, index) =>
-        promise.then(
-          pdf =>
-            new Promise(async resolve => {
-              const extent = boundingExtent([
-                sortedPoint.featurePoint.getGeometry().getCoordinates(),
-                sortedPointsFeatures[index + 1].featurePoint
-                  .getGeometry()
-                  .getCoordinates(),
-              ]);
+  const pdfArgs = [
+    map,
+    format,
+    resolution,
+    sortedPointsFeatures,
+    onLoadStart,
+    onLoadEnd,
+  ];
 
-              // eslint-disable-next-line no-param-reassign
-              pdf = await exportMapToPDF(
-                map,
-                format,
-                resolution,
-                false,
-                extent,
-                pdf,
-                canvas => {
-                  addPDFTextToCanvas(
-                    canvas,
-                    sortedPoint,
-                    sortedPointsFeatures,
-                    index
-                  );
-                }
-              );
-              if (index < sortedPointsFeatures.length - 2) {
-                pdf.addPage();
-              }
+  const finalPDF =
+    option === PDF_OPTION_ALL
+      ? await getMultiStagePDF(...pdfArgs)
+      : await getCurrentViewPDF(...pdfArgs);
 
-              resolve(pdf);
-            })
-        ),
-      Promise.resolve(null)
-    );
-
-  zip.file('map.pdf', finalPDF.output('blob'));
+  zip.file(fileName, finalPDF.output('blob'));
 };
 
 export const downloadZipFile = async (
@@ -109,8 +140,13 @@ export const downloadZipFile = async (
   includeGPX,
   includePDF,
   pdfFormat,
-  pdfResolution
+  pdfResolution,
+  pdfOption,
+  onLoadStart,
+  onLoadEnd
 ) => {
+  onLoadStart();
+
   const {
     default: JSZip,
   } = await import(/* webpackChunkName: "jszip" */ 'jszip');
@@ -128,7 +164,15 @@ export const downloadZipFile = async (
     await addGPXToZip(source, rootZipDir);
   }
   if (includePDF) {
-    await addPDFToZip(map, pdfFormat, pdfResolution, rootZipDir);
+    await addPDFToZip(
+      map,
+      pdfFormat,
+      pdfResolution,
+      pdfOption,
+      rootZipDir,
+      onLoadStart,
+      onLoadEnd
+    );
   }
 
   return new Promise(resolve => {
@@ -136,6 +180,7 @@ export const downloadZipFile = async (
       saveAs(content, `${zipFileName}.zip`);
       map.setSize(size);
       map.getView().fit(initialExtent, { size });
+      onLoadEnd();
       resolve();
     });
   });
