@@ -162,3 +162,53 @@ export const sampleCoordinates = (coords, minDistanceThreshold = 0) => {
       return false;
     });
 };
+
+const dims = {
+  a0: [1189, 841],
+  a1: [841, 594],
+  a2: [594, 420],
+  a3: [420, 297],
+  a4: [297, 210],
+  a5: [210, 148],
+};
+
+export const exportMapToPDF = async (
+  map,
+  format = 'a4',
+  resolution = 150,
+  reset = true,
+  extent = null,
+  pdf,
+  onBeforeRender = () => {}
+) =>
+  new Promise(async resolve => {
+    if (!pdf) {
+      const {
+        default: JSPDF,
+      } = await import(/* webpackChunkName: "jspdf" */ 'jspdf');
+      // eslint-disable-next-line no-param-reassign
+      pdf = new JSPDF('landscape', undefined, format);
+    }
+    const dim = dims[format];
+    const size = map.getSize();
+    const defaultExtent = map.getView().calculateExtent(size);
+
+    map.once('rendercomplete', event => {
+      const { canvas } = event.context;
+      onBeforeRender(canvas);
+      const data = canvas.toDataURL('image/jpeg');
+      pdf.addImage(data, 'JPEG', 0, 0, dim[0], dim[1]);
+      if (reset) {
+        map.setSize(size);
+        map.getView().fit(extent || defaultExtent, { size });
+      }
+      resolve(pdf);
+    });
+
+    const width = Math.round((dim[0] * resolution) / 25.4);
+    const height = Math.round((dim[1] * resolution) / 25.4);
+    const printSize = [width, height];
+
+    map.setSize(printSize);
+    map.getView().fit(extent || defaultExtent, { size: printSize });
+  });

@@ -8,11 +8,11 @@ import { getLayerById } from '../../util/util';
 import { OptionsContext } from '../Options/OptionsProvider';
 
 import FullScreenButtonControl from './FullScreenButtonControl';
-import MyLocationButtonControl from './MyLocationButtonControl';
-import DownloadButtonControl from './DownloadButtonControl';
-import ZoomToExtentButtonControl from './ZoomToExtentButtonControl';
-import GetLinkButtonControl from './GetLinkButtonControl';
-import PdfExportButtonControl from './PdfExportButtonControl';
+import MyLocationButtonControl from '../MyLocationButtonControl/MyLocationButtonControl';
+import DownloadButtonControl from '../DownloadButtonControl/DownloadButtonControl';
+import ZoomToExtentButtonControl from '../ZoomToExtentButtonControl/ZoomToExtentButtonControl';
+import GetLinkButtonControl from '../GetLinkButtonControl/GetLinkButtonControl';
+import PdfExportButtonControl from '../PdfExportButtonControl/PdfExportButtonControl';
 
 import { zoomControl, attributionControl, scaleLineControl } from './controls';
 
