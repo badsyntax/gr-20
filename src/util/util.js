@@ -72,6 +72,12 @@ export const getDataFromPointFeature = (
     ({ featurePoint }) => featurePoint === feature
   );
 
+  if (!sortedPoint) {
+    throw new Error(
+      'getDataFromPointFeature: unable to find feature in sorted point features'
+    );
+  }
+
   const sortedPointIndex = sortedPointFeatures.indexOf(sortedPoint);
   const nextPoint = sortedPointFeatures[sortedPointIndex + 1];
 

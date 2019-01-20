@@ -7,6 +7,8 @@ import Overlay from 'ol/Overlay';
 import { fromLonLat } from 'ol/proj';
 import { easeOut } from 'ol/easing';
 import GeometryType from 'ol/geom/GeometryType';
+import EventType from 'ol/events/EventType';
+import MapBrowserEventType from 'ol/MapBrowserEventType';
 
 import { MdHome } from 'react-icons/md';
 
@@ -30,7 +32,15 @@ import STYLES from './Popup.module.scss';
 
 const c = classNames.bind(STYLES);
 const { MULTI_LINE_STRING } = GeometryType;
+
 const ANIMATION_DURATION = 800;
+
+const pointSelectEvents = [
+  EventType.MOUSEDOWN,
+  EventType.TOUCHSTART,
+  EventType.MSPOINTERDOWN,
+  MapBrowserEventType.POINTERDOWN,
+];
 
 class Popup extends Component {
   state = {
@@ -44,6 +54,11 @@ class Popup extends Component {
     distanceInKm: null,
     elevationGainUp: null,
     elevationGainDown: null,
+    modifiers: {
+      hide: { enabled: true },
+      preventOverflow: { enabled: true },
+      flip: { enabled: false },
+    },
   };
 
   containerRef = React.createRef();
@@ -53,18 +68,14 @@ class Popup extends Component {
 
     this.overlay = new Overlay({
       element: this.containerRef.current,
-      autoPan: true,
-      autoPanAnimation: {
-        duration: ANIMATION_DURATION,
-      },
-      autoPanMargin: 50, // todo: adjust for mobile
+      autoPan: false,
       stopEvent: true,
       positioning: 'top-center',
       insertFirst: false,
     });
 
     map.addOverlay(this.overlay);
-    map.on('click', this.onMapClick);
+    pointSelectEvents.forEach(eventType => map.on(eventType, this.onMapClick));
     this.setSortedPoints();
   }
 
@@ -77,7 +88,7 @@ class Popup extends Component {
 
   componentWillUnmount() {
     const { map } = this.props;
-    map.un('click', this.onMapClick);
+    pointSelectEvents.forEach(eventType => map.un(eventType, this.onMapClick));
   }
 
   setSortedPoints() {
@@ -93,7 +104,7 @@ class Popup extends Component {
 
   onMapClick = evt => {
     const { map } = this.props;
-    const features = map.getFeaturesAtPixel(evt.pixel);
+    const features = map.getFeaturesAtPixel(evt.pixel, { hitTolerance: 10 });
     if (features && features.length) {
       const feature = features[0];
       this.openPopup(evt, feature);
@@ -156,15 +167,31 @@ class Popup extends Component {
       coordinates = evt.coordinate;
     } else {
       coordinates = feature.getGeometry().getCoordinates();
-      Object.assign(
-        nextState,
-        getDataFromPointFeature(feature, gpxVectorLayer, sortedPointFeatures)
-      );
-      nextState.distanceInKm = (nextState.distance / 1000).toFixed(2);
+      if (
+        feature.getId() !== 'startPoint' &&
+        feature.getId() !== 'finishPoint'
+      ) {
+        Object.assign(
+          nextState,
+          getDataFromPointFeature(feature, gpxVectorLayer, sortedPointFeatures)
+        );
+        nextState.distanceInKm = (nextState.distance / 1000).toFixed(2);
+      }
     }
     Object.assign(nextState, getDataFromCoords(coordinates));
 
-    this.setState(nextState, () => this.overlay.setPosition(coordinates));
+    this.overlay.setPosition(coordinates);
+    this.setState(nextState);
+
+    map.getView().animate(
+      {
+        center: coordinates,
+        duration: ANIMATION_DURATION,
+      },
+      () => {
+        this.setState(nextState);
+      }
+    );
   }
 
   render() {
@@ -180,6 +207,7 @@ class Popup extends Component {
       elevationGainDown,
       sortedPointFeatures,
       sortedPoint,
+      modifiers,
     } = this.state;
     const lon = (lonLat[0] || 0).toFixed(6);
     const lat = (lonLat[1] || 0).toFixed(6);
@@ -194,17 +222,13 @@ class Popup extends Component {
     return (
       <div ref={this.containerRef}>
         <Popover
-          placement="bottom"
+          placement="top"
           isOpen={isOpen}
           target={() => this.containerRef.current}
           container={() => this.containerRef.current}
           toggle={this.toggle}
           className={c('Popup')}
-          modifiers={{
-            hide: { enabled: false },
-            flip: { enabled: false },
-            preventOverflow: { enabled: false },
-          }}
+          modifiers={modifiers}
         >
           <PopoverHeader>
             <CloseButtonControl onClick={this.onCloseButtonClick} />
