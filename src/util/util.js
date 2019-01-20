@@ -106,6 +106,11 @@ export const getSortedPointFeatures = vectorLayer => {
   const multiLine = getMultiLineStringFeature(
     vectorLayer.getSource().getFeatures()
   );
+  if (!multiLine) {
+    throw new Error(
+      'getSortedPointFeatures: unable to find multiLine feature in gpx vector layer'
+    );
+  }
   const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
   const pointsInMultiLine = points.map(point => {
     const closestPointInMultiLine = multiLine

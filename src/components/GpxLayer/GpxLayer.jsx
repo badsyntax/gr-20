@@ -4,44 +4,17 @@ import PropTypes from 'prop-types';
 import { Vector as VectorLayer } from 'ol/layer';
 import VectorSource from 'ol/source/Vector';
 import STATE from 'ol/source/State';
-import Circle from 'ol/style/Circle';
-import Fill from 'ol/style/Fill';
-import Stroke from 'ol/style/Stroke';
-import Style from 'ol/style/Style';
+
 import GPX from 'ol/format/GPX';
 import { MapContext } from '../Map/Map';
 import { OptionsContext } from '../Options/OptionsProvider';
 import { SpinnerContext } from '../Spinner/SpinnerProvider';
 
-const getMultiLineStringFeature = layer =>
-  layer
-    .getSource()
-    .getFeatures()
-    .find(feature => feature.getGeometry().getType() === 'MultiLineString');
+import { getMultiLineStringFeature, getPointFeatures } from '../../util/util';
 
-const getPointFeatures = layer =>
-  layer
-    .getSource()
-    .getFeatures()
-    .filter(feature => feature.getGeometry().getType() === 'Point');
+import STYLES from './styles';
 
-const style = {
-  Point: new Style({
-    image: new Circle({
-      fill: new Fill({
-        color: 'yellow',
-      }),
-      stroke: new Stroke({ color: 'rgba(0,60,136)', width: 1 }),
-      radius: 5,
-    }),
-  }),
-  MultiLineString: new Style({
-    stroke: new Stroke({
-      color: 'rgba(0,60,136)',
-      width: 4,
-    }),
-  }),
-};
+const EXTENSIONS_TAG_NAME = 'gr20';
 
 class GpxLayer extends Component {
   state = {
@@ -54,7 +27,7 @@ class GpxLayer extends Component {
     this.vectorLayer = new VectorLayer();
     this.vectorLayer.set('id', 'gpxvectorlayer');
     this.vectorLayer.setStyle(
-      feature => style[feature.getGeometry().getType()]
+      feature => STYLES[feature.getGeometry().getType()]
     );
   }
 
@@ -79,12 +52,29 @@ class GpxLayer extends Component {
 
   setSource() {
     const { gpxUrl, onSourceLoadStart, onSourceLoadEnd } = this.props;
+    onSourceLoadStart();
+    const format = new GPX({
+      readExtensions(feature, extensionsNode) {
+        if (!extensionsNode) {
+          return;
+        }
+        const gr20Nodes = [
+          ...extensionsNode.getElementsByTagName(EXTENSIONS_TAG_NAME),
+        ];
+        gr20Nodes.forEach(node => {
+          const name = node.getAttribute('name');
+          const text = node.textContent;
+          feature.setProperties({
+            [name]: text,
+          });
+        });
+      },
+    });
     const source = new VectorSource({
       url: gpxUrl,
-      format: new GPX(),
+      format,
     });
     this.vectorLayer.setSource(source);
-    onSourceLoadStart();
     source.once('change', evt => {
       if (source.getState() === STATE.READY) {
         onSourceLoadEnd();
@@ -93,19 +83,16 @@ class GpxLayer extends Component {
   }
 
   toggleMarkers(show) {
+    const source = this.vectorLayer.getSource();
     if (show) {
       const { gpxMarkers } = this.state;
-      gpxMarkers.forEach(markerPoint =>
-        this.vectorLayer.getSource().addFeature(markerPoint)
-      );
+      gpxMarkers.forEach(markerPoint => source.addFeature(markerPoint));
     } else {
-      const gpxMarkers = getPointFeatures(this.vectorLayer);
+      const gpxMarkers = getPointFeatures(source.getFeatures());
       this.setState({
         gpxMarkers,
       });
-      gpxMarkers.forEach(markerPoint =>
-        this.vectorLayer.getSource().removeFeature(markerPoint)
-      );
+      gpxMarkers.forEach(markerPoint => source.removeFeature(markerPoint));
     }
   }
 
@@ -114,7 +101,9 @@ class GpxLayer extends Component {
       const { multiLineFeature } = this.state;
       this.vectorLayer.getSource().addFeature(multiLineFeature);
     } else {
-      const multiLineFeature = getMultiLineStringFeature(this.vectorLayer);
+      const multiLineFeature = getMultiLineStringFeature(
+        this.vectorLayer.getSource().getFeatures()
+      );
       this.setState({
         multiLineFeature,
       });

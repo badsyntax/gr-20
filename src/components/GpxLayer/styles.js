@@ -1,0 +1,22 @@
+import Circle from 'ol/style/Circle';
+import Fill from 'ol/style/Fill';
+import Stroke from 'ol/style/Stroke';
+import Style from 'ol/style/Style';
+
+export default {
+  Point: new Style({
+    image: new Circle({
+      fill: new Fill({
+        color: 'yellow',
+      }),
+      stroke: new Stroke({ color: 'rgba(0,60,136)', width: 1 }),
+      radius: 5,
+    }),
+  }),
+  MultiLineString: new Style({
+    stroke: new Stroke({
+      color: 'rgba(0,60,136)',
+      width: 4,
+    }),
+  }),
+};

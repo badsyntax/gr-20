@@ -13,94 +13,92 @@
     </link>
     <time>2017-07-12T15:43:10Z</time>
   </metadata>
-  <wpt lat="42.028081" lon="9.194165">
-    <ele>1290.0</ele>
-    <time>2017-09-17T18:03:23Z</time>
-    <name>Bocca di Verde</name>
-    <cmt />
-    <desc />
-  </wpt>
   <wpt lat="42.508262" lon="8.854572">
     <ele>275.8</ele>
     <time>2017-09-17T18:03:23Z</time>
     <name>Calenzana</name>
-    <cmt />
-    <desc />
+  </wpt>
+  <wpt lat="42.028081" lon="9.194165">
+    <ele>1290.0</ele>
+    <time>2017-09-17T18:03:23Z</time>
+    <name>Bocca di Verde</name>
   </wpt>
   <wpt lat="42.114515" lon="9.121582">
     <ele>1137.8</ele>
     <time>2017-09-17T18:03:23Z</time>
     <name>Col de Vizzavona</name>
-    <cmt />
-    <desc />
+    <extensions>
+      <gr20 name="google360Url">https://www.google.com/maps/embed?pb=!4v1547972621136!6m8!1m7!1sCAoSLEFGMVFpcE8taHFKS0hHeXZrX0E5YzhJbXoxdlg4eVdxaWNMZjZzaUpLZmFR!2m2!1d42.1283452!2d9.132660399999999!3f296.13086046611727!4f0!5f0.7820865974627469</gr20>
+    </extensions>
   </wpt>
   <wpt lat="41.734736" lon="9.333706">
     <ele>247.2</ele>
     <time>2017-09-17T18:03:23Z</time>
     <name>Conca- Le Soleil Levant</name>
-    <cmt />
-    <desc />
   </wpt>
   <wpt lat="42.286572" lon="8.893171">
     <ele>1408.0</ele>
     <time>2017-09-17T18:03:23Z</time>
     <name>Hotel Castel de Vergio</name>
-    <cmt />
-    <desc />
+    <extensions>
+      <gr20 name="google360Url">https://www.google.com/maps/embed?pb=!4v1547972571063!6m8!1m7!1sQUUF7903u2TtlLBymFD6Sg!2m2!1d42.2865101645661!2d8.893488698614997!3f49.89013180460277!4f-3.85678718595355!5f0.7820865974627469</gr20>
+    </extensions>
   </wpt>
   <wpt lat="42.403539" lon="8.922439">
     <ele>1424.5</ele>
     <time>2017-09-17T18:03:23Z</time>
     <name>Refugio Asco Stagnu</name>
-    <cmt />
-    <desc />
+    <extensions>
+      <gr20 name="google360Url">https://www.google.com/maps/embed?pb=!4v1547972403882!6m8!1m7!1sCAoSLEFGMVFpcE1EU2tJSUh6V2NSMHN4R1dyX0Vic0xXOU16T2tEQzVFd1FCX0dH!2m2!1d42.4036121!2d8.922943!3f183.93793237209997!4f0!5f0.7820865974627469</gr20>
+    </extensions>
   </wpt>
   <wpt lat="41.841509" lon="9.214169">
     <ele>1520.4</ele>
     <time>2017-09-17T18:03:23Z</time>
     <name>Refugio de Asinau</name>
-    <cmt />
-    <desc />
   </wpt>
   <wpt lat="41.935098" lon="9.206022">
     <ele>1731.4</ele>
     <time>2017-09-17T18:03:23Z</time>
     <name>Refugio de Usciolu</name>
-    <cmt />
-    <desc />
+    <extensions>
+      <gr20 name="google360Url">https://www.google.com/maps/embed?pb=!4v1547972293023!6m8!1m7!1sCAoSLEFGMVFpcE8wYkRWYUl6S0V6SVVSWHBjYmtXcE9JTjRsdmpvQ1VueGtCQ2gt!2m2!1d41.93516109999999!2d9.205068899999999!3f356.8448331683744!4f0!5f0.7820865974627469</gr20>
+    </extensions>
   </wpt>
   <wpt lat="42.219863" lon="8.980494">
     <ele>1578.6</ele>
     <time>2017-09-17T18:03:23Z</time>
     <name>Refugio Manganu</name>
-    <cmt />
-    <desc />
+    <extensions>
+      <gr20 name="google360Url">https://www.google.com/maps/embed?pb=!4v1547972237363!6m8!1m7!1sCAoSLEFGMVFpcE1GTjMtOXhkcUNlRk9nUFdlbWJ1MENJV3ZucGVxc00wbGZ1Xzl4!2m2!1d42.2194392!2d8.981143699999999!3f337.25143776342634!4f4.1603178365879785!5f0.7820865974627469</gr20>
+    </extensions>
   </wpt>
   <wpt lat="42.465407" lon="8.906840">
     <ele>1553.1</ele>
     <time>2017-09-17T18:03:23Z</time>
-    <name>Refugio Ortu di  u Piobbu</name>
-    <cmt />
-    <desc />
+    <name>Refugio Ortu di u Piobbu</name>
+    <extensions>
+      <gr20 name="google360Url">https://www.google.com/maps/embed?pb=!4v1547972164226!6m8!1m7!1sCAoSLEFGMVFpcFBBaHMzRWwxRkpLcldzMDc3eDZSVWVPSEZmR2MxbHEySFpJVVhi!2m2!1d42.4652615!2d8.9063293!3f299.45441169211256!4f-4.06346840204958!5f0.7820865974627469</gr20>
+    </extensions>
   </wpt>
   <wpt lat="42.198240" lon="9.052419">
     <ele>1837.9</ele>
     <time>2017-09-17T18:03:23Z</time>
     <name>Refugio Petra Piana</name>
-    <cmt />
-    <desc />
+    <extensions>
+      <gr20 name="google360Url">https://www.google.com/maps/embed?pb=!4v1547972093908!6m8!1m7!1sCAoSLEFGMVFpcFByeFhxRWh4VXRzVnFMa2NJSDh5VmpRLWVkdDd3Z2tVZ2pkUFlt!2m2!1d42.1981529!2d9.0518243!3f175.02752969247314!4f-3.8631878986134183!5f0.7820865974627469</gr20>
+    </extensions>
   </wpt>
   <wpt lat="42.362257" lon="8.908994">
     <ele>1686.5</ele>
     <time>2017-09-17T18:03:23Z</time>
     <name>Refugio Tighjettu</name>
-    <cmt />
-    <desc />
+    <extensions>
+      <gr20 name="google360Url">https://www.google.com/maps/embed?pb=!4v1547971072503!6m8!1m7!1sCAoSLEFGMVFpcE1LOEkzb3FheWtHOVhFby1vQnlWeGpqZkQ2XzVKanlhMzdDdkJo!2m2!1d42.36211429999999!2d8.909091!3f341.3072325021569!4f0!5f0.7820865974627469</gr20>
+    </extensions>
   </wpt>
   <trk>
     <name>Córcega GR20 - Calenzana-Conca</name>
-    <cmt />
-    <desc />
     <trkseg>
       <trkpt lat="42.508168" lon="8.854437">
         <ele>276.023</ele>

@@ -14,6 +14,16 @@ class ButtonControl extends Component {
 
   buttonRef = React.createRef();
 
+  componentDidMount() {
+    const { onClick } = this.props;
+    this.buttonRef.current.addEventListener('click', onClick);
+  }
+
+  componentWillUnmount() {
+    const { onClick } = this.props;
+    this.buttonRef.current.removeEventListener('click', onClick);
+  }
+
   toggleTooltip = () => {
     this.setState(({ tooltipOpen }) => ({
       tooltipOpen: !tooltipOpen,
@@ -27,6 +37,7 @@ class ButtonControl extends Component {
       className,
       tooltip,
       tooltipPlacement,
+      onClick,
       ...rest
     } = this.props;
     return (
@@ -59,6 +70,7 @@ ButtonControl.propTypes = {
   className: PropTypes.string,
   tooltip: PropTypes.string,
   tooltipPlacement: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
 };
 
 ButtonControl.defaultProps = {

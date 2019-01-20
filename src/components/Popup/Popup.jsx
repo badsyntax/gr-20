@@ -6,12 +6,15 @@ import Map from 'ol/Map';
 import Overlay from 'ol/Overlay';
 import { fromLonLat } from 'ol/proj';
 import { easeOut } from 'ol/easing';
+import GeometryType from 'ol/geom/GeometryType';
+
 import { MdHome } from 'react-icons/md';
 
 import CloseButtonControl from './CloseButtonControl';
 import ZoomInButtonControl from './ZoomInButtonControl';
 import PrevPointButtonControl from './PrevPointButtonControl';
 import NextPointButtonControl from './NextPointButtonControl';
+import Google360ButtonControl from './Google360ButtonControl';
 
 import {
   getLayerById,
@@ -26,7 +29,7 @@ import { OptionsContext } from '../Options/OptionsProvider';
 import STYLES from './Popup.module.scss';
 
 const c = classNames.bind(STYLES);
-
+const { MULTI_LINE_STRING } = GeometryType;
 const ANIMATION_DURATION = 800;
 
 class Popup extends Component {
@@ -54,9 +57,10 @@ class Popup extends Component {
       autoPanAnimation: {
         duration: ANIMATION_DURATION,
       },
-      autoPanMargin: 50,
-      stopEvent: false,
+      autoPanMargin: 50, // todo: adjust for mobile
+      stopEvent: true,
       positioning: 'top-center',
+      insertFirst: false,
     });
 
     map.addOverlay(this.overlay);
@@ -135,10 +139,11 @@ class Popup extends Component {
     const { sortedPointFeatures } = this.state;
     const { map } = this.props;
     const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
-    const { name } = feature.getProperties();
+    const { name, google360Url } = feature.getProperties();
 
     const nextState = {
       name,
+      google360Url,
       isOpen: true,
       distanceInKm: null,
       sortedPoint: null,
@@ -147,7 +152,7 @@ class Popup extends Component {
     };
 
     let coordinates = null;
-    if (feature.getGeometry().getType() === 'MultiLineString') {
+    if (feature.getGeometry().getType() === MULTI_LINE_STRING) {
       coordinates = evt.coordinate;
     } else {
       coordinates = feature.getGeometry().getCoordinates();
@@ -167,6 +172,7 @@ class Popup extends Component {
       elevation,
       hdms,
       name,
+      google360Url,
       isOpen,
       lonLat,
       distanceInKm,
@@ -238,6 +244,14 @@ class Popup extends Component {
                 <NextPointButtonControl
                   onClick={this.onNextPointButtonClick}
                   tooltip="Next Point"
+                  {...buttonProps}
+                />
+              )}
+              {google360Url && (
+                <Google360ButtonControl
+                  tooltip="View 360"
+                  pointName={name}
+                  embedUrl={google360Url}
                   {...buttonProps}
                 />
               )}
