@@ -175,13 +175,9 @@ export const downloadZipFile = async (
     );
   }
 
-  return new Promise(resolve => {
-    zip.generateAsync({ type: 'blob' }).then(content => {
-      saveAs(content, `${zipFileName}.zip`);
-      map.setSize(size);
-      map.getView().fit(initialExtent, { size });
-      onLoadEnd();
-      resolve();
-    });
-  });
+  const content = await zip.generateAsync({ type: 'blob' });
+  saveAs(content, `${zipFileName}.zip`);
+  map.setSize(size);
+  map.getView().fit(initialExtent, { size });
+  onLoadEnd();
 };
