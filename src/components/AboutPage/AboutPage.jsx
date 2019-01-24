@@ -44,17 +44,17 @@ class AboutPage extends Component {
               <Collapse isOpen={isOpen} navbar>
                 <Nav className="ml-auto" navbar>
                   <NavItem>
-                    <NavLink tag={Link} to="/map">
+                    <NavLink tag={Link} to="/map/">
                       Routes
                     </NavLink>
                   </NavItem>
                   <NavItem>
-                    <NavLink tag={Link} to="/kit">
+                    <NavLink tag={Link} to="/kit/">
                       Kit
                     </NavLink>
                   </NavItem>
                   <NavItem active>
-                    <NavLink tag={Link} to="/kit">
+                    <NavLink tag={Link} to="/about/">
                       About
                     </NavLink>
                   </NavItem>
