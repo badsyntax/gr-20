@@ -38,12 +38,13 @@ class ButtonControl extends Component {
       tooltip,
       tooltipPlacement,
       onClick,
+      buttonClassName,
       ...rest
     } = this.props;
     return (
       <div className={c(STYLES.ButtonControl__container, className)}>
         <button
-          className={STYLES.ButtonControl}
+          className={c(STYLES.ButtonControl, buttonClassName)}
           type="button"
           ref={this.buttonRef}
           {...rest}
@@ -68,6 +69,7 @@ class ButtonControl extends Component {
 
 ButtonControl.propTypes = {
   className: PropTypes.string,
+  buttonClassName: PropTypes.string,
   tooltip: PropTypes.string,
   tooltipPlacement: PropTypes.string,
   onClick: PropTypes.func.isRequired,
@@ -75,6 +77,7 @@ ButtonControl.propTypes = {
 
 ButtonControl.defaultProps = {
   className: null,
+  buttonClassName: null,
   tooltip: null,
   tooltipPlacement: 'bottom',
 };

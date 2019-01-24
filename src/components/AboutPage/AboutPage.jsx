@@ -1,71 +1,136 @@
-import React, { Fragment } from 'react';
-import { IoMdArrowRoundForward } from 'react-icons/io';
-import { Link } from 'react-router-dom';
+import React, { Component, Fragment } from 'react';
+import classNames from 'classnames/bind';
 import { Helmet } from 'react-helmet';
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink,
+} from 'reactstrap';
+import { Link } from 'react-router-dom';
 
 import STYLES from './AboutPage.module.scss';
 
-import cover from '../IndexPage/cover.jpg';
+const c = classNames.bind(STYLES);
 
-const AboutPage = props => (
-  <Fragment>
-    <Helmet>
-      <title>GR-20 - About</title>
-    </Helmet>
-    <div
-      className={STYLES.AboutPage__cover}
-      style={{ backgroundImage: `url("${cover}")` }}
-    >
-      <a href="https://github.com/badsyntax/gr-20">
-        <img
-          style={{ position: 'absolute', top: 0, left: 0 }}
-          src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"
-          alt="Fork me on GitHub"
-        />
-      </a>
-      <div className={STYLES['AboutPage__cover-overlay']}>
-        <div className="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-          <header className="masthead mb-auto" />
+class AboutPage extends Component {
+  state = {
+    isOpen: false,
+  };
 
-          <main role="main" className="inner cover">
-            <h1 className="cover-heading">GR-20 - About</h1>
-            <br />
-            <p className="lead" style={{ textShadow: '2px 2px 1px #000' }}>
-              This project uses open data from different platforms to provide
-              useful information on the GR-20 route. It uses OpenLayers to build
-              the map, various open tile servers, and open GPX routes from
-              different sources.
-              <br />
-              <br />
-              The source code for this project can be found{' '}
-              <a href="https://github.com/badsyntax/gr-20">on GitHub</a>.
-            </p>
-            <br />
-            <p className="lead">
-              <Link to="/" className="btn btn-lg btn-primary">
-                Home <IoMdArrowRoundForward />
-              </Link>{' '}
-              <Link to="/map/" className="btn btn-lg btn-primary">
-                View Route <IoMdArrowRoundForward />
-              </Link>{' '}
-              <Link to="/kit/" className="btn btn-lg btn-primary">
-                View Kit <IoMdArrowRoundForward />
-              </Link>
-            </p>
-          </main>
+  toggle = () => {
+    this.setState(({ isOpen }) => ({
+      isOpen: !isOpen,
+    }));
+  };
 
-          <footer className="mastfoot mt-auto">
-            <div className="inner">
-              <p>
-                Cover template for{' '}
-                <a href="https://getbootstrap.com/">Bootstrap</a>, by{' '}
-                <a href="https://twitter.com/mdo">@mdo</a>.
-              </p>
+  render() {
+    const { isOpen } = this.state;
+    return (
+      <Fragment>
+        <Helmet>
+          <title>GR-20 - About</title>
+        </Helmet>
+        <div className={c('AboutPage')}>
+          <Navbar color="dark" dark expand="sm">
+            <div className="container">
+              <NavbarBrand tag={Link} to="/" title="Home">
+                GR-20
+              </NavbarBrand>
+              <NavbarToggler onClick={this.toggle} />
+              <Collapse isOpen={isOpen} navbar>
+                <Nav className="ml-auto" navbar>
+                  <NavItem>
+                    <NavLink tag={Link} to="/map">
+                      Routes
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink tag={Link} to="/kit">
+                      Kit
+                    </NavLink>
+                  </NavItem>
+                  <NavItem active>
+                    <NavLink tag={Link} to="/kit">
+                      About
+                    </NavLink>
+                  </NavItem>
+                </Nav>
+              </Collapse>
             </div>
-          </footer>
+          </Navbar>
+          <div className="container">
+            <div className="mt-3">
+              <h1>About this GR-20 site</h1>
+            </div>
+            <p className="lead">
+              This is a hobby fan site made for the GR-20 route in Corsica,
+              France. The intention is to provide useful resources to help{' '}
+              <a href="https://github.com/badsyntax">me</a> and you plan and
+              explore the route/s and island.
+            </p>
+            <div className="mt-3">
+              <h2>Goals</h2>
+            </div>
+            <p>
+              Here are some high-level goals I'd like to achieve with this site,
+              in no particular order:
+            </p>
+            <ul>
+              <li>
+                0 maintenance overhead - I want to be able to step away from
+                this project at any point.
+                <ul>
+                  <li>
+                    No reliance on any custom server-side tech for runtime.
+                    Purely front-end application that calls remote API's.
+                  </li>
+                  <li>
+                    No fees to pay (hosted on a free service, like GitHub pages)
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Use and share open data. Not-for profit. Open-source. All for
+                passion of the route.
+              </li>
+              <li>
+                Collaborative effort.
+                <ul>
+                  <li>
+                    I need help with the GPS data. I would like to have GPX
+                    routes for the variants and other routes on the island. I
+                    plan to record more data when I do the route again in June
+                    2019 but if anyone wants to submit their GPS data it would
+                    super useful!
+                  </li>
+                  <li>
+                    If you'd like to contribute, you can so via GitHub. Just{' '}
+                    <a href="https://github.com/badsyntax/gr-20/issues">
+                      create an issue{' '}
+                    </a>{' '}
+                    to get a conversation going. If you don't have an account
+                    you'll need to sign-up but it's free.
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <div className="mt-3">
+              <h2>Tech used</h2>
+              <ul>
+                <li>OpenLayers V5</li>
+                <li>OpenStreetMap</li>
+                <li>React</li>
+                <li>Bootstrap</li>
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </Fragment>
-);
+      </Fragment>
+    );
+  }
+}
 export default AboutPage;

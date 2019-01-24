@@ -18,7 +18,7 @@ class Google360ButtonControl extends Component {
   };
 
   render() {
-    const { pointName, embedUrl, rest } = this.props;
+    const { pointName, embedUrl, ...rest } = this.props;
     const { modalOpen } = this.state;
     return (
       <Fragment>

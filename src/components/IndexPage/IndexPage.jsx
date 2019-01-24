@@ -37,7 +37,7 @@ const IndexPage = props => (
             </p>
             <p className="lead">
               <Link to="/map/" className="btn btn-lg btn-primary">
-                View Route <IoMdArrowRoundForward />
+                View Routes <IoMdArrowRoundForward />
               </Link>{' '}
               <Link to="/kit/" className="btn btn-lg btn-primary">
                 View Kit <IoMdArrowRoundForward />

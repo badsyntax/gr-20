@@ -28,12 +28,21 @@
     padding: 2px;
     position: static;
     display: inline-block;
-    margin: 0;
   }
 
   &__close {
     position: absolute;
     right: 0.3rem;
     top: 0.2rem;
+    background: none;
+
+    &-button {
+      background: none;
+      color: #444;
+      &:hover,
+      &:focus {
+        background: none;
+      }
+    }
   }
 }
