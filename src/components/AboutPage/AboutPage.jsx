@@ -120,11 +120,36 @@ class AboutPage extends Component {
             </ul>
             <div className="mt-3">
               <h2>Tech used</h2>
+            </div>
+            <ul>
+              <li>OpenLayers V5</li>
+              <li>OpenStreetMap</li>
+              <li>React</li>
+              <li>Bootstrap</li>
+            </ul>
+            <div className="mt-3">
+              <h2>Other Resources</h2>
               <ul>
-                <li>OpenLayers V5</li>
-                <li>OpenStreetMap</li>
-                <li>React</li>
-                <li>Bootstrap</li>
+                <li>
+                  <a href="http://corsica.forhikers.com/forum/gr-20">
+                    http://corsica.forhikers.com/forum/gr-20
+                  </a>
+                </li>
+                <li>
+                  <a href="https://gr20corsica.wordpress.com/about/">
+                    https://gr20corsica.wordpress.com/about/
+                  </a>
+                </li>
+                <li>
+                  <a href="http://www.le-gr20.fr/en/">
+                    http://www.le-gr20.fr/en/
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.cicerone.co.uk/the-gr20-corsica">
+                    https://www.cicerone.co.uk/the-gr20-corsica
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

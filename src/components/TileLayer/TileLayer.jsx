@@ -14,21 +14,29 @@ import maps from '../../data/maps/maps';
 const urls = maps.map(({ url }) => expandUrl(url)).flat();
 
 class TileLayer extends Component {
-  componentDidMount() {
-    const { map, mapUrl } = this.props;
-    this.xyzSource = new OSM({
-      url: mapUrl,
-    });
-    const rasterLayer = new Tile({
+  constructor(props) {
+    super(props);
+    this.xyzSource = new OSM();
+    this.rasterLayer = new Tile({
       source: this.xyzSource,
     });
-    rasterLayer.set('id', 'osmtilelayer');
-    map.addLayer(rasterLayer);
+    this.rasterLayer.set('id', 'osmtilelayer');
+  }
+
+  componentDidMount() {
+    const { map, mapUrl } = this.props;
+    map.addLayer(this.rasterLayer);
+    this.xyzSource.setUrl(mapUrl);
   }
 
   componentDidUpdate() {
     const { mapUrl } = this.props;
     this.xyzSource.setUrl(mapUrl);
+  }
+
+  componentWillUnmount() {
+    const { map } = this.props;
+    map.removeLayer(this.rasterLayer);
   }
 
   render() {
