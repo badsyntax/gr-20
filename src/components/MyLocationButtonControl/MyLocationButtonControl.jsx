@@ -18,6 +18,7 @@ import marker from './baseline-my_location-24px-yellow.svg';
 
 const LAYER_ID = 'mylocation_layer';
 const FEATURE_ID = 'mylocation_feature';
+const ANIMATION_DURATION = 1000;
 
 class FullScreenButtonControl extends Component {
   constructor(props) {
@@ -65,17 +66,21 @@ class FullScreenButtonControl extends Component {
   onGetCurrentPosition = position => {
     const { showSpinner, map } = this.props;
     showSpinner(false);
+
     const coords = fromLonLat([
       position.coords.longitude,
       position.coords.latitude,
     ]);
 
-    map.getView().setCenter(coords);
-
     this.vectorLayer
       .getSource()
       .getFeatureById(FEATURE_ID)
       .setGeometry(new Point(coords));
+
+    map.getView().animate({
+      center: coords,
+      duration: ANIMATION_DURATION,
+    });
   };
 
   render() {

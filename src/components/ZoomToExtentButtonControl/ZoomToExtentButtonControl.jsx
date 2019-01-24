@@ -5,16 +5,23 @@ import { MdFullscreen } from 'react-icons/md';
 
 import ButtonControl from '../ButtonControl/ButtonControl';
 
+const ANIMATION_DURATION = 1000;
+
 class ZoomToExtentButtonControl extends Component {
   onButtonCLick = () => {
     const { map } = this.props;
     const view = map.getView();
-    view.fit([
-      978823.488305482,
-      5121096.608475749,
-      1039463.1111227559,
-      5245134.752643153,
-    ]);
+    view.fit(
+      [
+        978823.488305482,
+        5121096.608475749,
+        1039463.1111227559,
+        5245134.752643153,
+      ],
+      {
+        duration: ANIMATION_DURATION,
+      }
+    );
   };
 
   render() {
