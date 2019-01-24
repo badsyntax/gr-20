@@ -104,7 +104,7 @@ class Popup extends Component {
 
   onMapClick = evt => {
     const { map } = this.props;
-    const features = map.getFeaturesAtPixel(evt.pixel, { hitTolerance: 10 });
+    const features = map.getFeaturesAtPixel(evt.pixel, { hitTolerance: 4 });
     if (features && features.length) {
       const feature = features[0];
       this.openPopup(evt, feature);
