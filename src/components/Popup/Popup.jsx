@@ -55,8 +55,8 @@ class Popup extends Component {
     elevationGainUp: null,
     elevationGainDown: null,
     modifiers: {
-      hide: { enabled: true },
-      preventOverflow: { enabled: true },
+      hide: { enabled: false },
+      preventOverflow: { enabled: false },
       flip: { enabled: false },
     },
   };
@@ -69,8 +69,10 @@ class Popup extends Component {
     this.overlay = new Overlay({
       element: this.containerRef.current,
       autoPan: false,
+      autoPanAnimation: {
+        duration: 250,
+      },
       stopEvent: true,
-      positioning: 'top-center',
       insertFirst: false,
     });
 
@@ -135,7 +137,7 @@ class Popup extends Component {
     this.openPopup(null, prevPoint.featurePoint);
   };
 
-  onZoomInButotnClick = () => {
+  onZoomInButtonClick = () => {
     const { lonLat } = this.state;
     const { map } = this.props;
     map.getView().animate({
@@ -152,6 +154,11 @@ class Popup extends Component {
     const gpxVectorLayer = getLayerById(map, 'gpxvectorlayer');
     const { name, google360Url } = feature.getProperties();
 
+    const coordinates =
+      feature.getGeometry().getType() === MULTI_LINE_STRING
+        ? evt.coordinate
+        : feature.getGeometry().getCoordinates();
+
     const nextState = {
       name,
       google360Url,
@@ -160,38 +167,25 @@ class Popup extends Component {
       sortedPoint: null,
       elevationGainUp: null,
       elevationGainDown: null,
+      ...getDataFromCoords(coordinates),
     };
 
-    let coordinates = null;
-    if (feature.getGeometry().getType() === MULTI_LINE_STRING) {
-      coordinates = evt.coordinate;
-    } else {
-      coordinates = feature.getGeometry().getCoordinates();
-      if (
-        feature.getId() !== 'startPoint' &&
-        feature.getId() !== 'finishPoint'
-      ) {
-        Object.assign(
-          nextState,
-          getDataFromPointFeature(feature, gpxVectorLayer, sortedPointFeatures)
-        );
-        nextState.distanceInKm = (nextState.distance / 1000).toFixed(2);
-      }
+    if (feature.getId() !== 'startPoint' && feature.getId() !== 'finishPoint') {
+      Object.assign(
+        nextState,
+        getDataFromPointFeature(feature, gpxVectorLayer, sortedPointFeatures)
+      );
     }
-    Object.assign(nextState, getDataFromCoords(coordinates));
 
-    this.overlay.setPosition(coordinates);
-    this.setState(nextState);
-
-    map.getView().animate(
-      {
-        center: coordinates,
-        duration: ANIMATION_DURATION,
-      },
-      () => {
-        this.setState(nextState);
-      }
-    );
+    this.setState(nextState, () => {
+      this.overlay.setPosition(coordinates);
+      setTimeout(() =>
+        map.getView().animate({
+          center: coordinates,
+          duration: ANIMATION_DURATION,
+        })
+      );
+    });
   }
 
   render() {
@@ -244,16 +238,16 @@ class Popup extends Component {
                 <strong>Next Point</strong>
                 {distanceInKm && <div>Distance: {distanceInKm}km</div>}
                 {elevationGainUp && (
-                  <div>Elevation gain up: {elevationGainUp}m</div>
+                  <div>Elevation gain: {elevationGainUp}m</div>
                 )}
                 {elevationGainDown && (
-                  <div>Elevation gain down: {elevationGainDown}m</div>
+                  <div>Elevation loss: {elevationGainDown}m</div>
                 )}
               </Fragment>
             )}
             <div style={{ paddingTop: '0.5rem' }}>
               <ZoomInButtonControl
-                onClick={this.onZoomInButotnClick}
+                onClick={this.onZoomInButtonClick}
                 tooltip="Zoom to Point"
                 {...buttonProps}
               />

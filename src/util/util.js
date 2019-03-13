@@ -47,6 +47,7 @@ export const getDataFromMultiCoords = multiCoords => {
       elevationGainDown: 0,
     }
   );
+  data.distanceInKm = (data.distance / 1000).toFixed(2);
   return data;
 };
 

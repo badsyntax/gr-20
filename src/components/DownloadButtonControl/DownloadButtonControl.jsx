@@ -211,7 +211,13 @@ class DownloadButtonControl extends Component {
                   Please note it might take some time to generate the PDF.
                 </Alert>
               )}
-              <Button onClick={this.onDownloadButtonClick}>Download</Button>
+
+              <Button
+                onClick={this.onDownloadButtonClick}
+                disabled={!values.includeGPX && !values.includePDF}
+              >
+                Download
+              </Button>
             </Form>
           </ModalBody>
         </Modal>

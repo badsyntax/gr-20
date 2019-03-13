@@ -5,30 +5,41 @@
   "private": true,
   "homepage": "https://badsyntax.github.io/gr-20/",
   "dependencies": {
-    "@types/jest": "^23.3.13",
-    "@types/node": "^10.12.18",
-    "@types/ol": "^4.6.3",
-    "@types/react": "^16.7.20",
-    "@types/react-dom": "^16.0.11",
     "bootstrap": "^4.2.1",
     "classnames": "^2.2.6",
     "core-js": "^3.0.0-beta.8",
     "file-saver": "^2.0.0",
+    "gh-pages": "^2.0.1",
     "jspdf": "^1.5.3",
     "jszip": "^3.1.5",
-    "ol": "^5.3.0",
-    "ol-hashed": "^2.0.0",
-    "prop-types": "^15.6.2",
-    "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-helmet": "^6.0.0-beta",
     "react-icons": "^3.3.0",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.1.3",
+    "ol-hashed": "^2.0.0",
+    "ol": "^5.3.0",
+    "prop-types": "^15.6.2",
     "react-topbar-progress-indicator": "^2.0.0",
     "react-virtualized": "^9.21.0",
     "react-vis": "^1.11.6",
-    "reactstrap": "^7.1.0",
+    "react": "^16.7.0",
+    "reactstrap": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/core-js": "^2.5.0",
+    "@types/jest": "^24.0.11",
+    "@types/node": "^11.11.2",
+    "@types/ol": "^4.6.3",
+    "@types/react-dom": "^16.0.11",
+    "@types/react": "^16.7.20",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "node-sass": "^4.11.0",
+    "prettier": "^1.15.3",
+    "react-scripts": "^2.1.8",
+    "react-snap": "^1.23.0",
+    "source-map-explorer": "^1.6.0",
     "typescript": "^3.2.4"
   },
   "scripts": {
@@ -50,30 +61,24 @@
     }
   },
   "eslintConfig": {
-    "extends": [
-      "airbnb",
-      "react-app",
-      "prettier",
-      "prettier/react"
-    ],
+    "extends": "react-app",
     "plugins": [
       "prettier"
-    ]
+    ],
+    "rules": {
+      "prettier/prettier": "error"
+    }
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true
   },
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
-  "devDependencies": {
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-config-prettier": "^3.4.0",
-    "eslint-plugin-prettier": "^3.0.1",
-    "gh-pages": "^2.0.1",
-    "node-sass": "^4.11.0",
-    "prettier": "^1.15.3",
-    "react-snap": "^1.23.0",
-    "source-map-explorer": "^1.6.0"
-  }
+  ]
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Map from 'ol/Map';
-import { MdFullscreen } from 'react-icons/md';
+import { MdZoomOutMap } from 'react-icons/md';
 
 import ButtonControl from '../ButtonControl/ButtonControl';
 
@@ -32,7 +32,7 @@ class ZoomToExtentButtonControl extends Component {
         onClick={this.onButtonCLick}
         {...rest}
       >
-        <MdFullscreen />
+        <MdZoomOutMap />
       </ButtonControl>
     );
   }

@@ -7,11 +7,11 @@ import { MapContext } from '../Map/Map';
 import { getLayerById } from '../../util/util';
 import { OptionsContext } from '../Options/OptionsProvider';
 
-import FullScreenButtonControl from './FullScreenButtonControl';
+// import FullScreenButtonControl fro../FullScreenButtonControl/FullScreenButtonControlrol';
 import MyLocationButtonControl from '../MyLocationButtonControl/MyLocationButtonControl';
 import DownloadButtonControl from '../DownloadButtonControl/DownloadButtonControl';
 import ZoomToExtentButtonControl from '../ZoomToExtentButtonControl/ZoomToExtentButtonControl';
-import GetLinkButtonControl from '../GetLinkButtonControl/GetLinkButtonControl';
+// import GetLinkButtonControl from '../GetLinkButtonControl/GetLinkButtonControl';
 import PdfExportButtonControl from '../PdfExportButtonControl/PdfExportButtonControl';
 
 import controls, { zoomControl } from './controls';
@@ -54,10 +54,10 @@ class MapControls extends Component {
       <div className={STYLES.MapControls}>
         <div ref={this.zoomContainerRef} />
         <ZoomToExtentButtonControl tooltip="Fit Extent" {...buttonProps} />
-        <FullScreenButtonControl
+        {/* <FullScreenButtonControl
           tooltip="Toggle full-screen"
           {...buttonProps}
-        />
+        /> */}
         <PdfExportButtonControl
           tooltip="Export to PDF"
           showSpinner={showSpinner}
@@ -69,7 +69,7 @@ class MapControls extends Component {
           showSpinner={showSpinner}
           {...buttonProps}
         />
-        <GetLinkButtonControl tooltip="Get Shareable Link" {...buttonProps} />
+        {/* <GetLinkButtonControl tooltip="Get Shareable Link" {...buttonProps} /> */}
         <MyLocationButtonControl
           tooltip="Show My Location"
           showSpinner={showSpinner}
