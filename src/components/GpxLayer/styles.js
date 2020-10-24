@@ -7,7 +7,7 @@ const styles = {
   Point: new Style({
     image: new Circle({
       fill: new Fill({
-        color: 'yellow',
+        color: 'rgb(255,255,0,1)',
       }),
       stroke: new Stroke({ color: 'rgba(0,60,136)', width: 1 }),
       radius: 5,

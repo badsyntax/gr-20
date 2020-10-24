@@ -1,6 +1,6 @@
 # GR-20
 
-[![Build Status](https://travis-ci.org/badsyntax/gr-20.svg?branch=master)](https://travis-ci.org/badsyntax/gr-20)
+![Build & Publish](https://github.com/badsyntax/gr-20/workflows/Build%20&%20Publish/badge.svg?branch=master)
 
 Some useful info on the GR-20 hike in Corsica. https://badsyntax.github.io/gr-20/
 
