@@ -50,12 +50,12 @@ class Map extends Component {
     map.un('pointermove', this.onMapPointerMove);
   }
 
-  onMapPointerMove = evt => {
+  onMapPointerMove = (evt) => {
     const { map } = this.state;
     if (evt.originalEvent.target.nodeName.toLowerCase() === 'canvas') {
       const pixel = map.getEventPixel(evt.originalEvent);
       const features = [];
-      map.forEachFeatureAtPixel(pixel, feature => {
+      map.forEachFeatureAtPixel(pixel, (feature) => {
         features.push(feature);
       });
       if (features.length > 0) {

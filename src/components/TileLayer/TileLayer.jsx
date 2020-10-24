@@ -42,7 +42,7 @@ class TileLayer extends Component {
   render() {
     return (
       <Helmet>
-        {urls.map(url => (
+        {urls.map((url) => (
           <link key={url} href={new URL(url).origin} rel="preconnect" />
         ))}
       </Helmet>
@@ -55,7 +55,7 @@ TileLayer.propTypes = {
   mapUrl: PropTypes.string.isRequired,
 };
 
-export default props => (
+const TileLayerContainer = (props) => (
   <OptionsContext.Consumer>
     {({ values }) => {
       const { mapUrl } = values;
@@ -67,3 +67,5 @@ export default props => (
     }}
   </OptionsContext.Consumer>
 );
+
+export default TileLayerContainer;

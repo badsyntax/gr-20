@@ -6,7 +6,7 @@ import AboutPage from '../AboutPage/AboutPage';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import './App.css';
 
-const App = props => (
+const App = (props) => (
   <div className="App">
     <Router basename={process.env.PUBLIC_URL}>
       <Switch>

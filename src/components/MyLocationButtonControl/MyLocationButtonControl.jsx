@@ -63,7 +63,7 @@ class FullScreenButtonControl extends Component {
     }
   };
 
-  onGetCurrentPosition = position => {
+  onGetCurrentPosition = (position) => {
     const { showSpinner, map } = this.props;
     showSpinner(false);
 

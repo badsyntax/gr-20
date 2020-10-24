@@ -6,14 +6,14 @@ import { SpinnerContext } from './SpinnerProvider';
 
 TopBarProgress.config({
   barColors: {
-    '0': 'yellow',
+    0: 'yellow',
     '1.0': 'yellow',
   },
   shadowBlur: 5,
   barThickness: 3,
 });
 
-const Spinner = props => {
+const Spinner = (props) => {
   const { isOpen } = props;
   document.body.style.cursor = isOpen ? 'progress' : 'default';
   return isOpen ? <TopBarProgress /> : null;
@@ -23,8 +23,10 @@ Spinner.propTypes = {
   isOpen: PropTypes.bool.isRequired,
 };
 
-export default props => (
+const SpinnerContainer = (props) => (
   <SpinnerContext.Consumer>
-    {context => <Spinner isOpen={context.isOpen} />}
+    {(context) => <Spinner isOpen={context.isOpen} />}
   </SpinnerContext.Consumer>
 );
+
+export default SpinnerContainer;

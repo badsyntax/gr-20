@@ -22,7 +22,7 @@ const initialOptions = {
   gpxUrl: routes[0].url,
 };
 
-const MapPage = props => (
+const MapPage = (props) => (
   <Fragment>
     <Helmet>
       <title>GR-20 - The Route</title>

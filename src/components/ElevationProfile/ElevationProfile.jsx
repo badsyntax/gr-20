@@ -81,8 +81,8 @@ class ElevationProfile extends Component {
       x: point.distanceFromStart / 1000, // km
       y: point.coord[2],
     }));
-    const yMax = Math.max(...data.map(e => e.y)) || 0;
-    const yMin = Math.min(...data.map(e => e.y)) || 0;
+    const yMax = Math.max(...data.map((e) => e.y)) || 0;
+    const yMin = Math.min(...data.map((e) => e.y)) || 0;
     this.setState({
       data,
       yMax,

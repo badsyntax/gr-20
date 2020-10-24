@@ -1,82 +1,82 @@
 [
-    {
-        "name": "Calenzana",
-        "wiki": null,
-        "google-360": null
-    },
-    {
-        "name": "Refuge de Capannelle",
-        "wiki": "https://fr.wikipedia.org/wiki/Refuge_d%27E_Capannelle",
-        "google-360": null
-    },
-    {
-        "name": "Refuge de Prati",
-        "wiki": "https://fr.wikipedia.org/wiki/Refuge_de_Prati",
-        "google-360": null
-    },
-    {
-        "name": "Refuge D'Usciolu",
-        "wiki": "https://fr.wikipedia.org/wiki/Refuge_d%27Usciolu",
-        "google-360": null
-    },
-    {
-        "name": "Refuge D'Asinau",
-        "wiki": "https://fr.wikipedia.org/wiki/Refuge_d%27Asinau",
-        "google-360": null
-    },
-    {
-        "name": "Refuge de Paliri",
-        "wiki": null,
-        "google-360": null
-    },
-    {
-        "name": "Conca",
-        "wiki": null,
-        "google-360": null
-    },
-    {
-        "name": "Refuge d'Ortu Di U Piobbu",
-        "wiki": null,
-        "google-360": null
-    },
-    {
-        "name": "Refuge de Carozzu",
-        "wiki": null,
-        "google-360": null
-    },
-    {
-        "name": "Refuge de Haut-Asco",
-        "wiki": null,
-        "google-360": null
-    },
-    {
-        "name": "Refuge de Tighjettu",
-        "wiki": null,
-        "google-360": "https://www.google.com/maps/embed?pb=!4v1546681287448!6m8!1m7!1sCAoSLEFGMVFpcE1LOEkzb3FheWtHOVhFby1vQnlWeGpqZkQ2XzVKanlhMzdDdkJo!2m2!1d42.36211429999999!2d8.909091!3f292.889159142757!4f-17.229054098280898!5f0.8452963887718612"
-    },
-    {
-        "name": "Castel de Vergio",
-        "wiki": null,
-        "google-360": null
-    },
-    {
-        "name": "Refuge de Manganu",
-        "wiki": null,
-        "google-360": null
-    },
-    {
-        "name": "Refuge de Petra Piana",
-        "wiki": "https://fr.wikipedia.org/wiki/Refuge_de_Petra_Piana",
-        "google-360": null
-    },
-    {
-        "name": "Refuge de L'Onda",
-        "wiki": "https://fr.wikipedia.org/wiki/Refuge_de_l%27Onda",
-        "google-360": null
-    },
-    {
-        "name": "Vizzavona",
-        "wiki": "https://fr.wikipedia.org/wiki/Vizzavona",
-        "google-360": null
-    }
+  {
+    "name": "Calenzana",
+    "wiki": null,
+    "google-360": null
+  },
+  {
+    "name": "Refuge de Capannelle",
+    "wiki": "https://fr.wikipedia.org/wiki/Refuge_d%27E_Capannelle",
+    "google-360": null
+  },
+  {
+    "name": "Refuge de Prati",
+    "wiki": "https://fr.wikipedia.org/wiki/Refuge_de_Prati",
+    "google-360": null
+  },
+  {
+    "name": "Refuge D'Usciolu",
+    "wiki": "https://fr.wikipedia.org/wiki/Refuge_d%27Usciolu",
+    "google-360": null
+  },
+  {
+    "name": "Refuge D'Asinau",
+    "wiki": "https://fr.wikipedia.org/wiki/Refuge_d%27Asinau",
+    "google-360": null
+  },
+  {
+    "name": "Refuge de Paliri",
+    "wiki": null,
+    "google-360": null
+  },
+  {
+    "name": "Conca",
+    "wiki": null,
+    "google-360": null
+  },
+  {
+    "name": "Refuge d'Ortu Di U Piobbu",
+    "wiki": null,
+    "google-360": null
+  },
+  {
+    "name": "Refuge de Carozzu",
+    "wiki": null,
+    "google-360": null
+  },
+  {
+    "name": "Refuge de Haut-Asco",
+    "wiki": null,
+    "google-360": null
+  },
+  {
+    "name": "Refuge de Tighjettu",
+    "wiki": null,
+    "google-360": "https://www.google.com/maps/embed?pb=!4v1546681287448!6m8!1m7!1sCAoSLEFGMVFpcE1LOEkzb3FheWtHOVhFby1vQnlWeGpqZkQ2XzVKanlhMzdDdkJo!2m2!1d42.36211429999999!2d8.909091!3f292.889159142757!4f-17.229054098280898!5f0.8452963887718612"
+  },
+  {
+    "name": "Castel de Vergio",
+    "wiki": null,
+    "google-360": null
+  },
+  {
+    "name": "Refuge de Manganu",
+    "wiki": null,
+    "google-360": null
+  },
+  {
+    "name": "Refuge de Petra Piana",
+    "wiki": "https://fr.wikipedia.org/wiki/Refuge_de_Petra_Piana",
+    "google-360": null
+  },
+  {
+    "name": "Refuge de L'Onda",
+    "wiki": "https://fr.wikipedia.org/wiki/Refuge_de_l%27Onda",
+    "google-360": null
+  },
+  {
+    "name": "Vizzavona",
+    "wiki": "https://fr.wikipedia.org/wiki/Vizzavona",
+    "google-360": null
+  }
 ]

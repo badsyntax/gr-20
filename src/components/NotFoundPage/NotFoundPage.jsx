@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import STYLES from './NotFoundPage.module.scss';
 
-const NotFoundPage = props => (
+const NotFoundPage = (props) => (
   <div className={STYLES.NotFoundPage}>
     <Helmet>
       <title>404 Not Found</title>

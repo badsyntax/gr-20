@@ -11,8 +11,6 @@ export default class RotateNorthControl extends ButtonControl {
   }
 
   onButtonCLick = () => {
-    this.getMap()
-      .getView()
-      .setRotation(0);
+    this.getMap().getView().setRotation(0);
   };
 }

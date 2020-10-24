@@ -78,7 +78,7 @@ export const getMultiStagePDF = (
       false,
       extent,
       pdf,
-      canvas => {
+      (canvas) => {
         addPDFTextToCanvas(canvas, stageFeature, stageFeatures, index);
       }
     );
@@ -147,9 +147,9 @@ export const downloadZipFile = async (
 ) => {
   onLoadStart();
 
-  const {
-    default: JSZip,
-  } = await import(/* webpackChunkName: "jszip" */ 'jszip');
+  const { default: JSZip } = await import(
+    /* webpackChunkName: "jszip" */ 'jszip'
+  );
 
   const vectorLayer = getLayerById(map, 'gpxvectorlayer');
   const source = vectorLayer.getSource();

@@ -59,7 +59,7 @@ class DropdownGroup extends Component {
                           >
                             <Label
                               check
-                              onClick={event => {
+                              onClick={(event) => {
                                 event.stopPropagation();
                               }}
                               className={STYLES['DropdownGroup__form-label']}
@@ -77,7 +77,7 @@ class DropdownGroup extends Component {
                       ) : (
                         <DropdownItem
                           key={inputName}
-                          onClick={eventKey => {
+                          onClick={(eventKey) => {
                             this.onChange({
                               target: {
                                 name: dropdownName,
@@ -129,7 +129,7 @@ DropdownGroup.propTypes = {
   ).isRequired,
 };
 
-export default props => (
+const DropdownGroupContainer = (props) => (
   <OptionsContext.Consumer>
     {({ dropdownOptions, values, onChange }) => (
       <DropdownGroup
@@ -141,3 +141,5 @@ export default props => (
     )}
   </OptionsContext.Consumer>
 );
+
+export default DropdownGroupContainer;

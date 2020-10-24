@@ -7,7 +7,7 @@ import STYLES from './IndexPage.module.scss';
 
 import cover from './cover.jpg';
 
-const IndexPage = props => (
+const IndexPage = (props) => (
   <Fragment>
     <Helmet>
       <title>GR-20</title>

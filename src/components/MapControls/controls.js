@@ -13,4 +13,6 @@ export const scaleLineControl = new ScaleLine({
   minWidth: 100,
 });
 
-export default [zoomControl, attributionControl, scaleLineControl];
+const controls = [zoomControl, attributionControl, scaleLineControl];
+
+export default controls;

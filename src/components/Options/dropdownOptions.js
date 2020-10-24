@@ -1,7 +1,7 @@
 import maps from '../../data/maps/maps';
 import routes from '../../data/routes/routes';
 
-export default [
+const options = [
   {
     label: 'Routes',
     name: 'gpxUrl',
@@ -36,3 +36,5 @@ export default [
     ],
   },
 ];
+
+export default options;

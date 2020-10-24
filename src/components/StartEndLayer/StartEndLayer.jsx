@@ -89,7 +89,7 @@ class StartEndLayer extends Component {
     );
     this.vectorLayer.setSource(source);
 
-    gpxVectorLayer.getSource().once('change', evt => {
+    gpxVectorLayer.getSource().once('change', (evt) => {
       if (gpxVectorLayer.getSource().getState() === STATE.READY) {
         const multiLineStringGeometry = getMultiLineStringFeature(
           gpxVectorLayer.getSource().getFeatures()
@@ -120,7 +120,7 @@ StartEndLayer.propTypes = {
   gpxUrl: PropTypes.string.isRequired,
 };
 
-export default props => (
+const StartEndLayerContainer = (props) => (
   <OptionsContext.Consumer>
     {({ values }) => {
       const { showMarkers, gpxUrl } = values;
@@ -139,3 +139,5 @@ export default props => (
     }}
   </OptionsContext.Consumer>
 );
+
+export default StartEndLayerContainer;

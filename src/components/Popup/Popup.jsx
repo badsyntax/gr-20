@@ -77,7 +77,9 @@ class Popup extends Component {
     });
 
     map.addOverlay(this.overlay);
-    pointSelectEvents.forEach(eventType => map.on(eventType, this.onMapClick));
+    pointSelectEvents.forEach((eventType) =>
+      map.on(eventType, this.onMapClick)
+    );
     this.setSortedPoints();
   }
 
@@ -90,7 +92,9 @@ class Popup extends Component {
 
   componentWillUnmount() {
     const { map } = this.props;
-    pointSelectEvents.forEach(eventType => map.un(eventType, this.onMapClick));
+    pointSelectEvents.forEach((eventType) =>
+      map.un(eventType, this.onMapClick)
+    );
   }
 
   setSortedPoints() {
@@ -104,7 +108,7 @@ class Popup extends Component {
     });
   }
 
-  onMapClick = evt => {
+  onMapClick = (evt) => {
     const { map } = this.props;
     const features = map.getFeaturesAtPixel(evt.pixel, { hitTolerance: 4 });
     if (features && features.length) {
@@ -286,7 +290,7 @@ Popup.propTypes = {
   gpxUrl: PropTypes.string.isRequired,
 };
 
-export default props => (
+const PopupContainer = (props) => (
   <OptionsContext.Consumer>
     {({ values }) => {
       const { gpxUrl } = values;
@@ -298,3 +302,5 @@ export default props => (
     }}
   </OptionsContext.Consumer>
 );
+
+export default PopupContainer;

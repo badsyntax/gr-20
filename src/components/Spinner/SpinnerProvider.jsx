@@ -16,7 +16,7 @@ class SpinnerProvider extends Component {
     };
   }
 
-  toggle = show => {
+  toggle = (show) => {
     this.setState(({ isOpen }) => ({
       isOpen: show !== undefined ? show : !isOpen,
     }));

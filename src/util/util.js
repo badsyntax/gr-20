@@ -5,18 +5,18 @@ import GeometryType from 'ol/geom/GeometryType';
 
 const { MULTI_LINE_STRING, POINT } = GeometryType;
 
-export const getHDMS = coords => {
+export const getHDMS = (coords) => {
   const lonLat = toLonLat(coords);
   const hdms = toStringHDMS(lonLat);
   return hdms;
 };
 
-export const getElevation = coords => {
+export const getElevation = (coords) => {
   const elevation = Math.round(coords[2]);
   return elevation;
 };
 
-export const getDataFromMultiCoords = multiCoords => {
+export const getDataFromMultiCoords = (multiCoords) => {
   const data = multiCoords.reduce(
     (accumulator, currentValue, i) => {
       if (i === multiCoords.length - 1) {
@@ -51,7 +51,7 @@ export const getDataFromMultiCoords = multiCoords => {
   return data;
 };
 
-export const getDataFromCoords = coords => {
+export const getDataFromCoords = (coords) => {
   const lonLat = toLonLat(coords);
   const hdms = getHDMS(coords);
   const elevation = getElevation(coords);
@@ -98,17 +98,17 @@ export const getLayerById = (map, id) =>
   map
     .getLayers()
     .getArray()
-    .find(layer => layer.get('id') === id);
+    .find((layer) => layer.get('id') === id);
 
-export const getMultiLineStringFeature = features =>
+export const getMultiLineStringFeature = (features) =>
   features.find(
-    feature => feature.getGeometry().getType() === MULTI_LINE_STRING
+    (feature) => feature.getGeometry().getType() === MULTI_LINE_STRING
   );
 
-export const getPointFeatures = features =>
-  features.filter(feature => feature.getGeometry().getType() === POINT);
+export const getPointFeatures = (features) =>
+  features.filter((feature) => feature.getGeometry().getType() === POINT);
 
-export const getSortedPointFeatures = vectorLayer => {
+export const getSortedPointFeatures = (vectorLayer) => {
   const points = getPointFeatures(vectorLayer.getSource().getFeatures());
   const multiLine = getMultiLineStringFeature(
     vectorLayer.getSource().getFeatures()
@@ -119,13 +119,13 @@ export const getSortedPointFeatures = vectorLayer => {
     );
   }
   const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
-  const pointsInMultiLine = points.map(point => {
+  const pointsInMultiLine = points.map((point) => {
     const closestPointInMultiLine = multiLine
       .getGeometry()
       .getClosestPoint(point.getGeometry().getCoordinates());
     const margin = 50; // meters
     const closesPointIndex = multiLineCoords.findIndex(
-      coord =>
+      (coord) =>
         new LineString([coord, closestPointInMultiLine]).getLength() < margin
     );
     return {
@@ -182,11 +182,11 @@ export const exportMapToPDF = async (
   pdf,
   onBeforeRender = () => {}
 ) =>
-  new Promise(async resolve => {
+  new Promise(async (resolve) => {
     if (!pdf) {
-      const {
-        default: JSPDF,
-      } = await import(/* webpackChunkName: "jspdf" */ 'jspdf');
+      const { default: JSPDF } = await import(
+        /* webpackChunkName: "jspdf" */ 'jspdf'
+      );
       // eslint-disable-next-line no-param-reassign
       pdf = new JSPDF('landscape', undefined, format);
     }
@@ -194,7 +194,7 @@ export const exportMapToPDF = async (
     const size = map.getSize();
     const defaultExtent = map.getView().calculateExtent(size);
 
-    map.once('rendercomplete', event => {
+    map.once('rendercomplete', (event) => {
       const { canvas } = event.context;
       onBeforeRender(canvas);
       const data = canvas.toDataURL('image/jpeg');

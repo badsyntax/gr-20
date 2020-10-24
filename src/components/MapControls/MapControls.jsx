@@ -29,15 +29,15 @@ class MapControls extends Component {
   componentDidMount() {
     const { map } = this.props;
     zoomControl.setTarget(this.zoomContainerRef.current);
-    controls.forEach(control => map.addControl(control));
+    controls.forEach((control) => map.addControl(control));
   }
 
   componentWillUnmount() {
     const { map } = this.props;
-    controls.forEach(control => map.removeControl(control));
+    controls.forEach((control) => map.removeControl(control));
   }
 
-  tooltipToggle = i => {
+  tooltipToggle = (i) => {
     this.setState(({ openTooltipIndex }) => ({
       openTooltipIndex: i === openTooltipIndex ? -1 : i,
     }));
@@ -88,7 +88,7 @@ MapControls.propTypes = {
   showSpinner: PropTypes.func.isRequired,
 };
 
-export default props => (
+const MapControlsContainer = (props) => (
   <OptionsContext.Consumer>
     {({ values }) => {
       const { showControls } = values;
@@ -108,3 +108,5 @@ export default props => (
     }}
   </OptionsContext.Consumer>
 );
+
+export default MapControlsContainer;

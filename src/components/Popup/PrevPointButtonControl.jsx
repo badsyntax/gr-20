@@ -3,7 +3,7 @@ import { FaCaretLeft } from 'react-icons/fa';
 
 import ButtonControl from '../ButtonControl/ButtonControl';
 
-const PrevPointButtonControl = props => (
+const PrevPointButtonControl = (props) => (
   <ButtonControl {...props}>
     <FaCaretLeft />
   </ButtonControl>

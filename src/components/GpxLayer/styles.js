@@ -3,7 +3,7 @@ import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
 
-export default {
+const styles = {
   Point: new Style({
     image: new Circle({
       fill: new Fill({
@@ -20,3 +20,5 @@ export default {
     }),
   }),
 };
+
+export default styles;

@@ -27,7 +27,7 @@ class GpxLayer extends Component {
     this.vectorLayer = new VectorLayer();
     this.vectorLayer.set('id', 'gpxvectorlayer');
     this.vectorLayer.setStyle(
-      feature => STYLES[feature.getGeometry().getType()]
+      (feature) => STYLES[feature.getGeometry().getType()]
     );
   }
 
@@ -61,7 +61,7 @@ class GpxLayer extends Component {
         const gr20Nodes = [
           ...extensionsNode.getElementsByTagName(EXTENSIONS_TAG_NAME),
         ];
-        gr20Nodes.forEach(node => {
+        gr20Nodes.forEach((node) => {
           const name = node.getAttribute('name');
           const text = node.textContent;
           feature.setProperties({
@@ -75,7 +75,7 @@ class GpxLayer extends Component {
       format,
     });
     this.vectorLayer.setSource(source);
-    source.once('change', evt => {
+    source.once('change', (evt) => {
       if (source.getState() === STATE.READY) {
         onSourceLoadEnd();
       }
@@ -86,13 +86,13 @@ class GpxLayer extends Component {
     const source = this.vectorLayer.getSource();
     if (show) {
       const { gpxMarkers } = this.state;
-      gpxMarkers.forEach(markerPoint => source.addFeature(markerPoint));
+      gpxMarkers.forEach((markerPoint) => source.addFeature(markerPoint));
     } else {
       const gpxMarkers = getPointFeatures(source.getFeatures());
       this.setState({
         gpxMarkers,
       });
-      gpxMarkers.forEach(markerPoint => source.removeFeature(markerPoint));
+      gpxMarkers.forEach((markerPoint) => source.removeFeature(markerPoint));
     }
   }
 
@@ -125,7 +125,7 @@ GpxLayer.propTypes = {
   onSourceLoadEnd: PropTypes.func.isRequired,
 };
 
-export default props => (
+const GpxLayerContainer = (props) => (
   <SpinnerContext.Consumer>
     {({ toggle: showSpinner }) => (
       <OptionsContext.Consumer>
@@ -151,3 +151,5 @@ export default props => (
     )}
   </SpinnerContext.Consumer>
 );
+
+export default GpxLayerContainer;

@@ -4,7 +4,7 @@ import { MdZoomIn } from 'react-icons/md';
 
 import ButtonControl from '../ButtonControl/ButtonControl';
 
-const ZoomInButtonControl = props => (
+const ZoomInButtonControl = (props) => (
   <ButtonControl {...props}>
     <MdZoomIn />
   </ButtonControl>

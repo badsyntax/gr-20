@@ -7,7 +7,7 @@ class Dropdown extends Component {
     isOpen: false,
   };
 
-  toggle = name => {
+  toggle = (name) => {
     this.setState(({ isOpen }) => ({
       isOpen: !isOpen,
     }));
