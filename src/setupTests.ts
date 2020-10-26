@@ -5,7 +5,10 @@
 import '@testing-library/jest-dom';
 import 'jest-canvas-mock';
 
-function noop() {}
+function noop() {
+  return undefined;
+}
+
 if (typeof window.URL.createObjectURL === 'undefined') {
   Object.defineProperty(window.URL, 'createObjectURL', { value: noop });
 }

@@ -180,7 +180,9 @@ export const exportMapToPDF = async (
   reset = true,
   extent = null,
   pdf,
-  onBeforeRender = () => {}
+  onBeforeRender = () => {
+    return undefined;
+  }
 ) =>
   new Promise(async (resolve) => {
     if (!pdf) {

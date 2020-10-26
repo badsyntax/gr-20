@@ -2,6 +2,7 @@
   "name": "gr-20",
   "version": "0.1.0",
   "private": true,
+  "sideEffects": false,
   "homepage": "https://badsyntax.github.io/gr-20/",
   "scripts": {
     "start": "react-scripts start",
@@ -22,13 +23,33 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "plugin:@typescript-eslint/recommended",
+      "prettier/@typescript-eslint",
+      "plugin:prettier/recommended"
     ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "ignorePatterns": "build",
     "plugins": [
       "prettier"
     ],
     "rules": {
-      "prettier/prettier": "error"
+      "prettier/prettier": "error",
+      "@typescript-eslint/no-floating-promises": "error",
+      "import/order": [
+        "error",
+        {
+          "groups": [
+            "builtin",
+            "external",
+            "parent",
+            "sibling",
+            "index"
+          ]
+        }
+      ]
     }
   },
   "browserslist": {
@@ -71,14 +92,26 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@fluentui/react": "^7.147.1",
+    "@fluentui/react-theme-provider": "^0.16.2",
+    "@reduxjs/toolkit": "^1.4.0",
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "@types/classnames": "^2.2.10",
     "@types/jest": "^26.0.15",
     "@types/node": "^14.14.2",
     "@types/ol": "^6.4.1",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "@types/react-helmet": "^6.1.0",
+    "@types/react-redux": "^7.1.9",
+    "@types/react-router-dom": "^5.1.6",
+    "@types/reactstrap": "^8.5.2",
+    "@typescript-eslint/eslint-plugin": "^4.5.0",
+    "@typescript-eslint/parser": "^4.5.0",
+    "@uifabric/react-hooks": "^7.13.6",
+    "add": "^2.0.6",
     "bootstrap": "^4.5.3",
     "classnames": "^2.2.6",
     "core-js": "^3.6.5",
@@ -97,6 +130,7 @@
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",
     "react-icons": "^3.11.0",
+    "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
     "react-snap": "^1.23.0",
@@ -104,6 +138,7 @@
     "react-virtualized": "^9.22.2",
     "react-vis": "^1.11.7",
     "reactstrap": "^8.6.0",
+    "redux-thunk": "^2.3.0",
     "source-map-explorer": "^2.5.0",
     "typescript": "^4.0.3",
     "web-vitals": "^0.2.4"

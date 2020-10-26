@@ -14,7 +14,17 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "paths": {
+      "ol": ["node_modules/ol/src"],
+      "ol/*": ["node_modules/ol/src/*"]
+    }
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "node_modules/ol/**/*"
+  ],
+  "typeAcquisition": {
+    "exclude": ["ol"]
+  }
 }

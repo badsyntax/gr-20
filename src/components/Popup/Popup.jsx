@@ -12,21 +12,19 @@ import MapBrowserEventType from 'ol/MapBrowserEventType';
 
 import { MdHome } from 'react-icons/md';
 
-import CloseButtonControl from './CloseButtonControl';
-import ZoomInButtonControl from './ZoomInButtonControl';
-import PrevPointButtonControl from './PrevPointButtonControl';
-import NextPointButtonControl from './NextPointButtonControl';
-import Google360ButtonControl from './Google360ButtonControl';
-
 import {
   getLayerById,
   getSortedPointFeatures,
   getDataFromCoords,
   getDataFromPointFeature,
 } from '../../util/util';
-
 import { MapContext } from '../Map/Map';
 import { OptionsContext } from '../Options/OptionsProvider';
+import CloseButtonControl from './CloseButtonControl';
+import ZoomInButtonControl from './ZoomInButtonControl';
+import PrevPointButtonControl from './PrevPointButtonControl';
+import NextPointButtonControl from './NextPointButtonControl';
+import Google360ButtonControl from './Google360ButtonControl';
 
 import STYLES from './Popup.module.scss';
 

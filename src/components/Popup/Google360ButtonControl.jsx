@@ -2,9 +2,8 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 
-import { ReactComponent as Icon360 } from './360-24px.svg';
-
 import ButtonControl from '../ButtonControl/ButtonControl';
+import { ReactComponent as Icon360 } from './360-24px.svg';
 
 class Google360ButtonControl extends Component {
   state = {
