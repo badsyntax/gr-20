@@ -17,7 +17,8 @@
     "lint:eslint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "lint:eslint:fix": "npm run lint:eslint -- --fix",
     "lint:prettier": "prettier --check \"**/*.{json,svg,md,yml}\"",
-    "lint:prettier:fix": "prettier --write '**/*.{json,svg,md,yml}'"
+    "lint:prettier:fix": "prettier --write '**/*.{json,svg,md,yml}'",
+    "bundlewatch": "bundlewatch"
   },
   "eslintConfig": {
     "extends": [
@@ -41,6 +42,18 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "bundlewatch": {
+    "files": [
+      {
+        "path": "build/static/js/runtime-main*.js",
+        "maxSize": "2 kB"
+      },
+      {
+        "path": "build/static/js/*.chunk.js",
+        "maxSize": "190 kB"
+      }
     ]
   },
   "reactSnap": {
@@ -80,6 +93,7 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "bootstrap": "^4.5.3",
+    "bundlewatch": "^0.3.1",
     "classnames": "^2.2.6",
     "core-js": "^3.6.5",
     "eslint-config-prettier": "^6.14.0",

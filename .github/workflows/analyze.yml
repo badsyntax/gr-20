@@ -1,4 +1,4 @@
-name: 'CodeQL'
+name: Analyze
 
 on:
   push:
@@ -7,8 +7,40 @@ on:
     branches: [master]
 
 jobs:
-  analyze:
-    name: Analyze
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node 12.16.2
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.16.2
+      - name: Install NPM Packages
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+
+  bundlewatch:
+    runs-on: ubuntu-latest
+    name: Bundlewatch
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node 12.16.2
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.16.2'
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+      - name: Bundle watch
+        run: npm run bundlewatch
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_TOKEN }}
+
+  codeql:
+    name: CodeQL
     runs-on: ubuntu-latest
 
     strategy:

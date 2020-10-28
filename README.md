@@ -1,6 +1,7 @@
 # GR-20
 
-![Build & Publish](https://github.com/badsyntax/gr-20/workflows/Build%20&%20Publish/badge.svg?branch=master)
+![Analyze](https://github.com/badsyntax/gr-20/workflows/Analyze/badge.svg?branch=master)
+![Test](https://github.com/badsyntax/gr-20/workflows/Test/badge.svg?branch=master)
 
 Some useful info on the GR-20 hike in Corsica. https://badsyntax.github.io/gr-20/
 
