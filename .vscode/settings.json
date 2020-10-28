@@ -3,11 +3,12 @@
     "build": false
   },
   "typescript.tsc.autoDetect": "off",
+  "typescript.updateImportsOnFileMove.enabled": "always",
   "eslint.validate": ["javascript", "typescript"],
-  "cSpell.language": "en-GB",
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
+    "source.organizeImports": false
   },
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -19,5 +20,20 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "files.insertFinalNewline": true,
-  "files.trimTrailingWhitespace": true
+  "files.trimTrailingWhitespace": true,
+  "cSpell.language": "en-GB",
+  "cSpell.words": [
+    "Arial",
+    "Popover",
+    "Toggler",
+    "Unmount",
+    "bundlewatch",
+    "centered",
+    "codeql",
+    "coord",
+    "hdms",
+    "jspdf",
+    "jszip",
+    "rendercomplete"
+  ]
 }
