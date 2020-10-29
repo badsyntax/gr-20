@@ -1,39 +1,25 @@
-// import jsPDF from 'jspdf/types/index';
+import jsPDF from 'jspdf';
 import { boundingExtent, Extent } from 'ol/extent';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import SimpleGeometry from 'ol/geom/SimpleGeometry';
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import { Size } from 'ol/size';
-
-export const PDFDims = {
-  a0: [1189, 841],
-  a1: [841, 594],
-  a2: [594, 420],
-  a3: [420, 297],
-  a4: [297, 210],
-  a5: [210, 148],
-};
-
-export type PDFFormat = 'a0' | 'a1' | 'a2' | 'a3' | 'a4' | 'a5';
+import { PDFDims } from './constants';
+import { PDFFormat } from './types';
 
 export const exportMapToPDF = async (
-  map: Map,
-  pdf?: unknown,
+  map: OLMap,
+  pdf?: jsPDF,
   format: PDFFormat = 'a4',
   resolution = 150,
   reset = true,
   extent: SimpleGeometry | Extent | null = null,
   onBeforeRender = (context: HTMLCanvasElement) => undefined
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any> =>
+): Promise<jsPDF> =>
   new Promise(async (resolve) => {
     if (!pdf) {
-      const { default: JSPDF } = await import(
-        /* webpackChunkName: "jspdf" */ 'jspdf'
-      );
-      // eslint-disable-next-line no-param-reassign
-      pdf = new JSPDF('landscape', undefined, format);
+      pdf = new jsPDF('landscape', undefined, format);
     }
     const dim = PDFDims[format];
     const size = map.getSize();
@@ -73,7 +59,7 @@ export const exportMapToPDF = async (
         onBeforeRender(mapCanvas);
         const data = mapCanvas.toDataURL('image/jpeg');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (pdf as any)?.addImage(data, 'JPEG', 0, 0, dim[0], dim[1]);
+        (pdf as jsPDF)?.addImage(data, 'JPEG', 0, 0, dim[0], dim[1]);
       }
       if (reset) {
         map.setSize(size);
@@ -128,18 +114,16 @@ export const addPDFTextToCanvas = (
 };
 
 export const getMultiStagePDF = async (
-  map: Map,
+  map: OLMap,
   format: PDFFormat,
   resolution: number,
   stageFeatures: Feature<Point>[],
   onLoadStart: () => void,
   onLoadEnd: () => void
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any | undefined> => {
+): Promise<jsPDF | undefined> => {
   const features = stageFeatures.slice(0, -1);
   onLoadStart();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let pdf: any | undefined = undefined;
+  let pdf: jsPDF | undefined = undefined;
   for (let i = 0; i < features.length; i++) {
     const extent = boundingExtent([
       stageFeatures[i].getGeometry().getCoordinates(),
@@ -167,13 +151,12 @@ export const getMultiStagePDF = async (
 };
 
 export const getCurrentViewPDF = async (
-  map: Map,
+  map: OLMap,
   format: PDFFormat,
   resolution: number,
   onLoadStart: () => void,
   onLoadEnd: () => void
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any> => {
+): Promise<jsPDF> => {
   onLoadStart();
   const size = map.getSize();
   const extent = map.getView().calculateExtent(size);

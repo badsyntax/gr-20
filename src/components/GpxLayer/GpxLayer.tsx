@@ -2,7 +2,7 @@ import Feature from 'ol/Feature';
 import Geometry from 'ol/geom/Geometry';
 import MultiLineString from 'ol/geom/MultiLineString';
 import { Vector as VectorLayer } from 'ol/layer';
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import VectorSource from 'ol/source/Vector';
 import React, {
   Fragment,
@@ -24,7 +24,7 @@ vectorLayer.setStyle((feature) => {
 });
 
 export interface GpxLayerProps {
-  map: Map;
+  map: OLMap;
   gpxUrl: string;
   showMarkers: boolean;
   showRoute: boolean;

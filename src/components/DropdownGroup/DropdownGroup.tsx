@@ -1,15 +1,14 @@
 import React from 'react';
 import { IoMdCheckmark } from 'react-icons/io';
-import {
-  ButtonGroup,
-  ButtonToolbar,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  FormGroup,
-  Input,
-  Label,
-} from 'reactstrap';
+import ButtonGroup from 'reactstrap/lib/ButtonGroup';
+import ButtonToolbar from 'reactstrap/lib/ButtonToolbar';
+import DropdownItem from 'reactstrap/lib/DropdownItem';
+import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import DropdownToggle from 'reactstrap/lib/DropdownToggle';
+import FormGroup from 'reactstrap/lib/FormGroup';
+import Input from 'reactstrap/lib/Input';
+import Label from 'reactstrap/lib/Label';
+
 import Dropdown from '../Dropdown/Dropdown';
 import { INPUT_TYPES } from '../Form/Form';
 import { DropdownOption, SelectedOptions } from '../Settings/types';

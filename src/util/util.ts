@@ -6,7 +6,7 @@ import LineString from 'ol/geom/LineString';
 import MultiLineString from 'ol/geom/MultiLineString';
 import Point from 'ol/geom/Point';
 import VectorLayer from 'ol/layer/Vector';
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import { toLonLat } from 'ol/proj';
 import VectorSource from 'ol/source/Vector';
 
@@ -118,7 +118,7 @@ export const getMultiCoordsFromNextFeature = (
   return getDataFromMultiCoords(multiCoords);
 };
 
-export const getLayerById = <T>(map: Map, id: string): T | undefined =>
+export const getLayerById = <T>(map: OLMap, id: string): T | undefined =>
   (map
     .getLayers()
     .getArray()

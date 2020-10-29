@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import VectorSource from 'ol/source/Vector';
 import React, { createRef, useEffect } from 'react';
 import { DownloadControlButton } from '../ControlButtons/DownloadControlButton/DownloadControlButton';
@@ -12,7 +12,7 @@ import STYLES from './MapControls.module.scss';
 const c = classNames.bind(STYLES);
 
 export interface MapControlsProps {
-  map: Map;
+  map: OLMap;
   source: VectorSource;
 }
 

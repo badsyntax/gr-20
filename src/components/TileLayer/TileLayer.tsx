@@ -1,6 +1,5 @@
-import 'core-js/features/array/flat';
 import Tile from 'ol/layer/Tile';
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import OSM from 'ol/source/OSM';
 import { expandUrl } from 'ol/tileurlfunction';
 import React, { Component } from 'react';
@@ -10,7 +9,7 @@ import maps from '../../data/maps/maps.json';
 const urls = maps.map(({ url }) => expandUrl(url)).flat();
 
 export interface TileLayerProps {
-  map: Map;
+  map: OLMap;
   mapUrl: string;
 }
 

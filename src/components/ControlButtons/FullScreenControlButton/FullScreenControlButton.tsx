@@ -1,4 +1,4 @@
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import React from 'react';
 import { MdZoomOutMap } from 'react-icons/md';
 import {
@@ -7,7 +7,7 @@ import {
 } from '../ControlButton/ControlButton';
 
 export interface FullScreenControlButtonProps {
-  map: Map;
+  map: OLMap;
 }
 
 export const FullScreenControlButton: React.FunctionComponent<

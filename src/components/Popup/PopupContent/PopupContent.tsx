@@ -3,16 +3,16 @@ import { Coordinate } from 'ol/coordinate';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorLayer from 'ol/layer/Vector';
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import { MdHome } from 'react-icons/md';
-import { PopoverHeader } from 'reactstrap';
 import { getDataFromCoords } from '../../../util/util';
 import { CloseControlButton } from '../../ControlButtons/CloseControlButton/CloseControlButton';
 import { PopupFooter } from '../PopupFooter/PopupFooter';
 import { PopupBody } from '../PopupBody/PopupBody';
+import PopoverHeader from 'reactstrap/lib/PopoverHeader';
 
 export interface PopupContentProps {
-  map: Map;
+  map: OLMap;
   scheduleUpdate: () => void;
   onClose: () => void;
   selectFeature: (feature: Feature<Point>) => void;

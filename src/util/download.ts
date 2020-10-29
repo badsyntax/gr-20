@@ -1,12 +1,10 @@
 import { saveAs } from 'file-saver';
-import type JSZip from 'jszip/index.d';
-import Map from 'ol/Map';
+import JSZip from 'jszip';
+import { default as OLMap } from 'ol/Map';
 import VectorSource from 'ol/source/Vector';
-import { getCurrentViewPDF, getMultiStagePDF, PDFFormat } from './pdf';
+import { PDF_OPTION_ALL } from './constants';
+import { PDFFormat } from './types';
 import { getSortedPointFeatures } from './util';
-
-export const PDF_OPTION_ALL = 'all';
-export const PDF_OPTION_CURRENT = 'current';
 
 export const addGPXToZip = async (
   source: VectorSource,
@@ -24,7 +22,7 @@ export const addGPXToZip = async (
 };
 
 export const addPDFToZip = async (
-  map: Map,
+  map: OLMap,
   vectorSource: VectorSource,
   zip: JSZip,
   onLoadStart: () => void,
@@ -35,6 +33,10 @@ export const addPDFToZip = async (
   option = PDF_OPTION_ALL
 ): Promise<void> => {
   const sortedPointsFeatures = getSortedPointFeatures(vectorSource);
+
+  const { getCurrentViewPDF, getMultiStagePDF } = await import(
+    /* webpackChunkName: "pdf-util" */ './pdf'
+  );
 
   const finalPDF =
     option === PDF_OPTION_ALL
@@ -60,7 +62,7 @@ export const addPDFToZip = async (
 };
 
 export const downloadZipFile = async (
-  map: Map,
+  map: OLMap,
   source: VectorSource,
   includeGPX: boolean,
   includePDF: boolean,
@@ -72,10 +74,6 @@ export const downloadZipFile = async (
 ): Promise<void> => {
   onLoadStart();
 
-  const { default: Zip } = await import(
-    /* webpackChunkName: "jszip" */ 'jszip'
-  );
-
   const size = map.getSize();
   const initialExtent = map.getView().calculateExtent(size);
   const gpxFileUrl = source.getUrl();
@@ -86,7 +84,7 @@ export const downloadZipFile = async (
   if (!zipFileName) {
     return;
   }
-  const zip = new Zip();
+  const zip = new JSZip();
   const rootZipDir = zip.folder(zipFileName);
 
   if (includeGPX && rootZipDir) {

@@ -1,16 +1,15 @@
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import React from 'react';
 import { FaFilePdf } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../features/spinner';
-import { exportMapToPDF } from '../../../util/pdf';
 import {
   ControlButton,
   ControlButtonProps,
 } from '../ControlButton/ControlButton';
 
 export interface PdfExportControlButtonProps {
-  map: Map;
+  map: OLMap;
 }
 
 export const PdfExportControlButton: React.FunctionComponent<
@@ -20,6 +19,9 @@ export const PdfExportControlButton: React.FunctionComponent<
 
   const onButtonCLick = async () => {
     dispatch(showSpinner());
+    const { exportMapToPDF } = await import(
+      /* webpackChunkName: "pdf-util" */ '../../../util/pdf'
+    );
     const pdf = await exportMapToPDF(map);
     pdf.save('map.pdf');
     dispatch(hideSpinner());

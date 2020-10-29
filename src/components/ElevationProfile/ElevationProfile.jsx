@@ -1,7 +1,7 @@
 // import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 // import AutoSizer from 'react-virtualized/dist/es/AutoSizer/AutoSizer';
-// import Map from 'ol/Map';
+// import { default as OLMap } from 'ol/Map';
 // import XYPlot from 'react-vis/es/plot/xy-plot';
 // import AreaSeries from 'react-vis/es/plot/series/area-series';
 // import LineSeries from 'react-vis/es/plot/series/line-series';

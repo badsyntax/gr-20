@@ -1,6 +1,7 @@
 {
   "files.exclude": {
-    "build": false
+    "build": false,
+    "package-lock.json": true
   },
   "typescript.tsc.autoDetect": "off",
   "typescript.updateImportsOnFileMove.enabled": "always",
@@ -28,13 +29,20 @@
     "Toggler",
     "Unmount",
     "borderless",
+    "browserslist",
     "bundlewatch",
     "centered",
     "codeql",
     "coord",
+    "firefox",
     "hdms",
     "jspdf",
     "jszip",
-    "rendercomplete"
+    "postbuild",
+    "predeploy",
+    "reduxjs",
+    "rendercomplete",
+    "toolkit",
+    "topbar"
   ]
 }

@@ -2,7 +2,7 @@ import { Color } from 'ol/color';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import { Vector as VectorLayer } from 'ol/layer';
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import STATE from 'ol/source/State';
 import VectorSource from 'ol/source/Vector';
 import Fill from 'ol/style/Fill';
@@ -44,7 +44,7 @@ const createPointTextFeature = (
 };
 
 export interface StartEndLayerProps {
-  map: Map;
+  map: OLMap;
   gpxVectorLayer: VectorLayer;
   gpxUrl: string;
   showMarkers: boolean;

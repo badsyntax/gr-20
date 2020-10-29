@@ -2,15 +2,13 @@ import classNames from 'classnames/bind';
 import React, { Fragment, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import {
-  Collapse,
-  Nav,
-  Navbar,
-  NavbarBrand,
-  NavbarToggler,
-  NavItem,
-  NavLink,
-} from 'reactstrap';
+import Collapse from 'reactstrap/lib/Collapse';
+import Nav from 'reactstrap/lib/Nav';
+import Navbar from 'reactstrap/lib/Navbar';
+import NavbarBrand from 'reactstrap/lib/NavbarBrand';
+import NavbarToggler from 'reactstrap/lib/NavbarToggler';
+import NavItem from 'reactstrap/lib/NavItem';
+import NavLink from 'reactstrap/lib/NavLink';
 import STYLES from './AboutPage.module.scss';
 
 const c = classNames.bind(STYLES);

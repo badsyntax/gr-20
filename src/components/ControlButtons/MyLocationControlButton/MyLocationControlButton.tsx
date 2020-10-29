@@ -1,7 +1,7 @@
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorLayer from 'ol/layer/Vector';
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import { fromLonLat } from 'ol/proj';
 import VectorSource from 'ol/source/Vector';
 import Icon from 'ol/style/Icon';
@@ -22,7 +22,7 @@ const FEATURE_ID = 'mylocation_feature';
 const ANIMATION_DURATION = 1000;
 
 export interface MyLocationControlButtonProps {
-  map: Map;
+  map: OLMap;
 }
 
 export const MyLocationControlButton: React.FunctionComponent<

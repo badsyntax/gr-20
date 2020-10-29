@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import React, { memo } from 'react';
-import { Table } from 'reactstrap';
+import Table from 'reactstrap/lib/Table';
 import STYLES from './PointData.module.scss';
 
 const c = classNames.bind(STYLES);

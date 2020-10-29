@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind';
 import * as Popper from 'popper.js';
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { Tooltip } from 'reactstrap';
+import Tooltip from 'reactstrap/lib/Tooltip';
 import STYLES from './ControlButton.module.scss';
 
 const c = classNames.bind(STYLES);

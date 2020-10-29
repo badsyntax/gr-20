@@ -1,5 +1,5 @@
 import { Coordinate } from 'ol/coordinate';
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import { fromLonLat } from 'ol/proj';
 import React, { memo } from 'react';
 import { MdZoomIn } from 'react-icons/md';
@@ -12,7 +12,7 @@ export const ANIMATION_DURATION = 800;
 
 export interface ZoomInControlButtonProps {
   lonLat: Coordinate;
-  map: Map;
+  map: OLMap;
 }
 
 export const ZoomInControlButton: React.FunctionComponent<

@@ -3,9 +3,9 @@ import Point from 'ol/geom/Point';
 import VectorLayer from 'ol/layer/Vector';
 import classNames from 'classnames/bind';
 import React, { memo } from 'react';
-import { Table } from 'reactstrap';
 import { getMultiCoordsFromNextFeature } from '../../../util/util';
 import STYLES from '../PointData/PointData.module.scss';
+import Table from 'reactstrap/lib/Table';
 
 const c = classNames.bind(STYLES);
 

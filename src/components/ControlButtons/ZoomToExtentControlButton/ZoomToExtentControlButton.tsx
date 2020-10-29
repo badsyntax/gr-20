@@ -1,4 +1,4 @@
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import React from 'react';
 import { MdZoomOutMap } from 'react-icons/md';
 import {
@@ -9,7 +9,7 @@ import {
 const ANIMATION_DURATION = 1000;
 
 interface ZoomToExtentControlButtonProps {
-  map: Map;
+  map: OLMap;
 }
 
 export const ZoomToExtentControlButton: React.FunctionComponent<

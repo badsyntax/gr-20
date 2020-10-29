@@ -61,7 +61,11 @@
       },
       {
         "path": "build/static/js/*.chunk.js",
-        "maxSize": "190 kB"
+        "maxSize": "118 kB"
+      },
+      {
+        "path": "build/static/css/*.chunk.css",
+        "maxSize": "25 kB"
       }
     ]
   },
@@ -117,7 +121,6 @@
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.1.4",
     "file-saver": "^2.0.2",
-    "gh-pages": "^3.1.0",
     "jest-canvas-mock": "^2.3.0",
     "jspdf": "^2.1.1",
     "jszip": "^3.5.0",
@@ -137,7 +140,6 @@
     "react-virtualized": "^9.22.2",
     "react-vis": "^1.11.7",
     "reactstrap": "^8.6.0",
-    "redux-thunk": "^2.3.0",
     "source-map-explorer": "^2.5.0",
     "typescript": "^4.0.5",
     "web-vitals": "^0.2.4"

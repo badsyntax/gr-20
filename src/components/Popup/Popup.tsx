@@ -2,11 +2,11 @@ import classNames from 'classnames/bind';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorLayer from 'ol/layer/Vector';
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import Overlay from 'ol/Overlay';
 import OverlayPositioning from 'ol/OverlayPositioning';
 import React, { useEffect, useRef } from 'react';
-import { Popover } from 'reactstrap';
+import Popover from 'reactstrap/lib/Popover';
 import { ANIMATION_DURATION } from './constants';
 import STYLES from './Popup.module.scss';
 import { PopupContent } from './PopupContent/PopupContent';
@@ -14,7 +14,7 @@ import { PopupContent } from './PopupContent/PopupContent';
 const c = classNames.bind(STYLES);
 
 interface PopupProps {
-  map: Map;
+  map: OLMap;
   isOpen: boolean;
   onClose: () => void;
   gpxVectorLayer: VectorLayer;

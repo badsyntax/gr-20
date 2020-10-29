@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react';
-import { Form as ReactStrapForm } from 'reactstrap';
+import { default as ReactStrapForm } from 'reactstrap/lib/Form';
 
 export const INPUT_TYPES = {
   checkbox: 'checkbox',

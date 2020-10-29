@@ -1,8 +1,7 @@
 import Tile from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import OSM from 'ol/source/OSM';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { MdLink } from 'react-icons/md';
 import { getLayerById } from '../../../util/util';
@@ -12,7 +11,7 @@ import {
 } from '../ControlButton/ControlButton';
 
 export interface GetLinkControlButtonProps {
-  map: Map;
+  map: OLMap;
 }
 
 export const GetLinkControlButton: React.FunctionComponent<
@@ -51,10 +50,6 @@ export const GetLinkControlButton: React.FunctionComponent<
       <MdLink />
     </ControlButton>
   );
-};
-
-GetLinkControlButton.propTypes = {
-  map: PropTypes.instanceOf(Map).isRequired,
 };
 
 export default GetLinkControlButton;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ButtonDropdown } from 'reactstrap';
+import ButtonDropdown from 'reactstrap/lib/ButtonDropdown';
 
 export const Dropdown: React.FunctionComponent = ({ children }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);

@@ -4,17 +4,15 @@ import VectorLayer from 'ol/layer/Vector';
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 
-import {
-  PopoverBody,
-  Nav,
-  NavItem,
-  TabContent,
-  TabPane,
-  NavLink,
-} from 'reactstrap';
 import { NextPointData } from '../NextPointData/NextPointData';
 import { PointData } from '../PointData/PointData';
 import STYLES from './PopupBody.module.scss';
+import PopoverBody from 'reactstrap/lib/PopoverBody';
+import Nav from 'reactstrap/lib/Nav';
+import NavItem from 'reactstrap/lib/NavItem';
+import NavLink from 'reactstrap/lib/NavLink';
+import TabContent from 'reactstrap/lib/TabContent';
+import TabPane from 'reactstrap/lib/TabPane';
 
 const c = classNames.bind(STYLES);
 

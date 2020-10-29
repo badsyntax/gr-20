@@ -1,35 +1,30 @@
-import Map from 'ol/Map';
+import { default as OLMap } from 'ol/Map';
 import VectorSource from 'ol/source/Vector';
 import React, { Fragment, useState } from 'react';
 import { IoMdDownload } from 'react-icons/io';
 import { useDispatch } from 'react-redux';
-import {
-  Alert,
-  Button,
-  Col,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  Modal,
-  ModalBody,
-  ModalHeader,
-} from 'reactstrap';
 import { hideSpinner, showSpinner } from '../../../features/spinner';
-import {
-  downloadZipFile,
-  PDF_OPTION_ALL,
-  PDF_OPTION_CURRENT,
-} from '../../../util/download';
-import { PDFFormat } from '../../../util/pdf';
+
 import {
   ControlButton,
   ControlButtonProps,
 } from '../ControlButton/ControlButton';
 import { INPUT_TYPES } from '../../Form/Form';
+import ModalHeader from 'reactstrap/lib/ModalHeader';
+import Modal from 'reactstrap/lib/Modal';
+import ModalBody from 'reactstrap/lib/ModalBody';
+import Form from 'reactstrap/lib/Form';
+import FormGroup from 'reactstrap/lib/FormGroup';
+import Label from 'reactstrap/lib/Label';
+import Input from 'reactstrap/lib/Input';
+import Col from 'reactstrap/lib/Col';
+import Alert from 'reactstrap/lib/Alert';
+import Button from 'reactstrap/lib/Button';
+import { PDF_OPTION_ALL, PDF_OPTION_CURRENT } from '../../../util/constants';
+import { PDFFormat } from '../../../util/types';
 
 export interface DownloadControlButtonProps {
-  map: Map;
+  map: OLMap;
   source: VectorSource;
 }
 
@@ -73,6 +68,9 @@ export const DownloadControlButton: React.FunctionComponent<
   };
 
   const download = async () => {
+    const { downloadZipFile } = await import(
+      /* webpackChunkName: "download-util" */ '../../../util/download'
+    );
     const {
       pdfFormat,
       pdfResolution,
