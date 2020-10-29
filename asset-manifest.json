@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/gr-20/static/css/main.47a823f8.chunk.css",
-    "main.js": "/gr-20/static/js/main.2eb312d3.chunk.js",
-    "main.js.map": "/gr-20/static/js/main.2eb312d3.chunk.js.map",
+    "main.css": "/gr-20/static/css/main.a52cc728.chunk.css",
+    "main.js": "/gr-20/static/js/main.c8806b64.chunk.js",
+    "main.js.map": "/gr-20/static/js/main.c8806b64.chunk.js.map",
     "runtime-main.js": "/gr-20/static/js/runtime-main.5567321d.js",
     "runtime-main.js.map": "/gr-20/static/js/runtime-main.5567321d.js.map",
     "static/js/2.9ae4aaa8.chunk.js": "/gr-20/static/js/2.9ae4aaa8.chunk.js",
     "static/js/2.9ae4aaa8.chunk.js.map": "/gr-20/static/js/2.9ae4aaa8.chunk.js.map",
     "static/css/3.7ebcfb48.chunk.css": "/gr-20/static/css/3.7ebcfb48.chunk.css",
-    "static/js/3.b6c3519f.chunk.js": "/gr-20/static/js/3.b6c3519f.chunk.js",
-    "static/js/3.b6c3519f.chunk.js.map": "/gr-20/static/js/3.b6c3519f.chunk.js.map",
+    "static/js/3.bfa88619.chunk.js": "/gr-20/static/js/3.bfa88619.chunk.js",
+    "static/js/3.bfa88619.chunk.js.map": "/gr-20/static/js/3.bfa88619.chunk.js.map",
     "static/js/4.b72c1e49.chunk.js": "/gr-20/static/js/4.b72c1e49.chunk.js",
     "static/js/4.b72c1e49.chunk.js.map": "/gr-20/static/js/4.b72c1e49.chunk.js.map",
     "static/js/5.a86adbce.chunk.js": "/gr-20/static/js/5.a86adbce.chunk.js",
@@ -22,9 +22,9 @@
     "static/js/8.11b87480.chunk.js.map": "/gr-20/static/js/8.11b87480.chunk.js.map",
     "index.html": "/gr-20/index.html",
     "static/css/3.7ebcfb48.chunk.css.map": "/gr-20/static/css/3.7ebcfb48.chunk.css.map",
-    "static/css/main.47a823f8.chunk.css.map": "/gr-20/static/css/main.47a823f8.chunk.css.map",
+    "static/css/main.a52cc728.chunk.css.map": "/gr-20/static/css/main.a52cc728.chunk.css.map",
     "static/js/2.9ae4aaa8.chunk.js.LICENSE.txt": "/gr-20/static/js/2.9ae4aaa8.chunk.js.LICENSE.txt",
-    "static/js/3.b6c3519f.chunk.js.LICENSE.txt": "/gr-20/static/js/3.b6c3519f.chunk.js.LICENSE.txt",
+    "static/js/3.bfa88619.chunk.js.LICENSE.txt": "/gr-20/static/js/3.bfa88619.chunk.js.LICENSE.txt",
     "static/js/4.b72c1e49.chunk.js.LICENSE.txt": "/gr-20/static/js/4.b72c1e49.chunk.js.LICENSE.txt",
     "static/js/5.a86adbce.chunk.js.LICENSE.txt": "/gr-20/static/js/5.a86adbce.chunk.js.LICENSE.txt",
     "static/js/6.1c4fcd3a.chunk.js.LICENSE.txt": "/gr-20/static/js/6.1c4fcd3a.chunk.js.LICENSE.txt",
@@ -41,8 +41,8 @@
   "entrypoints": [
     "static/js/runtime-main.5567321d.js",
     "static/css/3.7ebcfb48.chunk.css",
-    "static/js/3.b6c3519f.chunk.js",
-    "static/css/main.47a823f8.chunk.css",
-    "static/js/main.2eb312d3.chunk.js"
+    "static/js/3.bfa88619.chunk.js",
+    "static/css/main.a52cc728.chunk.css",
+    "static/js/main.c8806b64.chunk.js"
   ]
 }
