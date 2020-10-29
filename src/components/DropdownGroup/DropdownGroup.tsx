@@ -49,20 +49,13 @@ export const DropdownGroup: React.FunctionComponent<DropdownOptionsProps> = ({
                 <DropdownMenu right>
                   {items.map(({ name: inputName, label, url }) =>
                     type === 'formGroup' ? (
-                      <DropdownItem
-                        key={inputName}
-                        className={STYLES['DropdownGroup__form-item']}
-                      >
-                        <FormGroup
-                          check
-                          className={STYLES['DropdownGroup__form-group']}
-                        >
+                      <DropdownItem key={inputName}>
+                        <FormGroup check>
                           <Label
                             check
                             onClick={(event) => {
                               event.stopPropagation();
                             }}
-                            className={STYLES['DropdownGroup__form-label']}
                           >
                             <Input
                               name={inputName}
