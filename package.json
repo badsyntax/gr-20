@@ -38,18 +38,6 @@
     "rules": {
       "prettier/prettier": "error",
       "@typescript-eslint/no-floating-promises": "error",
-      "import/order": [
-        "error",
-        {
-          "groups": [
-            "builtin",
-            "external",
-            "parent",
-            "sibling",
-            "index"
-          ]
-        }
-      ],
       "curly": "error"
     }
   },
@@ -127,7 +115,6 @@
     "classnames": "^2.2.6",
     "core-js": "^3.6.5",
     "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.1.4",
     "file-saver": "^2.0.2",
     "gh-pages": "^3.1.0",
@@ -138,7 +125,6 @@
     "ol": "^6.4.3",
     "ol-hashed": "^2.0.0",
     "prettier": "^2.1.2",
-    "prettier-plugin-organize-imports": "^1.1.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-helmet-async": "^1.0.7",
