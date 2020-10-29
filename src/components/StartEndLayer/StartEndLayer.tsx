@@ -58,9 +58,7 @@ export const StartEndLayer: React.FunctionComponent<StartEndLayerProps> = memo(
     const startEndVectorLayer = useRef<VectorLayer>();
 
     const toggleMarkers = (show: boolean) => {
-      if (startEndVectorLayer.current?.getSource()) {
-        startEndVectorLayer.current.setVisible(show);
-      }
+      startEndVectorLayer.current?.setVisible(show);
     };
 
     const onGpxVectorLayerStateChange = () => {
