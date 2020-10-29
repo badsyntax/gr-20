@@ -126,10 +126,11 @@ export const getLayerById = <T>(map: Map, id: string): T | undefined =>
 
 export const getMultiLineStringFeature = (
   features: Feature<Geometry>[]
-): Feature<MultiLineString> | undefined =>
-  features.find(
+): Feature<MultiLineString> | undefined => {
+  return features.find(
     (feature) => feature.getGeometry().getType() === MULTI_LINE_STRING
   ) as Feature<MultiLineString>;
+};
 
 export const getPointFeatures = (
   features: Feature<Geometry>[]

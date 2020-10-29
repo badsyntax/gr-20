@@ -19,8 +19,8 @@ interface PopupProps {
   onClose: () => void;
   gpxVectorLayer: VectorLayer;
   feature: Feature<Point>;
-  prevFeature: Feature<Point>;
-  nextFeature: Feature<Point>;
+  prevFeature?: Feature<Point>;
+  nextFeature?: Feature<Point>;
   selectFeature: (feature: Feature<Point>) => void;
 }
 

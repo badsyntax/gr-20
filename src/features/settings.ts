@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import maps from '../data/maps/maps.json';
-import routes from '../data/routes/routes';
+import { routes } from '../data/routes/routes';
 
 export interface SettingsState {
   mapUrl: string;

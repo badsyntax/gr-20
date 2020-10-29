@@ -2,10 +2,10 @@ import classNames from 'classnames/bind';
 import Map from 'ol/Map';
 import VectorSource from 'ol/source/Vector';
 import React, { createRef, useEffect } from 'react';
-import { DownloadButtonControl } from '../DownloadButtonControl/DownloadButtonControl';
-import { MyLocationButtonControl } from '../MyLocationButtonControl/MyLocationButtonControl';
-import { PdfExportButtonControl } from '../PdfExportButtonControl/PdfExportButtonControl';
-import { ZoomToExtentButtonControl } from '../ZoomToExtentButtonControl/ZoomToExtentButtonControl';
+import { DownloadButtonControl } from '../ControlButtons/DownloadButtonControl/DownloadButtonControl';
+import { MyLocationButtonControl } from '../ControlButtons/MyLocationButtonControl/MyLocationButtonControl';
+import { PdfExportButtonControl } from '../ControlButtons/PdfExportButtonControl/PdfExportButtonControl';
+import { ZoomToExtentButtonControl } from '../ControlButtons/ZoomToExtentButtonControl/ZoomToExtentButtonControl';
 import controls, { zoomControl } from './controls';
 import STYLES from './MapControls.module.scss';
 

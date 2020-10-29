@@ -23,8 +23,8 @@ export interface PopupContentProps {
   feature: Feature<Point>;
   buttonClassName: string;
   coordinates: Coordinate;
-  prevFeature: Feature<Point>;
-  nextFeature: Feature<Point>;
+  prevFeature?: Feature<Point>;
+  nextFeature?: Feature<Point>;
 }
 
 export const PopupContent: React.FunctionComponent<PopupContentProps> = ({
@@ -45,11 +45,15 @@ export const PopupContent: React.FunctionComponent<PopupContentProps> = ({
   const lat = (lonLat[1] || 0).toFixed(6);
 
   const onNextPointButtonClick = () => {
-    selectFeature(nextFeature);
+    if (nextFeature) {
+      selectFeature(nextFeature);
+    }
   };
 
   const onPrevPointButtonClick = () => {
-    selectFeature(prevFeature);
+    if (prevFeature) {
+      selectFeature(prevFeature);
+    }
   };
 
   useEffect(() => {

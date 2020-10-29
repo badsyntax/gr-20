@@ -4,9 +4,14 @@ import MultiLineString from 'ol/geom/MultiLineString';
 import { Vector as VectorLayer } from 'ol/layer';
 import Map from 'ol/Map';
 import VectorSource from 'ol/source/Vector';
-import React, { memo, useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import React, {
+  Fragment,
+  memo,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { getMultiLineStringFeature, getPointFeatures } from '../../util/util';
 import { GpxSource } from './GpxSource';
 import { styles } from './styles';
@@ -19,17 +24,19 @@ vectorLayer.setStyle((feature) => {
 });
 
 export interface GpxLayerProps {
-  onSourceReady: (vectorSource: VectorSource) => void;
-  onLayerReady: (vectorLayer: VectorLayer) => void;
   map: Map;
+  gpxUrl: string;
+  showMarkers: boolean;
+  showRoute: boolean;
+  onSourceReady: (vectorSource: VectorSource) => void;
+  children: (
+    gpxVectorLayer: VectorLayer,
+    multiLineStringFeature?: Feature<MultiLineString>
+  ) => ReactNode;
 }
 
 export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
-  ({ onSourceReady, onLayerReady, map }) => {
-    const { gpxUrl, showMarkers, showRoute } = useSelector(
-      (state: RootState) => state.settings
-    );
-
+  ({ map, onSourceReady, gpxUrl, showMarkers, showRoute, children }) => {
     const [gpxMarkers, setGpxMarkers] = useState<Feature<Geometry>[]>([]);
     const [multiLineStringFeature, setMultiLineStringFeature] = useState<
       Feature<MultiLineString>
@@ -81,11 +88,7 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     );
 
     useEffect(() => {
-      onLayerReady(vectorLayer);
-    }, [onLayerReady]);
-
-    useEffect(() => {
-      map?.addLayer(vectorLayer);
+      map.addLayer(vectorLayer);
     }, [map]);
 
     useEffect(() => {
@@ -97,7 +100,14 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     }, [showRoute, toggleRoute]);
 
     return (
-      <GpxSource gpxUrl={gpxUrl} vectorLayer={vectorLayer} onReady={onReady} />
+      <Fragment>
+        <GpxSource
+          gpxUrl={gpxUrl}
+          vectorLayer={vectorLayer}
+          onReady={onReady}
+        />
+        {children && children(vectorLayer)}
+      </Fragment>
     );
   }
 );

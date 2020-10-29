@@ -1,9 +1,9 @@
+import route5 from './corcega-gr20-calenzana-conca.gpx';
+import route4 from './gr-20-corcega-track-completo.gpx';
 import route1 from './gr20-2018-complete-northsouth.gpx';
 import route2 from './gr20.gpx';
-import route4 from './gr-20-corcega-track-completo.gpx';
-import route5 from './corcega-gr20-calenzana-conca.gpx';
 
-const routes = [
+export const routes = [
   {
     name: 'corcega-gr20-calenzana-conca',
     url: route5,
@@ -24,5 +24,3 @@ const routes = [
     samplingDistance: 100,
   },
 ];
-
-export default routes;

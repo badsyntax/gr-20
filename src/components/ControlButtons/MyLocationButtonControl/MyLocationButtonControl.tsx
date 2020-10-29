@@ -9,12 +9,12 @@ import Style from 'ol/style/Style';
 import React, { useEffect, useMemo } from 'react';
 import { MdMyLocation } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
-import { hideSpinner, showSpinner } from '../../features/spinner';
-import { getLayerById } from '../../util/util';
+import { hideSpinner, showSpinner } from '../../../features/spinner';
+import { getLayerById } from '../../../util/util';
 import {
   ButtonControl,
   ButtonControlProps,
-} from '../ButtonControl/ButtonControl';
+} from '../../ButtonControl/ButtonControl';
 import marker from './baseline-my_location-24px-yellow.svg';
 
 const LAYER_ID = 'mylocation_layer';

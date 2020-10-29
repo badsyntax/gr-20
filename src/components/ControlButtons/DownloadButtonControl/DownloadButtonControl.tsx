@@ -15,18 +15,18 @@ import {
   ModalBody,
   ModalHeader,
 } from 'reactstrap';
-import { hideSpinner, showSpinner } from '../../features/spinner';
+import { hideSpinner, showSpinner } from '../../../features/spinner';
 import {
   downloadZipFile,
   PDF_OPTION_ALL,
   PDF_OPTION_CURRENT,
-} from '../../util/download';
-import { PDFFormat } from '../../util/pdf';
+} from '../../../util/download';
+import { PDFFormat } from '../../../util/pdf';
 import {
   ButtonControl,
   ButtonControlProps,
-} from '../ButtonControl/ButtonControl';
-import { INPUT_TYPES } from '../Form/Form';
+} from '../../ButtonControl/ButtonControl';
+import { INPUT_TYPES } from '../../Form/Form';
 
 export interface DownloadButtonControlProps {
   map: Map;

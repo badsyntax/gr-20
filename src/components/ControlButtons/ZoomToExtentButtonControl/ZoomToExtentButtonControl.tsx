@@ -4,7 +4,7 @@ import { MdZoomOutMap } from 'react-icons/md';
 import {
   ButtonControl,
   ButtonControlProps,
-} from '../ButtonControl/ButtonControl';
+} from '../../ButtonControl/ButtonControl';
 
 const ANIMATION_DURATION = 1000;
 

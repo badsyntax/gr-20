@@ -2,12 +2,12 @@ import Map from 'ol/Map';
 import React from 'react';
 import { FaFilePdf } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
-import { hideSpinner, showSpinner } from '../../features/spinner';
-import { exportMapToPDF } from '../../util/pdf';
+import { hideSpinner, showSpinner } from '../../../features/spinner';
+import { exportMapToPDF } from '../../../util/pdf';
 import {
   ButtonControl,
   ButtonControlProps,
-} from '../ButtonControl/ButtonControl';
+} from '../../ButtonControl/ButtonControl';
 
 export interface PdfExportButtonControlProps {
   map: Map;
