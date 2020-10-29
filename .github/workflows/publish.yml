@@ -55,6 +55,7 @@ jobs:
           git checkout gh-pages
           cp -r .build/* .
           rm -rf .build
+          ls -la
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
