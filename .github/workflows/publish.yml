@@ -55,9 +55,14 @@ jobs:
           git checkout gh-pages
           cp -r .build/* .
           rm -rf .build
+          rm "$TAR_ARCHIVE"
+          rm "$ZIP_ARCHIVE"
           ls -la
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
           git commit -m "Add build for version $tag"
           git push
+        env:
+          TAR_ARCHIVE: ${{ steps.archives.outputs.tar_archive }}
+          ZIP_ARCHIVE: ${{ steps.archives.outputs.zip_archive }}
