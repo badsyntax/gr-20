@@ -6,4 +6,4 @@
 
 Some useful info on the GR-20 hike in Corsica. https://badsyntax.github.io/gr-20/
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and uses React, Redux & TypeScript.
