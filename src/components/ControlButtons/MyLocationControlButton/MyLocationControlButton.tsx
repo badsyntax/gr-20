@@ -12,21 +12,21 @@ import { useDispatch } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../features/spinner';
 import { getLayerById } from '../../../util/util';
 import {
-  ButtonControl,
-  ButtonControlProps,
-} from '../../ButtonControl/ButtonControl';
+  ControlButton,
+  ControlButtonProps,
+} from '../ControlButton/ControlButton';
 import marker from './baseline-my_location-24px-yellow.svg';
 
 const LAYER_ID = 'mylocation_layer';
 const FEATURE_ID = 'mylocation_feature';
 const ANIMATION_DURATION = 1000;
 
-export interface MyLocationButtonControlProps {
+export interface MyLocationControlButtonProps {
   map: Map;
 }
 
-export const MyLocationButtonControl: React.FunctionComponent<
-  MyLocationButtonControlProps & Omit<ButtonControlProps, 'onClick'>
+export const MyLocationControlButton: React.FunctionComponent<
+  MyLocationControlButtonProps & Omit<ControlButtonProps, 'onClick'>
 > = ({ map, ...rest }) => {
   const dispatch = useDispatch();
 
@@ -95,8 +95,8 @@ export const MyLocationButtonControl: React.FunctionComponent<
   };
 
   return (
-    <ButtonControl tooltipPlacement="right" onClick={onButtonCLick} {...rest}>
+    <ControlButton tooltipPlacement="right" onClick={onButtonCLick} {...rest}>
       <MdMyLocation />
-    </ButtonControl>
+    </ControlButton>
   );
 };

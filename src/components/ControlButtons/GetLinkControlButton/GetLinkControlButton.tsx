@@ -5,19 +5,19 @@ import OSM from 'ol/source/OSM';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { MdLink } from 'react-icons/md';
-import { getLayerById } from '../../util/util';
+import { getLayerById } from '../../../util/util';
 import {
-  ButtonControl,
-  ButtonControlProps,
-} from '../ButtonControl/ButtonControl';
+  ControlButton,
+  ControlButtonProps,
+} from '../ControlButton/ControlButton';
 
-export interface GetLinkButtonControlProps {
+export interface GetLinkControlButtonProps {
   map: Map;
 }
 
-export const GetLinkButtonControl: React.FunctionComponent<
-  GetLinkButtonControlProps &
-    Omit<ButtonControlProps, 'onClick' | 'tooltipPlacement'>
+export const GetLinkControlButton: React.FunctionComponent<
+  GetLinkControlButtonProps &
+    Omit<ControlButtonProps, 'onClick' | 'tooltipPlacement'>
 > = ({ map, ...rest }) => {
   const onButtonCLick = () => {
     const gpxSource = getLayerById<VectorLayer>(
@@ -47,14 +47,14 @@ export const GetLinkButtonControl: React.FunctionComponent<
   };
 
   return (
-    <ButtonControl {...rest} onClick={onButtonCLick} tooltipPlacement="right">
+    <ControlButton {...rest} onClick={onButtonCLick} tooltipPlacement="right">
       <MdLink />
-    </ButtonControl>
+    </ControlButton>
   );
 };
 
-GetLinkButtonControl.propTypes = {
+GetLinkControlButton.propTypes = {
   map: PropTypes.instanceOf(Map).isRequired,
 };
 
-export default GetLinkButtonControl;
+export default GetLinkControlButton;

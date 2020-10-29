@@ -1,6 +1,6 @@
-// import { ButtonControl } from '../ButtonControl/ButtonControl';
+// import { ControlButton } from '../ControlButton/ControlButton';
 
-// export class RotateNorthControl extends ButtonControl {
+// export class RotateNorthControl extends ControlButton {
 //   constructor(options) {
 //     super(options);
 //     this.element.firstChild.addEventListener(

@@ -1,18 +1,18 @@
 import React, { Fragment, useState } from 'react';
 import { Modal, ModalBody, ModalHeader } from 'reactstrap';
 import {
-  ButtonControl,
-  ButtonControlProps,
-} from '../ButtonControl/ButtonControl';
+  ControlButton,
+  ControlButtonProps,
+} from '../ControlButton/ControlButton';
 import { ReactComponent as Icon360 } from './360-24px.svg';
 
-export interface Google360ButtonControlProps {
+export interface Google360ControlButtonProps {
   pointName: string;
   embedUrl: string;
 }
 
-export const Google360ButtonControl: React.FunctionComponent<
-  Google360ButtonControlProps & Omit<ButtonControlProps, 'onClick'>
+export const Google360ControlButton: React.FunctionComponent<
+  Google360ControlButtonProps & Omit<ControlButtonProps, 'onClick'>
 > = ({ pointName, embedUrl, ...rest }) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
@@ -22,9 +22,9 @@ export const Google360ButtonControl: React.FunctionComponent<
 
   return (
     <Fragment>
-      <ButtonControl {...rest} onClick={toggle}>
+      <ControlButton {...rest} onClick={toggle}>
         <Icon360 />
-      </ButtonControl>
+      </ControlButton>
       <Modal
         isOpen={modalOpen}
         toggle={toggle}
@@ -48,4 +48,4 @@ export const Google360ButtonControl: React.FunctionComponent<
   );
 };
 
-export default Google360ButtonControl;
+export default Google360ControlButton;

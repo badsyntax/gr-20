@@ -2,10 +2,10 @@ import classNames from 'classnames/bind';
 import Map from 'ol/Map';
 import VectorSource from 'ol/source/Vector';
 import React, { createRef, useEffect } from 'react';
-import { DownloadButtonControl } from '../ControlButtons/DownloadButtonControl/DownloadButtonControl';
-import { MyLocationButtonControl } from '../ControlButtons/MyLocationButtonControl/MyLocationButtonControl';
-import { PdfExportButtonControl } from '../ControlButtons/PdfExportButtonControl/PdfExportButtonControl';
-import { ZoomToExtentButtonControl } from '../ControlButtons/ZoomToExtentButtonControl/ZoomToExtentButtonControl';
+import { DownloadControlButton } from '../ControlButtons/DownloadControlButton/DownloadControlButton';
+import { MyLocationControlButton } from '../ControlButtons/MyLocationControlButton/MyLocationControlButton';
+import { PdfExportControlButton } from '../ControlButtons/PdfExportControlButton/PdfExportControlButton';
+import { ZoomToExtentControlButton } from '../ControlButtons/ZoomToExtentControlButton/ZoomToExtentControlButton';
 import controls, { zoomControl } from './controls';
 import STYLES from './MapControls.module.scss';
 
@@ -39,16 +39,16 @@ export const MapControls: React.FunctionComponent<MapControlsProps> = ({
   return (
     <div className={STYLES.MapControls}>
       <div ref={zoomContainerRef} />
-      <ZoomToExtentButtonControl tooltip="Fit Extent" {...buttonProps} />
-      {/* <FullScreenButtonControl tooltip="Toggle full-screen" {...buttonProps} /> */}
-      <PdfExportButtonControl tooltip="Export to PDF" {...buttonProps} />
-      <DownloadButtonControl
+      <ZoomToExtentControlButton tooltip="Fit Extent" {...buttonProps} />
+      {/* <FullScreenControlButton tooltip="Toggle full-screen" {...buttonProps} /> */}
+      <PdfExportControlButton tooltip="Export to PDF" {...buttonProps} />
+      <DownloadControlButton
         tooltip="Download Route and Maps"
         source={source}
         {...buttonProps}
       />
-      {/* <GetLinkButtonControl tooltip="Get Shareable Link" {...buttonProps} /> */}
-      <MyLocationButtonControl tooltip="Show My Location" {...buttonProps} />
+      {/* <GetLinkControlButton tooltip="Get Shareable Link" {...buttonProps} /> */}
+      <MyLocationControlButton tooltip="Show My Location" {...buttonProps} />
       {/* <ControlIcon target={rotateNorthButton}>
           <MdRotateLeft />
         </ControlIcon> */}

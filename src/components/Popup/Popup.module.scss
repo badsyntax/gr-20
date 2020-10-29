@@ -1,5 +1,4 @@
 .Popup {
-  min-width: 300px;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
   cursor: auto;
   z-index: 1;
@@ -11,6 +10,10 @@
   }
 
   :global {
+    .popover {
+      min-width: 340px;
+    }
+
     .ol-control {
       position: static;
       margin: 0;

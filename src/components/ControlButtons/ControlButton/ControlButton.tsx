@@ -2,19 +2,24 @@ import classNames from 'classnames/bind';
 import * as Popper from 'popper.js';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { Tooltip } from 'reactstrap';
-import STYLES from './ButtonControl.module.scss';
+import STYLES from './ControlButton.module.scss';
 
 const c = classNames.bind(STYLES);
 
-export interface ButtonControlProps {
+type ButtonProps = React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>;
+
+export type ControlButtonProps = ButtonProps & {
   onClick: () => void;
   className?: string;
   buttonClassName?: string;
   tooltip?: string;
   tooltipPlacement?: Popper.Placement;
-}
+};
 
-export const ButtonControl: React.FunctionComponent<ButtonControlProps> = memo(
+export const ControlButton: React.FunctionComponent<ControlButtonProps> = memo(
   ({
     children,
     onClick,
@@ -40,9 +45,9 @@ export const ButtonControl: React.FunctionComponent<ButtonControlProps> = memo(
     };
 
     return (
-      <div className={c(STYLES.ButtonControl__container, className)}>
+      <div className={c(STYLES.ControlButton__container, className)}>
         <button
-          className={c(STYLES.ButtonControl, buttonClassName)}
+          className={c(STYLES.ControlButton, buttonClassName)}
           type="button"
           ref={buttonRef}
           {...rest}

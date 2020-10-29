@@ -9,7 +9,7 @@ import React, { useEffect, useRef } from 'react';
 import { Popover } from 'reactstrap';
 import { ANIMATION_DURATION } from './constants';
 import STYLES from './Popup.module.scss';
-import { PopupContent } from './PopupContent';
+import { PopupContent } from './PopupContent/PopupContent';
 
 const c = classNames.bind(STYLES);
 

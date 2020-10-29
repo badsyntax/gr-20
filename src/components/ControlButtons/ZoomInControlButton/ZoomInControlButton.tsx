@@ -4,19 +4,19 @@ import { fromLonLat } from 'ol/proj';
 import React, { memo } from 'react';
 import { MdZoomIn } from 'react-icons/md';
 import {
-  ButtonControl,
-  ButtonControlProps,
-} from '../ButtonControl/ButtonControl';
+  ControlButton,
+  ControlButtonProps,
+} from '../ControlButton/ControlButton';
 
 export const ANIMATION_DURATION = 800;
 
-export interface ZoomInButtonControlProps {
+export interface ZoomInControlButtonProps {
   lonLat: Coordinate;
   map: Map;
 }
 
-export const ZoomInButtonControl: React.FunctionComponent<
-  ZoomInButtonControlProps & Omit<ButtonControlProps, 'onClick'>
+export const ZoomInControlButton: React.FunctionComponent<
+  ZoomInControlButtonProps & Omit<ControlButtonProps, 'onClick'>
 > = memo(({ lonLat, map, ...rest }) => {
   const onClick = () => {
     map.getView().animate({
@@ -26,8 +26,8 @@ export const ZoomInButtonControl: React.FunctionComponent<
     });
   };
   return (
-    <ButtonControl {...rest} onClick={onClick}>
+    <ControlButton {...rest} onClick={onClick}>
       <MdZoomIn />
-    </ButtonControl>
+    </ControlButton>
   );
 });

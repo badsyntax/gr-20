@@ -2,18 +2,18 @@ import Map from 'ol/Map';
 import React from 'react';
 import { MdZoomOutMap } from 'react-icons/md';
 import {
-  ButtonControl,
-  ButtonControlProps,
-} from '../../ButtonControl/ButtonControl';
+  ControlButton,
+  ControlButtonProps,
+} from '../ControlButton/ControlButton';
 
 const ANIMATION_DURATION = 1000;
 
-interface ZoomToExtentButtonControlProps {
+interface ZoomToExtentControlButtonProps {
   map: Map;
 }
 
-export const ZoomToExtentButtonControl: React.FunctionComponent<
-  ZoomToExtentButtonControlProps & Omit<ButtonControlProps, 'onClick'>
+export const ZoomToExtentControlButton: React.FunctionComponent<
+  ZoomToExtentControlButtonProps & Omit<ControlButtonProps, 'onClick'>
 > = ({ map, ...rest }) => {
   const onButtonCLick = () => {
     const view = map.getView();
@@ -31,8 +31,8 @@ export const ZoomToExtentButtonControl: React.FunctionComponent<
   };
 
   return (
-    <ButtonControl tooltipPlacement="right" onClick={onButtonCLick} {...rest}>
+    <ControlButton tooltipPlacement="right" onClick={onButtonCLick} {...rest}>
       <MdZoomOutMap />
-    </ButtonControl>
+    </ControlButton>
   );
 };

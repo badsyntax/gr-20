@@ -1,4 +1,4 @@
-.ButtonControl {
+.ControlButton {
   display: block;
   margin: 1px;
   padding: 0;
@@ -20,6 +20,11 @@
   &:focus {
     text-decoration: none;
     background-color: rgba(0, 60, 136, 0.7);
+  }
+
+  &[disabled] {
+    background-color: rgba(0, 60, 136, 0.1);
+    cursor: default;
   }
 
   &__container {

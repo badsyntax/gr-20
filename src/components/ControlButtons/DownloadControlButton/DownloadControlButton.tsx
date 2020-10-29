@@ -23,12 +23,12 @@ import {
 } from '../../../util/download';
 import { PDFFormat } from '../../../util/pdf';
 import {
-  ButtonControl,
-  ButtonControlProps,
-} from '../../ButtonControl/ButtonControl';
+  ControlButton,
+  ControlButtonProps,
+} from '../ControlButton/ControlButton';
 import { INPUT_TYPES } from '../../Form/Form';
 
-export interface DownloadButtonControlProps {
+export interface DownloadControlButtonProps {
   map: Map;
   source: VectorSource;
 }
@@ -41,8 +41,8 @@ export interface DownloadOptions {
   pdfResolution: number;
 }
 
-export const DownloadButtonControl: React.FunctionComponent<
-  DownloadButtonControlProps & Omit<ButtonControlProps, 'onClick'>
+export const DownloadControlButton: React.FunctionComponent<
+  DownloadControlButtonProps & Omit<ControlButtonProps, 'onClick'>
 > = ({ map, source, ...rest }) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [downloadOptions, setDownloadOptions] = useState<DownloadOptions>({
@@ -104,9 +104,9 @@ export const DownloadButtonControl: React.FunctionComponent<
 
   return (
     <Fragment>
-      <ButtonControl {...rest} onClick={onButtonCLick} tooltipPlacement="right">
+      <ControlButton {...rest} onClick={onButtonCLick} tooltipPlacement="right">
         <IoMdDownload />
-      </ButtonControl>
+      </ControlButton>
       <Modal isOpen={modalOpen} toggle={toggle} centered>
         <ModalHeader toggle={toggle}>Download Options</ModalHeader>
         <ModalBody>

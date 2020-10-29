@@ -5,16 +5,16 @@ import { useDispatch } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../features/spinner';
 import { exportMapToPDF } from '../../../util/pdf';
 import {
-  ButtonControl,
-  ButtonControlProps,
-} from '../../ButtonControl/ButtonControl';
+  ControlButton,
+  ControlButtonProps,
+} from '../ControlButton/ControlButton';
 
-export interface PdfExportButtonControlProps {
+export interface PdfExportControlButtonProps {
   map: Map;
 }
 
-export const PdfExportButtonControl: React.FunctionComponent<
-  PdfExportButtonControlProps & Omit<ButtonControlProps, 'onClick'>
+export const PdfExportControlButton: React.FunctionComponent<
+  PdfExportControlButtonProps & Omit<ControlButtonProps, 'onClick'>
 > = ({ map, ...rest }) => {
   const dispatch = useDispatch();
 
@@ -26,8 +26,8 @@ export const PdfExportButtonControl: React.FunctionComponent<
   };
 
   return (
-    <ButtonControl tooltipPlacement="right" onClick={onButtonCLick} {...rest}>
+    <ControlButton tooltipPlacement="right" onClick={onButtonCLick} {...rest}>
       <FaFilePdf />
-    </ButtonControl>
+    </ControlButton>
   );
 };
