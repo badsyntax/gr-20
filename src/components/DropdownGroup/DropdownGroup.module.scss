@@ -10,11 +10,11 @@
   }
 
   &__form-group {
-    padding: 0;
+    padding: 0 !important;
   }
 
   &__form-label {
-    padding: 0.25rem 1.5rem 0.25rem 2.75rem;
+    padding: 0.15rem 1rem;
     display: block;
   }
 }
