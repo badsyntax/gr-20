@@ -5,7 +5,6 @@ import Point from 'ol/geom/Point';
 import { default as OLMap } from 'ol/Map';
 import MapBrowserEvent from 'ol/MapBrowserEvent';
 import MapBrowserEventType from 'ol/MapBrowserEventType';
-import 'ol/ol.css';
 import { fromLonLat } from 'ol/proj';
 import VectorSource from 'ol/source/Vector';
 import View from 'ol/View';
@@ -33,6 +32,7 @@ import {
 } from '../StartEndLayer/StartEndLayer';
 import { TileLayer } from '../TileLayer/TileLayer';
 import STYLES from './Map.module.scss';
+import 'ol/ol.css';
 
 const initialState = {
   lat: 42.184207,
