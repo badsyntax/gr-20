@@ -18,10 +18,10 @@ export const options: DropdownOption[] = [
     name: 'options',
     type: 'formGroup',
     items: [
-      {
-        name: 'showElevationProfile',
-        label: 'Show elevation profile',
-      },
+      // {
+      //   name: 'showElevationProfile',
+      //   label: 'Show elevation profile',
+      // },
       {
         name: 'showControls',
         label: 'Show controls',

@@ -38,23 +38,50 @@ export const exportMapToPDF = async (
     const dim = PDFDims[format];
     const size = map.getSize();
     const defaultExtent = map.getView().calculateExtent(size);
-
-    map.once('rendercomplete', (event) => {
-      const { canvas } = event.context;
-      onBeforeRender(canvas);
-      const data = canvas.toDataURL('image/jpeg');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (pdf as any)?.addImage(data, 'JPEG', 0, 0, dim[0], dim[1]);
-      if (reset) {
-        map.setSize(size);
-        map.getView().fit(extent || defaultExtent, { size });
-      }
-      resolve(pdf);
-    });
-
     const width = Math.round((dim[0] * resolution) / 25.4);
     const height = Math.round((dim[1] * resolution) / 25.4);
     const printSize: Size = [width, height];
+    const viewResolution = map.getView().getResolution();
+
+    map.once('rendercomplete', () => {
+      const mapCanvas = document.createElement('canvas');
+      mapCanvas.width = width;
+      mapCanvas.height = height;
+      const mapContext = mapCanvas.getContext('2d');
+      if (mapContext) {
+        Array.prototype.forEach.call(
+          document.querySelectorAll('.ol-layer canvas'),
+          function (canvas) {
+            if (canvas.width > 0) {
+              const opacity = canvas.parentNode.style.opacity;
+              mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+              const transform = canvas.style.transform;
+              // Get the transform parameters from the style's transform matrix
+              const matrix = transform
+                .match(/^matrix\(([^(]*)\)$/)[1]
+                .split(',')
+                .map(Number);
+              // Apply the transform to the export map context
+              CanvasRenderingContext2D.prototype.setTransform.apply(
+                mapContext,
+                matrix
+              );
+              mapContext.drawImage(canvas, 0, 0);
+            }
+          }
+        );
+        onBeforeRender(mapCanvas);
+        const data = mapCanvas.toDataURL('image/jpeg');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (pdf as any)?.addImage(data, 'JPEG', 0, 0, dim[0], dim[1]);
+      }
+      if (reset) {
+        map.setSize(size);
+        map.getView().fit(extent || defaultExtent, { size });
+        map.getView().setResolution(viewResolution);
+      }
+      resolve(pdf);
+    });
 
     map.setSize(printSize);
     map.getView().fit(extent || defaultExtent, { size: printSize });
@@ -115,8 +142,8 @@ export const getMultiStagePDF = async (
   let pdf: any | undefined = undefined;
   for (let i = 0; i < features.length; i++) {
     const extent = boundingExtent([
-      features[i].getGeometry().getCoordinates(),
-      features[i + 1].getGeometry().getCoordinates(),
+      stageFeatures[i].getGeometry().getCoordinates(),
+      stageFeatures[i + 1].getGeometry().getCoordinates(),
     ]);
 
     pdf = await exportMapToPDF(
@@ -127,7 +154,7 @@ export const getMultiStagePDF = async (
       false,
       extent,
       (canvas) => {
-        addPDFTextToCanvas(canvas, features[i], features[i + 1]);
+        addPDFTextToCanvas(canvas, stageFeatures[i], stageFeatures[i + 1]);
         return undefined;
       }
     );

@@ -40,7 +40,9 @@ export const Map: React.FunctionComponent = ({ children }) => {
   const [sortedPointFeatures, setSortedPointFeatures] = useState<
     Feature<Point>[]
   >();
-  const { mapUrl } = useSelector((state: RootState) => state.settings);
+  const { mapUrl, showControls } = useSelector(
+    (state: RootState) => state.settings
+  );
 
   const map = useMemo<OLMap>(
     () =>
@@ -148,7 +150,7 @@ export const Map: React.FunctionComponent = ({ children }) => {
           selectFeature={selectFeature}
         />
       )}
-      {source && <MapControls map={map} source={source} />}
+      {showControls && source && <MapControls map={map} source={source} />}
     </div>
   );
 };
