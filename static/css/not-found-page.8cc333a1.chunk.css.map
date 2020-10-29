@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/components/NotFoundPage/NotFoundPage.module.scss"],"names":[],"mappings":"AAAA,kCACE,YAAa","file":"not-found-page.8cc333a1.chunk.css","sourcesContent":[".NotFoundPage {\n  padding: 4rem;\n}\n"]}

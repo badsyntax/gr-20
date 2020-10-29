@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/components/AboutPage/AboutPage.module.scss"],"names":[],"mappings":"AAAA,4BACE,eAAgB","file":"about-page.6d05c560.chunk.css","sourcesContent":[".AboutPage {\n  text-align: left;\n}\n"]}
