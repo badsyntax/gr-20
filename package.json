@@ -124,7 +124,6 @@
     "jest-canvas-mock": "^2.3.0",
     "jspdf": "^2.1.1",
     "jszip": "^3.5.0",
-    "node-sass": "^4.14.1",
     "ol": "^6.4.3",
     "ol-hashed": "^2.0.0",
     "prettier": "^2.1.2",
