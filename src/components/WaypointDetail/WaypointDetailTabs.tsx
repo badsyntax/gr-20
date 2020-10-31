@@ -7,14 +7,14 @@ import VectorLayer from 'ol/layer/Vector';
 import { TabPanel } from '../TabPanel/TabPanel';
 import { NextPointData } from '../NextPointData/NextPointData';
 
-export interface WaypointDrawerTabsProps {
+export interface WaypointDetailTabsProps {
   feature: Feature<Point>;
   nextFeature?: Feature<Point>;
   prevFeature?: Feature<Point>;
   gpxVectorLayer: VectorLayer;
 }
 
-export const WaypointDrawerTabs: React.FunctionComponent<WaypointDrawerTabsProps> = memo(
+export const WaypointDetailTabs: React.FunctionComponent<WaypointDetailTabsProps> = memo(
   ({ feature, nextFeature, prevFeature, gpxVectorLayer }) => {
     const [value, setValue] = React.useState<number>(
       nextFeature ? 0 : prevFeature ? 1 : -1

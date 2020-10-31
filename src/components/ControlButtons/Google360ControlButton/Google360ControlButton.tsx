@@ -5,8 +5,7 @@ import {
   ControlButton,
   ControlButtonProps,
 } from '../ControlButton/ControlButton';
-import { ReactComponent as Icon360 } from './360-24px.svg';
-
+import ThreeSixtyIcon from '@material-ui/icons/ThreeSixty';
 export interface Google360ControlButtonProps {
   pointName: string;
   embedUrl: string;
@@ -36,7 +35,7 @@ export const Google360ControlButton: React.FunctionComponent<
   return (
     <Fragment>
       <ControlButton {...rest} onClick={toggle}>
-        <Icon360 />
+        <ThreeSixtyIcon />
       </ControlButton>
       {modalOpen && (
         <Portal container={document.body}>

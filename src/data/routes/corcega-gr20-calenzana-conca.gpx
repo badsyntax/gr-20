@@ -17,6 +17,9 @@
     <ele>275.8</ele>
     <time>2017-09-17T18:03:23Z</time>
     <name>Calenzana</name>
+    <extensions>
+      <gr20 name="image">https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Calenzana-Village.jpg/1920px-Calenzana-Village.jpg</gr20>
+    </extensions>
   </wpt>
   <wpt lat="42.028081" lon="9.194165">
     <ele>1290.0</ele>
@@ -79,6 +82,7 @@
     <name>Refugio Ortu di u Piobbu</name>
     <extensions>
       <gr20 name="google360Url">https://www.google.com/maps/embed?pb=!4v1547972164226!6m8!1m7!1sCAoSLEFGMVFpcFBBaHMzRWwxRkpLcldzMDc3eDZSVWVPSEZmR2MxbHEySFpJVVhi!2m2!1d42.4652615!2d8.9063293!3f299.45441169211256!4f-4.06346840204958!5f0.7820865974627469</gr20>
+      <gr20 name="image">https://lh3.ggpht.com/p/AF1QipNSXUhYEJixq0zcjmylBl4fX2dzqTRf6Zqn2pQk=s1536</gr20>
     </extensions>
   </wpt>
   <wpt lat="42.198240" lon="9.052419">
