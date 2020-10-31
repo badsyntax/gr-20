@@ -1,0 +1,2 @@
+(this["webpackJsonpgr-20"]=this["webpackJsonpgr-20"]||[]).push([[5],{700:function(t,e,n){"use strict";n.r(e),n.d(e,"NotFoundPage",(function(){return i}));var c=n(3),o=(n(0),n(40)),r=n(44),i=function(){return Object(c.jsxs)("div",{children:[Object(c.jsx)(o.a,{children:Object(c.jsx)("title",{children:"404 Not Found"})}),Object(c.jsx)("h1",{children:"Not Found"}),Object(c.jsx)(r.b,{to:"/",children:"Go Home \xbb"})]})}}}]);
+//# sourceMappingURL=not-found-page.f3ab3d61.chunk.js.map
