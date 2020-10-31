@@ -5,6 +5,7 @@
   },
   "typescript.tsc.autoDetect": "off",
   "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
   "eslint.validate": ["javascript", "typescript"],
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
@@ -28,6 +29,7 @@
     "Popover",
     "Toggler",
     "Unmount",
+    "Waypoint",
     "borderless",
     "browserslist",
     "bundlewatch",
@@ -39,6 +41,7 @@
     "jspdf",
     "jszip",
     "postbuild",
+    "postrender",
     "predeploy",
     "reduxjs",
     "rendercomplete",

@@ -1,7 +1,6 @@
+import Portal from '@material-ui/core/Portal';
+import { makeStyles } from '@material-ui/core/styles';
 import React, { Fragment, useState } from 'react';
-import Modal from 'reactstrap/lib/Modal';
-import ModalBody from 'reactstrap/lib/ModalBody';
-import ModalHeader from 'reactstrap/lib/ModalHeader';
 import {
   ControlButton,
   ControlButtonProps,
@@ -13,9 +12,21 @@ export interface Google360ControlButtonProps {
   embedUrl: string;
 }
 
+const useStyles = makeStyles({
+  iframe: {
+    width: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 380,
+    right: 0,
+    height: '100%',
+  },
+});
+
 export const Google360ControlButton: React.FunctionComponent<
   Google360ControlButtonProps & Omit<ControlButtonProps, 'onClick'>
 > = ({ pointName, embedUrl, ...rest }) => {
+  const classes = useStyles();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const toggle = () => {
@@ -27,7 +38,19 @@ export const Google360ControlButton: React.FunctionComponent<
       <ControlButton {...rest} onClick={toggle}>
         <Icon360 />
       </ControlButton>
-      <Modal
+      {modalOpen && (
+        <Portal container={document.body}>
+          <iframe
+            title="Google Maps 360"
+            src={embedUrl}
+            frameBorder="0"
+            style={{ border: 0 }}
+            allowFullScreen
+            className={classes.iframe}
+          />
+        </Portal>
+      )}
+      {/* <Modal
         isOpen={modalOpen}
         toggle={toggle}
         centered
@@ -45,9 +68,7 @@ export const Google360ControlButton: React.FunctionComponent<
             allowFullScreen
           />
         </ModalBody>
-      </Modal>
+      </Modal> */}
     </Fragment>
   );
 };
-
-export default Google360ControlButton;

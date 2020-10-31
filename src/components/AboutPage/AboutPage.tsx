@@ -1,32 +1,28 @@
-import classNames from 'classnames/bind';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
-import Collapse from 'reactstrap/lib/Collapse';
-import Nav from 'reactstrap/lib/Nav';
-import Navbar from 'reactstrap/lib/Navbar';
-import NavbarBrand from 'reactstrap/lib/NavbarBrand';
-import NavbarToggler from 'reactstrap/lib/NavbarToggler';
-import NavItem from 'reactstrap/lib/NavItem';
-import NavLink from 'reactstrap/lib/NavLink';
-import STYLES from './AboutPage.module.scss';
-
-const c = classNames.bind(STYLES);
+// import { Link } from 'react-router-dom';
+// import Collapse from 'reactstrap/lib/Collapse';
+// import Nav from 'reactstrap/lib/Nav';
+// import Navbar from 'reactstrap/lib/Navbar';
+// import NavbarBrand from 'reactstrap/lib/NavbarBrand';
+// import NavbarToggler from 'reactstrap/lib/NavbarToggler';
+// import NavItem from 'reactstrap/lib/NavItem';
+// import NavLink from 'reactstrap/lib/NavLink';
 
 export const AboutPage: React.FunctionComponent = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  // const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const toggle = () => {
-    setIsOpen(!isOpen);
-  };
+  // const toggle = () => {
+  //   setIsOpen(!isOpen);
+  // };
 
   return (
     <Fragment>
       <Helmet>
         <title>GR-20 - About</title>
       </Helmet>
-      <div className={c('AboutPage')}>
-        <Navbar color="dark" dark expand="sm">
+      <div>
+        {/* <Navbar color="dark" dark expand="sm">
           <div className="container">
             <NavbarBrand tag={Link} to="/" title="Home">
               GR-20
@@ -52,7 +48,7 @@ export const AboutPage: React.FunctionComponent = () => {
               </Nav>
             </Collapse>
           </div>
-        </Navbar>
+        </Navbar> */}
         <div className="container">
           <div className="mt-3">
             <h1>About this GR-20 site</h1>

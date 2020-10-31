@@ -9,6 +9,7 @@ export interface SettingsState {
   showControls: boolean;
   showMarkers: boolean;
   showRoute: boolean;
+  showFeatureLabels: boolean;
 }
 
 const initialState: SettingsState = {
@@ -18,6 +19,7 @@ const initialState: SettingsState = {
   showControls: true,
   showMarkers: true,
   showRoute: true,
+  showFeatureLabels: false,
 };
 
 const SettingsSlice = createSlice({

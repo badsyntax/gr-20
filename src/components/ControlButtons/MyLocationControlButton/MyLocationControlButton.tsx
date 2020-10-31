@@ -7,7 +7,6 @@ import VectorSource from 'ol/source/Vector';
 import Icon from 'ol/style/Icon';
 import Style from 'ol/style/Style';
 import React, { useEffect, useMemo } from 'react';
-import { MdMyLocation } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../../features/spinner';
 import { getLayerById } from '../../../util/util';
@@ -16,7 +15,7 @@ import {
   ControlButtonProps,
 } from '../ControlButton/ControlButton';
 import marker from './baseline-my_location-24px-yellow.svg';
-
+import MyLocationIcon from '@material-ui/icons/MyLocation';
 const LAYER_ID = 'mylocation_layer';
 const FEATURE_ID = 'mylocation_feature';
 const ANIMATION_DURATION = 1000;
@@ -95,8 +94,8 @@ export const MyLocationControlButton: React.FunctionComponent<
   };
 
   return (
-    <ControlButton tooltipPlacement="right" onClick={onButtonCLick} {...rest}>
-      <MdMyLocation />
+    <ControlButton onClick={onButtonCLick} {...rest}>
+      <MyLocationIcon />
     </ControlButton>
   );
 };

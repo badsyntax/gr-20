@@ -1,5 +1,5 @@
 import { Coordinate, toStringHDMS } from 'ol/coordinate';
-import Feature from 'ol/Feature';
+import Feature, { FeatureLike } from 'ol/Feature';
 import Geometry from 'ol/geom/Geometry';
 import GeometryType from 'ol/geom/GeometryType';
 import LineString from 'ol/geom/LineString';
@@ -9,6 +9,7 @@ import VectorLayer from 'ol/layer/Vector';
 import { default as OLMap } from 'ol/Map';
 import { toLonLat } from 'ol/proj';
 import VectorSource from 'ol/source/Vector';
+import { START_POINT_ID, FINISH_POINT_ID } from './constants';
 
 const { MULTI_LINE_STRING, POINT } = GeometryType;
 
@@ -215,3 +216,11 @@ export const sampleCoordinates = (
       return false;
     });
 };
+
+export function isGpxWayPoint(feature: FeatureLike): feature is Feature<Point> {
+  return (
+    feature.getGeometry().getType() === GeometryType.POINT &&
+    feature.getId() !== START_POINT_ID &&
+    feature.getId() !== FINISH_POINT_ID
+  );
+}

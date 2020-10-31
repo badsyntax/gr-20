@@ -1,7 +1,7 @@
 import { default as OLMap } from 'ol/Map';
 import React from 'react';
-import { FaFilePdf } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import { hideSpinner, showSpinner } from '../../../features/spinner';
 import {
   ControlButton,
@@ -28,8 +28,8 @@ export const PdfExportControlButton: React.FunctionComponent<
   };
 
   return (
-    <ControlButton tooltipPlacement="right" onClick={onButtonCLick} {...rest}>
-      <FaFilePdf />
+    <ControlButton onClick={onButtonCLick} {...rest}>
+      <PictureAsPdfIcon />
     </ControlButton>
   );
 };

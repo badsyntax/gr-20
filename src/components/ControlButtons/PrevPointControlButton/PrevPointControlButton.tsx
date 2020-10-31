@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { FaCaretLeft } from 'react-icons/fa';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {
   ControlButton,
   ControlButtonProps,
@@ -8,7 +8,7 @@ import {
 export const PrevPointControlButton: React.FunctionComponent<ControlButtonProps> = memo(
   (props) => (
     <ControlButton {...props}>
-      <FaCaretLeft />
+      <ArrowBackIcon />
     </ControlButton>
   )
 );

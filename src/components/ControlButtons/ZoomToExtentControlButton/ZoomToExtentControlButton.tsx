@@ -1,6 +1,6 @@
 import { default as OLMap } from 'ol/Map';
 import React from 'react';
-import { MdZoomOutMap } from 'react-icons/md';
+import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
 import {
   ControlButton,
   ControlButtonProps,
@@ -31,8 +31,8 @@ export const ZoomToExtentControlButton: React.FunctionComponent<
   };
 
   return (
-    <ControlButton tooltipPlacement="right" onClick={onButtonCLick} {...rest}>
-      <MdZoomOutMap />
+    <ControlButton onClick={onButtonCLick} {...rest}>
+      <ZoomOutMapIcon />
     </ControlButton>
   );
 };

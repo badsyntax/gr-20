@@ -1,33 +1,30 @@
-import { Coordinate } from 'ol/coordinate';
 import { default as OLMap } from 'ol/Map';
-import { fromLonLat } from 'ol/proj';
 import React, { memo } from 'react';
-import { MdZoomIn } from 'react-icons/md';
+import ZoomInIcon from '@material-ui/icons/ZoomIn';
+
 import {
   ControlButton,
   ControlButtonProps,
 } from '../ControlButton/ControlButton';
 
-export const ANIMATION_DURATION = 800;
+export const ANIMATION_DURATION = 250;
 
 export interface ZoomInControlButtonProps {
-  lonLat: Coordinate;
   map: OLMap;
 }
 
 export const ZoomInControlButton: React.FunctionComponent<
   ZoomInControlButtonProps & Omit<ControlButtonProps, 'onClick'>
-> = memo(({ lonLat, map, ...rest }) => {
+> = memo(({ map, ...rest }) => {
   const onClick = () => {
     map.getView().animate({
-      center: fromLonLat(lonLat),
-      zoom: 18,
+      zoom: map.getView().getZoom() + 0.5,
       duration: ANIMATION_DURATION,
     });
   };
   return (
-    <ControlButton {...rest} onClick={onClick}>
-      <MdZoomIn />
+    <ControlButton {...rest} tooltipPlacement="left" onClick={onClick}>
+      <ZoomInIcon />
     </ControlButton>
   );
 });

@@ -1,4 +1,5 @@
 import Attribution from 'ol/control/Attribution';
+import Control from 'ol/control/Control';
 import ScaleLine from 'ol/control/ScaleLine';
 import Zoom from 'ol/control/Zoom';
 
@@ -13,6 +14,8 @@ export const scaleLineControl = new ScaleLine({
   minWidth: 100,
 });
 
-const controls = [zoomControl, attributionControl, scaleLineControl];
+const controls: Control[] = [
+  /*zoomControl, attributionControl, scaleLineControl*/
+];
 
 export default controls;

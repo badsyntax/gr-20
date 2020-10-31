@@ -3,7 +3,7 @@ import VectorLayer from 'ol/layer/Vector';
 import { default as OLMap } from 'ol/Map';
 import OSM from 'ol/source/OSM';
 import React from 'react';
-import { MdLink } from 'react-icons/md';
+// import { MdLink } from 'react-icons/md';
 import { getLayerById } from '../../../util/util';
 import {
   ControlButton,
@@ -46,8 +46,8 @@ export const GetLinkControlButton: React.FunctionComponent<
   };
 
   return (
-    <ControlButton {...rest} onClick={onButtonCLick} tooltipPlacement="right">
-      <MdLink />
+    <ControlButton {...rest} onClick={onButtonCLick}>
+      Get link
     </ControlButton>
   );
 };

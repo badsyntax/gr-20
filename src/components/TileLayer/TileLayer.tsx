@@ -22,7 +22,7 @@ export class TileLayer extends Component<TileLayerProps> {
     this.rasterLayer = new Tile({
       source: this.xyzSource,
     });
-    this.rasterLayer.set('id', 'osmtilelayer');
+    this.rasterLayer.set('id', 'osm-tile-layer');
   }
 
   componentDidMount(): void {

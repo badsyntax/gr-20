@@ -1,17 +1,18 @@
 import React, { Fragment } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Map } from '../Map/Map';
-import { Settings } from '../Settings/Settings';
-import STYLES from './MapPage.module.scss';
+import { useStyles } from './styles';
 
-export const MapPage: React.FunctionComponent = () => (
-  <Fragment>
-    <Helmet>
-      <title>GR-20 - The Route</title>
-    </Helmet>
-    <div className={STYLES.MapPage}>
-      <Settings />
-      <Map />
-    </div>
-  </Fragment>
-);
+export const MapPage: React.FunctionComponent = () => {
+  const classes = useStyles();
+  return (
+    <Fragment>
+      <Helmet>
+        <title>GR-20 - The Route</title>
+      </Helmet>
+      <main className={classes.content}>
+        <Map />
+      </main>
+    </Fragment>
+  );
+};

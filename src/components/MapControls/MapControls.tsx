@@ -1,15 +1,19 @@
+import React, { Fragment } from 'react';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import classNames from 'classnames/bind';
 import { default as OLMap } from 'ol/Map';
 import VectorSource from 'ol/source/Vector';
-import React, { createRef, useEffect } from 'react';
 import { DownloadControlButton } from '../ControlButtons/DownloadControlButton/DownloadControlButton';
 import { MyLocationControlButton } from '../ControlButtons/MyLocationControlButton/MyLocationControlButton';
 import { PdfExportControlButton } from '../ControlButtons/PdfExportControlButton/PdfExportControlButton';
 import { ZoomToExtentControlButton } from '../ControlButtons/ZoomToExtentControlButton/ZoomToExtentControlButton';
-import controls, { zoomControl } from './controls';
-import STYLES from './MapControls.module.scss';
+import { ZoomInControlButton } from '../ControlButtons/ZoomInControlButton/ZoomInControlButton';
+import { ZoomOutControlButton } from '../ControlButtons/ZoomOutControlButton/ZoomOutControlButton';
+import { SettingsToggleControlButton } from '../ControlButtons/SettingsToggleControlButton/SettingsToggleControlButton';
+import { useStyles } from './styles';
+import Fade from '@material-ui/core/Fade';
 
-const c = classNames.bind(STYLES);
+export const FADE_TIMEOUT = 800;
 
 export interface MapControlsProps {
   map: OLMap;
@@ -20,38 +24,49 @@ export const MapControls: React.FunctionComponent<MapControlsProps> = ({
   map,
   source,
 }) => {
-  const zoomContainerRef = createRef<HTMLDivElement>();
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    zoomControl.setTarget(zoomContainerRef.current!);
-    controls.forEach((control) => map.addControl(control));
-    return () => {
-      controls.forEach((control) => map.removeControl(control));
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const buttonProps = {
-    map,
-    className: c('MapControls__button-control'),
-  };
+  const classes = useStyles();
   return (
-    <div className={STYLES.MapControls}>
-      <div ref={zoomContainerRef} />
-      <ZoomToExtentControlButton tooltip="Fit Extent" {...buttonProps} />
-      {/* <FullScreenControlButton tooltip="Toggle full-screen" {...buttonProps} /> */}
-      <PdfExportControlButton tooltip="Export to PDF" {...buttonProps} />
-      <DownloadControlButton
-        tooltip="Download Route and Maps"
-        source={source}
-        {...buttonProps}
-      />
-      {/* <GetLinkControlButton tooltip="Get Shareable Link" {...buttonProps} /> */}
-      <MyLocationControlButton tooltip="Show My Location" {...buttonProps} />
-      {/* <ControlIcon target={rotateNorthButton}>
-          <MdRotateLeft />
-        </ControlIcon> */}
-    </div>
+    <Fragment>
+      <Fade in timeout={FADE_TIMEOUT}>
+        <div className={classes.actionsContainer}>
+          <ButtonGroup
+            orientation="horizontal"
+            variant="text"
+            className={classes.buttonGroup}
+          >
+            <ZoomToExtentControlButton label="Fit Extent" map={map} />
+            <PdfExportControlButton label="Export to PDF" map={map} />
+            <DownloadControlButton
+              label="Download Route and Maps"
+              source={source}
+              map={map}
+            />
+            <MyLocationControlButton label="Show My Location" map={map} />
+          </ButtonGroup>
+          <ButtonGroup
+            orientation="horizontal"
+            variant="text"
+            className={classes.buttonGroup}
+          >
+            <SettingsToggleControlButton label="Settings" />
+          </ButtonGroup>
+        </div>
+      </Fade>
+      <Fade in timeout={FADE_TIMEOUT}>
+        <div className={classes.zoomContainer}>
+          <ButtonGroup
+            orientation="vertical"
+            variant="text"
+            className={classNames(
+              classes.buttonGroup,
+              classes.buttonGroupVertical
+            )}
+          >
+            <ZoomInControlButton label="Zoom In" map={map} />
+            <ZoomOutControlButton label="Zoom Out" map={map} />
+          </ButtonGroup>
+        </div>
+      </Fade>
+    </Fragment>
   );
 };

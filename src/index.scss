@@ -1,31 +1,5 @@
-$theme-colors: (
-  'secondary': #385a84,
-);
-
-@import 'node_modules/bootstrap/scss/bootstrap';
-
 body,
-html {
-  height: 100%;
-}
-
+html,
 #root {
   height: 100%;
-}
-
-:global {
-  $control-button-font-size: 1.14em;
-  .ol-control {
-    button {
-      font-size: $control-button-font-size;
-      cursor: pointer;
-    }
-  }
-  .ol-touch {
-    .ol-control {
-      button {
-        font-size: $control-button-font-size !important;
-      }
-    }
-  }
 }
