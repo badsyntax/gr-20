@@ -12,7 +12,6 @@
     "analyze": "source-map-explorer build/static/js/*.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "postbuild": "react-snap",
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "lint:fix": "npm run lint:eslint:fix && npm run lint:prettier:fix",
     "lint:eslint": "eslint src --ext .js,.jsx,.ts,.tsx",

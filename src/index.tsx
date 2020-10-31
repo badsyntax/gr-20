@@ -8,7 +8,7 @@ import App from './components/App/App';
 import reportWebVitals from './reportWebVitals';
 import { store } from './store';
 import { theme } from './theme/theme';
-import './index.scss';
+import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>
