@@ -51,6 +51,7 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     showFeatureLabels = false,
   }) => {
     const [gpxMarkers, setGpxMarkers] = useState<Feature<Geometry>[]>([]);
+    const [hoveredFeature, setHoveredFeature] = useState<Feature<Point>>();
 
     const vectorLayer = useMemo(
       () =>
@@ -75,9 +76,14 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
           (map.getTarget() as HTMLDivElement).style.cursor = pointFeature
             ? 'pointer'
             : '';
+          if (pointFeature) {
+            setHoveredFeature(pointFeature);
+          } else if (hoveredFeature) {
+            setHoveredFeature(undefined);
+          }
         }
       },
-      [map]
+      [hoveredFeature, map]
     );
 
     const onMapClick = useCallback(
@@ -101,6 +107,14 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
       [onSourceReady]
     );
 
+    const resetPoints = useCallback(() => {
+      gpxMarkers.forEach((feature) =>
+        feature.setStyle(
+          getFeatureStyle(feature, showFeatureLabels, showMarkers, showRoute)
+        )
+      );
+    }, [gpxMarkers, showFeatureLabels, showMarkers, showRoute]);
+
     useEffect(() => {
       vectorLayer.setStyle((feature) => {
         return getFeatureStyle(
@@ -117,21 +131,49 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     }, [map, vectorLayer]);
 
     useEffect(() => {
-      gpxMarkers.forEach((feature) => {
-        feature.setStyle(
-          getFeatureStyle(feature, showFeatureLabels, showMarkers, showRoute)
-        );
-      });
-      (selectedFeature?.getStyle() as Style)?.setImage(
+      if (!selectedFeature) {
+        return;
+      }
+      resetPoints();
+      const featureStyle = getFeatureStyle(
+        selectedFeature,
+        true,
+        false,
+        showRoute
+      );
+      featureStyle.setImage(
         new Icon({
           anchor: [0.5, 1],
           src: selectedPin,
         })
       );
-      (selectedFeature?.getStyle() as Style)?.setZIndex(3);
+      featureStyle.setZIndex(3);
+      selectedFeature.setStyle(featureStyle);
     }, [
       gpxMarkers,
       map,
+      resetPoints,
+      selectedFeature,
+      showFeatureLabels,
+      showMarkers,
+      showRoute,
+    ]);
+
+    useEffect(() => {
+      if (selectedFeature) {
+        return;
+      }
+      if (!hoveredFeature) {
+        resetPoints();
+      } else {
+        hoveredFeature?.setStyle(
+          getFeatureStyle(hoveredFeature, true, showMarkers, showRoute)
+        );
+      }
+    }, [
+      gpxMarkers,
+      hoveredFeature,
+      resetPoints,
       selectedFeature,
       showFeatureLabels,
       showMarkers,
