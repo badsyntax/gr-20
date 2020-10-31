@@ -6,9 +6,9 @@
     "about-page.js.map": "/gr-20/static/js/about-page.6bff0d78.chunk.js.map",
     "index-page.js": "/gr-20/static/js/index-page.0d3c33d6.chunk.js",
     "index-page.js.map": "/gr-20/static/js/index-page.0d3c33d6.chunk.js.map",
-    "main.css": "/gr-20/static/css/main.16974d8f.chunk.css",
-    "main.js": "/gr-20/static/js/main.c3d5b1c8.chunk.js",
-    "main.js.map": "/gr-20/static/js/main.c3d5b1c8.chunk.js.map",
+    "main.css": "/gr-20/static/css/main.ec3e7927.chunk.css",
+    "main.js": "/gr-20/static/js/main.55b545db.chunk.js",
+    "main.js.map": "/gr-20/static/js/main.55b545db.chunk.js.map",
     "map-page.js": "/gr-20/static/js/map-page.bb25c02d.chunk.js",
     "map-page.js.map": "/gr-20/static/js/map-page.bb25c02d.chunk.js.map",
     "not-found-page.js": "/gr-20/static/js/not-found-page.f3ab3d61.chunk.js",
@@ -32,7 +32,7 @@
     "static/js/14.89a7c7fb.chunk.js": "/gr-20/static/js/14.89a7c7fb.chunk.js",
     "static/js/14.89a7c7fb.chunk.js.map": "/gr-20/static/js/14.89a7c7fb.chunk.js.map",
     "index.html": "/gr-20/index.html",
-    "static/css/main.16974d8f.chunk.css.map": "/gr-20/static/css/main.16974d8f.chunk.css.map",
+    "static/css/main.ec3e7927.chunk.css.map": "/gr-20/static/css/main.ec3e7927.chunk.css.map",
     "static/js/10.0c78431b.chunk.js.LICENSE.txt": "/gr-20/static/js/10.0c78431b.chunk.js.LICENSE.txt",
     "static/js/11.17c98a3b.chunk.js.LICENSE.txt": "/gr-20/static/js/11.17c98a3b.chunk.js.LICENSE.txt",
     "static/js/12.2d2d121c.chunk.js.LICENSE.txt": "/gr-20/static/js/12.2d2d121c.chunk.js.LICENSE.txt",
@@ -51,7 +51,7 @@
   "entrypoints": [
     "static/js/runtime-main.3415920c.js",
     "static/js/10.0c78431b.chunk.js",
-    "static/css/main.16974d8f.chunk.css",
-    "static/js/main.c3d5b1c8.chunk.js"
+    "static/css/main.ec3e7927.chunk.css",
+    "static/js/main.55b545db.chunk.js"
   ]
 }
