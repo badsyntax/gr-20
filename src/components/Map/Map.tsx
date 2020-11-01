@@ -27,6 +27,7 @@ import { TileLayer } from '../TileLayer/TileLayer';
 import { useStyles } from './styles';
 import { WaypointDrawer } from '../WaypointDrawer/WaypointDrawer';
 import { StartFinishLayer } from '../StartFinishLayer/StartFinishLayer';
+import { Stage } from '../../util/types';
 
 const initialState = {
   lat: 42.184207,
@@ -44,6 +45,7 @@ export const Map: React.FunctionComponent = ({ children }) => {
   );
 
   const [selectedFeature, setSelectedFeature] = useState<Feature<Point>>();
+  const [selectedStage, setSelectedStage] = useState<Stage>();
   const [sortedPointFeatures, setSortedPointFeatures] = useState<
     Feature<Point>[]
   >([]);
@@ -80,10 +82,14 @@ export const Map: React.FunctionComponent = ({ children }) => {
     setIsWaypointDrawerOpen(false);
   };
 
-  const onSelectGpxPointFeature = (feature?: Feature<Point>) => {
+  const onSelectGpxPointFeature = useCallback((feature?: Feature<Point>) => {
     setSelectedFeature(feature);
     setIsWaypointDrawerOpen(!!feature);
-  };
+  }, []);
+
+  const onSelectGpxStage = useCallback((stage: Stage) => {
+    setSelectedStage(stage);
+  }, []);
 
   useEffect(() => {
     const { lat, lng, zoom } = initialState;
@@ -125,7 +131,9 @@ export const Map: React.FunctionComponent = ({ children }) => {
         onSourceReady={onGpxSourceReady}
         map={map}
         onSelectPointFeature={onSelectGpxPointFeature}
+        onSelectStage={onSelectGpxStage}
         selectedFeature={selectedFeature}
+        selectedStage={selectedStage}
       >
         {(gpxVectorLayer) => {
           return (

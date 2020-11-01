@@ -134,7 +134,7 @@ export const getLayerById = <T>(map: OLMap, id: string): T | undefined =>
 export const getMultiLineStringFeature = (
   features: Feature<Geometry>[]
 ): Feature<MultiLineString> | undefined => {
-  return features.find(isMultiLineStringFeature);
+  return features.find(findMultiLineStringFeature('gpx-multiline-feature'));
 };
 
 export const getPointFeatures = (
@@ -153,7 +153,7 @@ export interface SortedPointFeature {
 export const getCoordIndexInMultiLine = (
   coords: Coordinate,
   multiLine: Feature<MultiLineString>,
-  margin = 50 //meters
+  margin = 0 //meters
 ): number => {
   const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
   const closestPointInMultiLine = multiLine
@@ -179,7 +179,8 @@ export const getSortedPointFeatures = (
   const pointsInMultiLine = points.map((point) => {
     const featureIndex = getCoordIndexInMultiLine(
       point.getGeometry().getCoordinates(),
-      multiLine
+      multiLine,
+      50
     );
     return {
       featurePoint: point,
@@ -232,29 +233,36 @@ export function isGpxWayPoint(feature: FeatureLike): feature is Feature<Point> {
   );
 }
 
-export function isMultiLineStringFeature(
-  feature: FeatureLike
-): feature is Feature<MultiLineString> {
-  return feature.getGeometry().getType() === MULTI_LINE_STRING;
+export function findMultiLineStringFeature(id: string) {
+  return (feature: FeatureLike): feature is Feature<MultiLineString> => {
+    return (
+      feature.getGeometry().getType() === MULTI_LINE_STRING &&
+      id === feature.get('id')
+    );
+  };
 }
 
-// Given a single coordinate, returns an array of coordinates from a multi-string feature
-// between two point features.
 export function getStartEndPointCoordIndexesForCoordinate(
   coord: Coordinate,
   multiLine: Feature<MultiLineString>,
   sortedPointFeatures: Feature<Point>[]
 ): number[] {
-  const coordIndex = getCoordIndexInMultiLine(coord, multiLine, 100);
+  const coordIndex = getCoordIndexInMultiLine(coord, multiLine, 10);
   const pointIndexes = sortedPointFeatures.map((feature) =>
-    getCoordIndexInMultiLine(feature.getGeometry().getCoordinates(), multiLine)
+    getCoordIndexInMultiLine(
+      feature.getGeometry().getCoordinates(),
+      multiLine,
+      50
+    )
   );
   const startIndex = pointIndexes
     .filter((pointIndex, i) => pointIndex <= coordIndex)
     .pop();
+  if (startIndex === undefined) {
+    return [];
+  }
   const endIndex = pointIndexes.filter(
     (pointIndex, i) => pointIndex >= coordIndex
   )[0];
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return [startIndex!, endIndex];
+  return [startIndex, endIndex];
 }

@@ -22,6 +22,7 @@ export const GpxSource: React.FunctionComponent<GpxSourceProps> = memo(
       dispatch(showSpinner());
       const format = new GPX({
         readExtensions(feature, extensionsNode) {
+          feature.set('id', 'gpx-multiline-feature');
           if (!extensionsNode) {
             return;
           }

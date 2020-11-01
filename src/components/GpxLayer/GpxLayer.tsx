@@ -12,14 +12,13 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import {
   getPointFeatures,
   getStartEndPointCoordIndexesForCoordinate,
   isGpxWayPoint,
-  isMultiLineStringFeature,
+  findMultiLineStringFeature,
 } from '../../util/util';
 import { GpxSource } from './GpxSource';
 import selectedPin from './selected-pin.png';
@@ -29,16 +28,19 @@ import MapBrowserEvent from 'ol/MapBrowserEvent';
 import { getFeatureStyle } from './GpxLayerStyles';
 import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
+import { Stage } from '../../util/types';
 
 export interface GpxLayerProps {
   map: OLMap;
   gpxUrl: string;
   selectedFeature?: Feature<Point>;
+  selectedStage?: Stage;
   showMarkers: boolean;
   showRoute: boolean;
   showFeatureLabels?: boolean;
   onSourceReady: (vectorSource: VectorSource) => void;
   onSelectPointFeature: (feature?: Feature<Point>) => void;
+  onSelectStage: (stage: Stage) => void;
   sortedPointFeatures: Feature<Point>[];
   children: (
     gpxVectorLayer: VectorLayer,
@@ -51,10 +53,12 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     map,
     onSourceReady,
     onSelectPointFeature,
+    onSelectStage,
     gpxUrl,
     showMarkers,
     showRoute,
     selectedFeature,
+    selectedStage = [],
     children,
     sortedPointFeatures,
     showFeatureLabels = false,
@@ -73,13 +77,10 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     const highlightLayer = useMemo(
       () =>
         new VectorLayer({
-          declutter: false,
           source: new VectorSource(),
         }),
       []
     );
-
-    const previousHighlight = useRef<number[]>([]);
 
     const onMapPointerMove = useCallback(
       (evt: MapBrowserEvent<UIEvent>) => {
@@ -100,52 +101,9 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
           const pointFeature = features.find(isGpxWayPoint);
 
           const multilineStringFeature = features.find(
-            isMultiLineStringFeature
+            findMultiLineStringFeature('gpx-multiline-feature')
           );
 
-          const highlightSource = highlightLayer.getSource();
-
-          if (multilineStringFeature) {
-            const [
-              startIndex,
-              endIndex,
-            ] = getStartEndPointCoordIndexesForCoordinate(
-              coordinate,
-              multilineStringFeature,
-              sortedPointFeatures
-            );
-
-            const coords = multilineStringFeature
-              .getGeometry()
-              .getCoordinates()[0];
-            const highlightedCoordinates = coords.slice(startIndex, endIndex);
-            if (
-              previousHighlight.current[0] !== startIndex &&
-              previousHighlight.current[1] !== endIndex
-            ) {
-              const featureStyle = new Style({
-                stroke: new Stroke({
-                  color: 'orange',
-                  width: 4,
-                }),
-                zIndex: 0,
-              });
-
-              const feature = new Feature({
-                geometry: new MultiLineString([highlightedCoordinates]),
-                name: 'camera',
-              });
-
-              feature.setStyle(featureStyle);
-
-              highlightSource.clear();
-              highlightSource.addFeature(feature);
-              previousHighlight.current = [startIndex, endIndex];
-            }
-          } else {
-            previousHighlight.current = [];
-            highlightSource.clear();
-          }
           (map.getTarget() as HTMLDivElement).style.cursor =
             pointFeature || multilineStringFeature ? 'pointer' : '';
           if (pointFeature) {
@@ -153,21 +111,67 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
           } else if (hoveredFeature) {
             setHoveredFeature(undefined);
           }
+
+          if (multilineStringFeature) {
+            const [start, end] = getStartEndPointCoordIndexesForCoordinate(
+              coordinate,
+              multilineStringFeature,
+              sortedPointFeatures
+            );
+            if (
+              start === undefined ||
+              start === -1 ||
+              end === undefined ||
+              end === -1
+            ) {
+              return;
+            }
+            onSelectStage([start, end]);
+          } else if (selectedStage.length) {
+            onSelectStage([]);
+          }
         }
       },
-      [highlightLayer, hoveredFeature, map, sortedPointFeatures]
+      [
+        hoveredFeature,
+        map,
+        onSelectStage,
+        selectedStage.length,
+        sortedPointFeatures,
+      ]
     );
 
     const onMapClick = useCallback(
       (evt: MapBrowserEvent<UIEvent>) => {
+        const { coordinate } = evt;
         const features = map.getFeaturesAtPixel(evt.pixel, { hitTolerance: 4 });
-        const feature = features.find(isGpxWayPoint);
-        if (feature) {
+        const pointFeature = features.find(isGpxWayPoint);
+        const multilineStringFeature = features.find(
+          findMultiLineStringFeature('gpx-multiline-feature')
+        );
+        if (pointFeature || multilineStringFeature) {
           evt.preventDefault();
         }
-        onSelectPointFeature(feature);
+        if (pointFeature) {
+          onSelectPointFeature(pointFeature);
+        } else if (multilineStringFeature) {
+          const [start, end] = getStartEndPointCoordIndexesForCoordinate(
+            coordinate,
+            multilineStringFeature,
+            sortedPointFeatures
+          );
+          if (
+            start === undefined ||
+            start === -1 ||
+            end === undefined ||
+            end === -1
+          ) {
+            return;
+          }
+          onSelectStage([start, end]);
+        }
       },
-      [map, onSelectPointFeature]
+      [map, onSelectPointFeature, onSelectStage, sortedPointFeatures]
     );
 
     const onReady = useCallback(
@@ -214,6 +218,38 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     );
 
     useEffect(() => {
+      const source = highlightLayer.getSource();
+      source.clear();
+      if (!selectedStage.length) {
+        return;
+      }
+      const features = vectorLayer.getSource().getFeatures();
+      const multilineStringFeature = features.find(
+        findMultiLineStringFeature('gpx-multiline-feature')
+      );
+      if (multilineStringFeature) {
+        const coords = multilineStringFeature.getGeometry().getCoordinates()[0];
+        const highlightedCoordinates = coords.slice(
+          selectedStage[0],
+          selectedStage[1]
+        );
+        const feature = new Feature();
+        feature.setGeometry(new MultiLineString([highlightedCoordinates]));
+        feature.set('id', 'highlight-multiline-feature');
+        feature.setStyle(
+          new Style({
+            stroke: new Stroke({
+              color: 'orange',
+              width: 4,
+            }),
+            zIndex: 0,
+          })
+        );
+        source.addFeature(feature);
+      }
+    }, [highlightLayer, selectedStage, vectorLayer]);
+
+    useEffect(() => {
       vectorLayer.setStyle((feature) => {
         return getFeatureStyle(
           feature,
@@ -225,6 +261,9 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     }, [showFeatureLabels, showMarkers, showRoute, vectorLayer]);
 
     useEffect(() => {
+      highlightLayer.set('id', 'highlight-layer');
+      vectorLayer.set('id', 'gpx-vector-layer');
+
       map.addLayer(vectorLayer);
       map.addLayer(highlightLayer);
     }, [highlightLayer, map, vectorLayer]);

@@ -8,16 +8,13 @@ import CloseIcon from '@material-ui/icons/Close';
 import React, { Fragment, memo } from 'react';
 import { PointData } from '../PointData/PointData';
 import { WaypointControlButtons } from '../WaypointControlButtons/WaypointControlButtons';
-import { WaypointDetailTabs } from './WaypointDetailTabs';
 import { useStyles } from './WaypointDetail.styles';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorLayer from 'ol/layer/Vector';
 import { ImageBox } from '../ImageBox/ImageBox';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import ListItemText from '@material-ui/core/ListItemText';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
+import Button from '@material-ui/core/Button';
 
 export interface WaypointDetailProps {
   map: OLMap;
@@ -62,13 +59,23 @@ export const WaypointDetail: React.FunctionComponent<WaypointDetailProps> = memo
         <Box>
           <PointData feature={feature} />
         </Box>
-        <List>
+        {/* <List>
           <ListItem button>
             <PlayCircleOutlineIcon />
-            <ListItemText primary="View Stage 1" />
+            <ListItemText primary="Next Stage (2 of 16)" />
           </ListItem>
-        </List>
-        <Toolbar className={classes.toolbar}>
+        </List> */}
+        <Box p={2} className={classes.nextStageButtonContainer}>
+          <Button
+            color="primary"
+            variant="contained"
+            size="large"
+            startIcon={<PlayCircleOutlineIcon />}
+          >
+            Next Stage (2 of 16)
+          </Button>
+        </Box>
+        {/* <Toolbar className={classes.toolbar}>
           <Typography variant="h6">Stage 1</Typography>
         </Toolbar>
         <Divider />
@@ -77,7 +84,7 @@ export const WaypointDetail: React.FunctionComponent<WaypointDetailProps> = memo
           nextFeature={nextFeature}
           prevFeature={prevFeature}
           gpxVectorLayer={gpxVectorLayer}
-        />
+        /> */}
       </Fragment>
     );
   }
