@@ -79,7 +79,7 @@ export const StartFinishLayer: React.FunctionComponent<StartFinishLayerProps> = 
     }, [startEndSource, startEndVectorLayer]);
 
     useEffect(() => {
-      startEndVectorLayer.setZIndex(2);
+      startEndVectorLayer.setZIndex(3);
       map.addLayer(startEndVectorLayer);
       return () => {
         map.removeLayer(startEndVectorLayer);

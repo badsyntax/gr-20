@@ -169,6 +169,8 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
             return;
           }
           onSelectStage([start, end]);
+        } else {
+          onSelectPointFeature(undefined);
         }
       },
       [map, onSelectPointFeature, onSelectStage, sortedPointFeatures]
@@ -211,7 +213,7 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
             })
           );
         }
-        style.setZIndex(3);
+        style.setZIndex(2);
         feature.setStyle(style);
       },
       [selectedFeature, showMarkers, showRoute]
@@ -233,18 +235,16 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
           selectedStage[0],
           selectedStage[1]
         );
+        const style = new Style({
+          stroke: new Stroke({
+            color: 'orange',
+            width: 4,
+          }),
+        });
         const feature = new Feature();
         feature.setGeometry(new MultiLineString([highlightedCoordinates]));
         feature.set('id', 'highlight-multiline-feature');
-        feature.setStyle(
-          new Style({
-            stroke: new Stroke({
-              color: 'orange',
-              width: 4,
-            }),
-            zIndex: 0,
-          })
-        );
+        feature.setStyle(style);
         source.addFeature(feature);
       }
     }, [highlightLayer, selectedStage, vectorLayer]);
@@ -263,6 +263,9 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     useEffect(() => {
       highlightLayer.set('id', 'highlight-layer');
       vectorLayer.set('id', 'gpx-vector-layer');
+
+      vectorLayer.setZIndex(1);
+      highlightLayer.setZIndex(2);
 
       map.addLayer(vectorLayer);
       map.addLayer(highlightLayer);
