@@ -12,10 +12,11 @@ export interface NextPointDataProps {
   gpxVectorLayer: VectorLayer;
   feature: Feature<Point>;
   nextFeature: Feature<Point>;
+  name: string;
 }
 
 export const NextPointData: React.FunctionComponent<NextPointDataProps> = memo(
-  ({ feature, nextFeature, gpxVectorLayer }) => {
+  ({ feature, nextFeature, gpxVectorLayer, name }) => {
     const multiCoords = getMultiCoordsFromNextFeature(
       feature,
       nextFeature,
@@ -24,6 +25,10 @@ export const NextPointData: React.FunctionComponent<NextPointDataProps> = memo(
     return (
       <Table>
         <TableBody>
+          <TableRow>
+            <TableCell>Name:</TableCell>
+            <TableCell>{name}</TableCell>
+          </TableRow>
           <TableRow>
             <TableCell>Distance:</TableCell>
             <TableCell>{multiCoords.distanceInKm}km</TableCell>

@@ -46,7 +46,7 @@ export const Map: React.FunctionComponent = ({ children }) => {
   const [selectedFeature, setSelectedFeature] = useState<Feature<Point>>();
   const [sortedPointFeatures, setSortedPointFeatures] = useState<
     Feature<Point>[]
-  >();
+  >([]);
   const {
     mapUrl,
     gpxUrl,
@@ -118,6 +118,7 @@ export const Map: React.FunctionComponent = ({ children }) => {
     <div className={classes.root} ref={mapRef}>
       <GpxLayer
         gpxUrl={gpxUrl}
+        sortedPointFeatures={sortedPointFeatures}
         showMarkers={showMarkers}
         showRoute={showRoute}
         showFeatureLabels={showFeatureLabels}

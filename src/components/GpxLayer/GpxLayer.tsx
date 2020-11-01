@@ -12,16 +12,23 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
-import { getPointFeatures, isGpxWayPoint } from '../../util/util';
+import {
+  getPointFeatures,
+  getStartEndPointCoordIndexesForCoordinate,
+  isGpxWayPoint,
+  isMultiLineStringFeature,
+} from '../../util/util';
 import { GpxSource } from './GpxSource';
 import selectedPin from './selected-pin.png';
-import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
 import MapBrowserEventType from 'ol/MapBrowserEventType';
 import MapBrowserEvent from 'ol/MapBrowserEvent';
 import { getFeatureStyle } from './GpxLayerStyles';
+import Style from 'ol/style/Style';
+import Stroke from 'ol/style/Stroke';
 
 export interface GpxLayerProps {
   map: OLMap;
@@ -32,6 +39,7 @@ export interface GpxLayerProps {
   showFeatureLabels?: boolean;
   onSourceReady: (vectorSource: VectorSource) => void;
   onSelectPointFeature: (feature?: Feature<Point>) => void;
+  sortedPointFeatures: Feature<Point>[];
   children: (
     gpxVectorLayer: VectorLayer,
     multiLineStringFeature?: Feature<MultiLineString>
@@ -48,6 +56,7 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     showRoute,
     selectedFeature,
     children,
+    sortedPointFeatures,
     showFeatureLabels = false,
   }) => {
     const [gpxMarkers, setGpxMarkers] = useState<Feature<Geometry>[]>([]);
@@ -61,21 +70,84 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
       []
     );
 
+    const highlightLayer = useMemo(
+      () =>
+        new VectorLayer({
+          declutter: false,
+          source: new VectorSource(),
+        }),
+      []
+    );
+
+    const previousHighlight = useRef<number[]>([]);
+
     const onMapPointerMove = useCallback(
       (evt: MapBrowserEvent<UIEvent>) => {
         if (
           (evt.originalEvent?.target as HTMLElement).nodeName.toLowerCase() ===
           'canvas'
         ) {
+          const { coordinate } = evt;
           const pixel = map.getEventPixel(evt.originalEvent);
           const features: FeatureLike[] = [];
-          map.forEachFeatureAtPixel(pixel, (feature) => {
-            features.push(feature);
-          });
+          map.forEachFeatureAtPixel(
+            pixel,
+            (feature) => {
+              features.push(feature);
+            },
+            { hitTolerance: 4 }
+          );
           const pointFeature = features.find(isGpxWayPoint);
-          (map.getTarget() as HTMLDivElement).style.cursor = pointFeature
-            ? 'pointer'
-            : '';
+
+          const multilineStringFeature = features.find(
+            isMultiLineStringFeature
+          );
+
+          const highlightSource = highlightLayer.getSource();
+
+          if (multilineStringFeature) {
+            const [
+              startIndex,
+              endIndex,
+            ] = getStartEndPointCoordIndexesForCoordinate(
+              coordinate,
+              multilineStringFeature,
+              sortedPointFeatures
+            );
+
+            const coords = multilineStringFeature
+              .getGeometry()
+              .getCoordinates()[0];
+            const highlightedCoordinates = coords.slice(startIndex, endIndex);
+            if (
+              previousHighlight.current[0] !== startIndex &&
+              previousHighlight.current[1] !== endIndex
+            ) {
+              const featureStyle = new Style({
+                stroke: new Stroke({
+                  color: 'orange',
+                  width: 4,
+                }),
+                zIndex: 0,
+              });
+
+              const feature = new Feature({
+                geometry: new MultiLineString([highlightedCoordinates]),
+                name: 'camera',
+              });
+
+              feature.setStyle(featureStyle);
+
+              highlightSource.clear();
+              highlightSource.addFeature(feature);
+              previousHighlight.current = [startIndex, endIndex];
+            }
+          } else {
+            previousHighlight.current = [];
+            highlightSource.clear();
+          }
+          (map.getTarget() as HTMLDivElement).style.cursor =
+            pointFeature || multilineStringFeature ? 'pointer' : '';
           if (pointFeature) {
             setHoveredFeature(pointFeature);
           } else if (hoveredFeature) {
@@ -83,7 +155,7 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
           }
         }
       },
-      [hoveredFeature, map]
+      [highlightLayer, hoveredFeature, map, sortedPointFeatures]
     );
 
     const onMapClick = useCallback(
@@ -108,12 +180,38 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     );
 
     const resetPoints = useCallback(() => {
-      gpxMarkers.forEach((feature) =>
-        feature.setStyle(
-          getFeatureStyle(feature, showFeatureLabels, showMarkers, showRoute)
-        )
-      );
-    }, [gpxMarkers, showFeatureLabels, showMarkers, showRoute]);
+      gpxMarkers.forEach((feature) => {
+        if (selectedFeature !== feature) {
+          feature.setStyle(
+            getFeatureStyle(feature, showFeatureLabels, showMarkers, showRoute)
+          );
+        }
+      });
+    }, [
+      gpxMarkers,
+      selectedFeature,
+      showFeatureLabels,
+      showMarkers,
+      showRoute,
+    ]);
+
+    const setHoveredOrSelectedStyle = useCallback(
+      (feature: Feature<Point>) => {
+        const isSelectedFeature = feature === selectedFeature;
+        const style = getFeatureStyle(feature, true, showMarkers, showRoute);
+        if (isSelectedFeature) {
+          style.setImage(
+            new Icon({
+              anchor: [0.5, 1],
+              src: selectedPin,
+            })
+          );
+        }
+        style.setZIndex(3);
+        feature.setStyle(style);
+      },
+      [selectedFeature, showMarkers, showRoute]
+    );
 
     useEffect(() => {
       vectorLayer.setStyle((feature) => {
@@ -128,57 +226,24 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
 
     useEffect(() => {
       map.addLayer(vectorLayer);
-    }, [map, vectorLayer]);
+      map.addLayer(highlightLayer);
+    }, [highlightLayer, map, vectorLayer]);
 
     useEffect(() => {
       if (!selectedFeature) {
         return;
       }
       resetPoints();
-      const featureStyle = getFeatureStyle(
-        selectedFeature,
-        true,
-        false,
-        showRoute
-      );
-      featureStyle.setImage(
-        new Icon({
-          anchor: [0.5, 1],
-          src: selectedPin,
-        })
-      );
-      featureStyle.setZIndex(3);
-      selectedFeature.setStyle(featureStyle);
-    }, [
-      gpxMarkers,
-      map,
-      resetPoints,
-      selectedFeature,
-      showFeatureLabels,
-      showMarkers,
-      showRoute,
-    ]);
+      setHoveredOrSelectedStyle(selectedFeature);
+    }, [resetPoints, selectedFeature, setHoveredOrSelectedStyle]);
 
     useEffect(() => {
-      if (selectedFeature) {
-        return;
-      }
       if (!hoveredFeature) {
         resetPoints();
-      } else {
-        hoveredFeature?.setStyle(
-          getFeatureStyle(hoveredFeature, true, showMarkers, showRoute)
-        );
+        return;
       }
-    }, [
-      gpxMarkers,
-      hoveredFeature,
-      resetPoints,
-      selectedFeature,
-      showFeatureLabels,
-      showMarkers,
-      showRoute,
-    ]);
+      setHoveredOrSelectedStyle(hoveredFeature);
+    }, [hoveredFeature, resetPoints, setHoveredOrSelectedStyle]);
 
     useEffect(() => {
       map.on(MapBrowserEventType.POINTERMOVE, onMapPointerMove);

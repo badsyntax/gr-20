@@ -18,14 +18,9 @@ export const WaypointDrawer: React.FunctionComponent<WaypointDrawerProps> = ({
 }) => {
   const classes = useStyles();
   const theme = useTheme();
-
-  const container =
-    window !== undefined ? () => window.document.body : undefined;
-
   return (
     <nav className={classes.drawer} aria-label="waypoint">
       <Drawer
-        container={container}
         anchor={theme.direction === 'rtl' ? 'right' : 'left'}
         variant="persistent"
         open={isOpen}

@@ -86,6 +86,14 @@
         "options": {
           "parser": "html"
         }
+      },
+      {
+        "files": "*.gpx",
+        "options": {
+          "plugins": [
+            "xml"
+          ]
+        }
       }
     ]
   },

@@ -6,5 +6,14 @@ export const useStyles = makeStyles((theme: Theme) =>
       backgroundSize: 'cover',
       backgroundPosition: 'center',
     },
+    title: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
+    titleCloseButton: {
+      position: 'absolute',
+      right: theme.spacing(1),
+      top: theme.spacing(1),
+    },
   })
 );

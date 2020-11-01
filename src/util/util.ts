@@ -113,8 +113,14 @@ export const getMultiCoordsFromNextFeature = (
     throw new Error('unable to find multiLine feature in gpx vector layer');
   }
   const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
-  const featureIndex = getFeatureIndexInMultiLine(feature, multiLine);
-  const nextFeatureIndex = getFeatureIndexInMultiLine(nextFeature, multiLine);
+  const featureIndex = getCoordIndexInMultiLine(
+    feature.getGeometry().getCoordinates(),
+    multiLine
+  );
+  const nextFeatureIndex = getCoordIndexInMultiLine(
+    nextFeature.getGeometry().getCoordinates(),
+    multiLine
+  );
   const multiCoords = multiLineCoords.slice(featureIndex, nextFeatureIndex);
   return getDataFromMultiCoords(multiCoords);
 };
@@ -128,9 +134,7 @@ export const getLayerById = <T>(map: OLMap, id: string): T | undefined =>
 export const getMultiLineStringFeature = (
   features: Feature<Geometry>[]
 ): Feature<MultiLineString> | undefined => {
-  return features.find(
-    (feature) => feature.getGeometry().getType() === MULTI_LINE_STRING
-  ) as Feature<MultiLineString>;
+  return features.find(isMultiLineStringFeature);
 };
 
 export const getPointFeatures = (
@@ -146,15 +150,15 @@ export interface SortedPointFeature {
   index: number;
 }
 
-export const getFeatureIndexInMultiLine = (
-  feature: Feature<Point>,
-  multiLine: Feature<MultiLineString>
+export const getCoordIndexInMultiLine = (
+  coords: Coordinate,
+  multiLine: Feature<MultiLineString>,
+  margin = 50 //meters
 ): number => {
   const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
   const closestPointInMultiLine = multiLine
     .getGeometry()
-    .getClosestPoint(feature.getGeometry().getCoordinates());
-  const margin = 50; // meters
+    .getClosestPoint(coords);
   const closesPointIndex = multiLineCoords.findIndex(
     (coord) =>
       new LineString([coord, closestPointInMultiLine]).getLength() < margin
@@ -173,7 +177,10 @@ export const getSortedPointFeatures = (
     );
   }
   const pointsInMultiLine = points.map((point) => {
-    const featureIndex = getFeatureIndexInMultiLine(point, multiLine);
+    const featureIndex = getCoordIndexInMultiLine(
+      point.getGeometry().getCoordinates(),
+      multiLine
+    );
     return {
       featurePoint: point,
       index: featureIndex,
@@ -223,4 +230,31 @@ export function isGpxWayPoint(feature: FeatureLike): feature is Feature<Point> {
     feature.getId() !== START_POINT_ID &&
     feature.getId() !== FINISH_POINT_ID
   );
+}
+
+export function isMultiLineStringFeature(
+  feature: FeatureLike
+): feature is Feature<MultiLineString> {
+  return feature.getGeometry().getType() === MULTI_LINE_STRING;
+}
+
+// Given a single coordinate, returns an array of coordinates from a multi-string feature
+// between two point features.
+export function getStartEndPointCoordIndexesForCoordinate(
+  coord: Coordinate,
+  multiLine: Feature<MultiLineString>,
+  sortedPointFeatures: Feature<Point>[]
+): number[] {
+  const coordIndex = getCoordIndexInMultiLine(coord, multiLine, 100);
+  const pointIndexes = sortedPointFeatures.map((feature) =>
+    getCoordIndexInMultiLine(feature.getGeometry().getCoordinates(), multiLine)
+  );
+  const startIndex = pointIndexes
+    .filter((pointIndex, i) => pointIndex <= coordIndex)
+    .pop();
+  const endIndex = pointIndexes.filter(
+    (pointIndex, i) => pointIndex >= coordIndex
+  )[0];
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return [startIndex!, endIndex];
 }

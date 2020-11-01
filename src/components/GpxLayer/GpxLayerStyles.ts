@@ -41,7 +41,7 @@ export function getFeatureStyle(
       return new Style({
         image: showImage ? imageIcon : undefined,
         text: showLabel ? textStyleOpts : undefined,
-        zIndex: 2,
+        zIndex: 3,
       });
     case GeometryType.MULTI_LINE_STRING:
       const routeStyleOpts = {

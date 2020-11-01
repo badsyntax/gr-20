@@ -52,6 +52,12 @@ export const WaypointControlButtons: React.FunctionComponent<WaypointControlButt
         map={map}
         label="Zoom to Point"
       />
+      <Google360ControlButton
+        label="View 360"
+        pointName={name}
+        embedUrl={google360Url}
+        disabled={!google360Url}
+      />
       <PrevPointControlButton
         onClick={onPrevPointButtonClick}
         label="Previous Point"
@@ -61,12 +67,6 @@ export const WaypointControlButtons: React.FunctionComponent<WaypointControlButt
         onClick={onNextPointButtonClick}
         label="Next Point"
         disabled={!nextFeature}
-      />
-      <Google360ControlButton
-        label="View 360"
-        pointName={name}
-        embedUrl={google360Url}
-        disabled={!google360Url}
       />
     </ButtonGroup>
   );

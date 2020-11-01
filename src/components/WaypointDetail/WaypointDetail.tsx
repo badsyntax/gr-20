@@ -13,7 +13,11 @@ import { useStyles } from './WaypointDetail.styles';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorLayer from 'ol/layer/Vector';
-import { ImageBox } from '../Image/ImageBox';
+import { ImageBox } from '../ImageBox/ImageBox';
+import ListItem from '@material-ui/core/ListItem';
+import List from '@material-ui/core/List';
+import ListItemText from '@material-ui/core/ListItemText';
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 
 export interface WaypointDetailProps {
   map: OLMap;
@@ -39,13 +43,13 @@ export const WaypointDetail: React.FunctionComponent<WaypointDetailProps> = memo
     const { name, image } = feature.getProperties();
     return (
       <Fragment>
-        <ImageBox height={220} url={image} fade />
         <Toolbar className={classes.toolbar}>
           <Typography variant="h6">{name}</Typography>
           <IconButton edge="end" onClick={onClose}>
             <CloseIcon />
           </IconButton>
         </Toolbar>
+        <ImageBox height={220} url={image} fade label="Examplelabel" />
         <Divider />
         <WaypointControlButtons
           feature={feature}
@@ -55,9 +59,19 @@ export const WaypointDetail: React.FunctionComponent<WaypointDetailProps> = memo
           selectFeature={selectFeature}
         />
         <Divider />
-        <Box mb={2}>
+        <Box>
           <PointData feature={feature} />
         </Box>
+        <List>
+          <ListItem button>
+            <PlayCircleOutlineIcon />
+            <ListItemText primary="View Stage 1" />
+          </ListItem>
+        </List>
+        <Toolbar className={classes.toolbar}>
+          <Typography variant="h6">Stage 1</Typography>
+        </Toolbar>
+        <Divider />
         <WaypointDetailTabs
           feature={feature}
           nextFeature={nextFeature}

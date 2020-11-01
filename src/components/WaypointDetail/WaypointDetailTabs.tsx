@@ -46,6 +46,7 @@ export const WaypointDetailTabs: React.FunctionComponent<WaypointDetailTabsProps
               gpxVectorLayer={gpxVectorLayer}
               feature={feature}
               nextFeature={nextFeature}
+              name={nextFeature.getProperties().name}
             />
           )}
         </TabPanel>
@@ -55,6 +56,7 @@ export const WaypointDetailTabs: React.FunctionComponent<WaypointDetailTabsProps
               gpxVectorLayer={gpxVectorLayer}
               feature={prevFeature}
               nextFeature={feature}
+              name={prevFeature.getProperties().name}
             />
           )}
         </TabPanel>
