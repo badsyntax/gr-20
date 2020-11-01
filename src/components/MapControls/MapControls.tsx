@@ -12,6 +12,7 @@ import { ZoomOutControlButton } from '../ControlButtons/ZoomOutControlButton/Zoo
 import { SettingsToggleControlButton } from '../ControlButtons/SettingsToggleControlButton/SettingsToggleControlButton';
 import { useStyles } from './styles';
 import Fade from '@material-ui/core/Fade';
+import Slider from '@material-ui/core/Slider';
 
 export const FADE_TIMEOUT = 800;
 
@@ -63,6 +64,13 @@ export const MapControls: React.FunctionComponent<MapControlsProps> = ({
             )}
           >
             <ZoomInControlButton label="Zoom In" map={map} />
+            <div style={{ height: 100, textAlign: 'center' }}>
+              <Slider
+                orientation="vertical"
+                defaultValue={30}
+                aria-labelledby="vertical-slider"
+              />
+            </div>
             <ZoomOutControlButton label="Zoom Out" map={map} />
           </ButtonGroup>
         </div>

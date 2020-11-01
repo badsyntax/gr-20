@@ -1,20 +1,19 @@
+import React, { Fragment, memo } from 'react';
 import { default as OLMap } from 'ol/Map';
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import CloseIcon from '@material-ui/icons/Close';
-import React, { Fragment, memo } from 'react';
+import Button from '@material-ui/core/Button';
+import Feature from 'ol/Feature';
+import Point from 'ol/geom/Point';
+import { ImageBox } from '../ImageBox/ImageBox';
 import { PointData } from '../PointData/PointData';
 import { WaypointControlButtons } from '../WaypointControlButtons/WaypointControlButtons';
 import { useStyles } from './WaypointDetail.styles';
-import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
-import VectorLayer from 'ol/layer/Vector';
-import { ImageBox } from '../ImageBox/ImageBox';
-import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
-import Button from '@material-ui/core/Button';
 
 export interface WaypointDetailProps {
   map: OLMap;
@@ -23,7 +22,7 @@ export interface WaypointDetailProps {
   prevFeature?: Feature<Point>;
   onClose: () => void;
   selectFeature: (feature: Feature<Point>) => void;
-  gpxVectorLayer: VectorLayer;
+  sortedPointFeatures: Feature<Point>[];
 }
 
 export const WaypointDetail: React.FunctionComponent<WaypointDetailProps> = memo(
@@ -32,12 +31,17 @@ export const WaypointDetail: React.FunctionComponent<WaypointDetailProps> = memo
     feature,
     nextFeature,
     prevFeature,
-    gpxVectorLayer,
     onClose,
     selectFeature,
+    sortedPointFeatures,
   }) => {
     const classes = useStyles();
     const { name, image } = feature.getProperties();
+    const currentFeatureIndex = sortedPointFeatures.indexOf(feature);
+    const onSelectNextStage = () => {
+      alert('select next stage');
+    };
+
     return (
       <Fragment>
         <Toolbar className={classes.toolbar}>
@@ -46,7 +50,7 @@ export const WaypointDetail: React.FunctionComponent<WaypointDetailProps> = memo
             <CloseIcon />
           </IconButton>
         </Toolbar>
-        <ImageBox height={220} url={image} fade label="Examplelabel" />
+        <ImageBox height={220} url={image} label="Examplelabel" />
         <Divider />
         <WaypointControlButtons
           feature={feature}
@@ -59,22 +63,20 @@ export const WaypointDetail: React.FunctionComponent<WaypointDetailProps> = memo
         <Box>
           <PointData feature={feature} />
         </Box>
-        {/* <List>
-          <ListItem button>
-            <PlayCircleOutlineIcon />
-            <ListItemText primary="Next Stage (2 of 16)" />
-          </ListItem>
-        </List> */}
-        <Box p={2} className={classes.nextStageButtonContainer}>
-          <Button
-            color="primary"
-            variant="contained"
-            size="large"
-            startIcon={<PlayCircleOutlineIcon />}
-          >
-            Next Stage (2 of 16)
-          </Button>
-        </Box>
+        {nextFeature && (
+          <Box p={2} className={classes.nextStageButtonContainer}>
+            <Button
+              color="primary"
+              variant="contained"
+              size="large"
+              startIcon={<PlayCircleOutlineIcon />}
+              onClick={onSelectNextStage}
+            >
+              Next Stage ({currentFeatureIndex + 1} of{' '}
+              {sortedPointFeatures.length})
+            </Button>
+          </Box>
+        )}
         {/* <Toolbar className={classes.toolbar}>
           <Typography variant="h6">Stage 1</Typography>
         </Toolbar>

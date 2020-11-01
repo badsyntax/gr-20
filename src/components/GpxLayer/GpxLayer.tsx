@@ -29,12 +29,12 @@ import { getFeatureStyle } from './GpxLayerStyles';
 import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import { Stage } from '../../util/types';
+import { Coordinate } from 'ol/coordinate';
 
 export interface GpxLayerProps {
   map: OLMap;
   gpxUrl: string;
   selectedFeature?: Feature<Point>;
-  selectedStage?: Stage;
   showMarkers: boolean;
   showRoute: boolean;
   showFeatureLabels?: boolean;
@@ -58,13 +58,13 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     showMarkers,
     showRoute,
     selectedFeature,
-    selectedStage = [],
     children,
     sortedPointFeatures,
     showFeatureLabels = false,
   }) => {
     const [gpxMarkers, setGpxMarkers] = useState<Feature<Geometry>[]>([]);
     const [hoveredFeature, setHoveredFeature] = useState<Feature<Point>>();
+    const [hoveredStage, setHoveredStage] = useState<Stage>([]);
 
     const vectorLayer = useMemo(
       () =>
@@ -80,6 +80,29 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
           source: new VectorSource(),
         }),
       []
+    );
+
+    const getStage = useCallback(
+      (
+        coordinate: Coordinate,
+        multilineStringFeature: Feature<MultiLineString>
+      ): Stage => {
+        const [start, end] = getStartEndPointCoordIndexesForCoordinate(
+          coordinate,
+          multilineStringFeature,
+          sortedPointFeatures
+        );
+        if (
+          start === undefined ||
+          start === -1 ||
+          end === undefined ||
+          end === -1
+        ) {
+          return [];
+        }
+        return [start, end];
+      },
+      [sortedPointFeatures]
     );
 
     const onMapPointerMove = useCallback(
@@ -107,38 +130,25 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
           (map.getTarget() as HTMLDivElement).style.cursor =
             pointFeature || multilineStringFeature ? 'pointer' : '';
           if (pointFeature) {
-            setHoveredFeature(pointFeature);
+            if (!hoveredStage.length) {
+              setHoveredFeature(pointFeature);
+              return;
+            }
           } else if (hoveredFeature) {
             setHoveredFeature(undefined);
           }
 
           if (multilineStringFeature) {
-            const [start, end] = getStartEndPointCoordIndexesForCoordinate(
-              coordinate,
-              multilineStringFeature,
-              sortedPointFeatures
-            );
-            if (
-              start === undefined ||
-              start === -1 ||
-              end === undefined ||
-              end === -1
-            ) {
-              return;
+            const stage = getStage(coordinate, multilineStringFeature);
+            if (stage.length) {
+              setHoveredStage(stage);
             }
-            onSelectStage([start, end]);
-          } else if (selectedStage.length) {
-            onSelectStage([]);
+          } else if (hoveredStage.length) {
+            setHoveredStage([]);
           }
         }
       },
-      [
-        hoveredFeature,
-        map,
-        onSelectStage,
-        selectedStage.length,
-        sortedPointFeatures,
-      ]
+      [getStage, hoveredFeature, hoveredStage.length, map]
     );
 
     const onMapClick = useCallback(
@@ -155,25 +165,15 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
         if (pointFeature) {
           onSelectPointFeature(pointFeature);
         } else if (multilineStringFeature) {
-          const [start, end] = getStartEndPointCoordIndexesForCoordinate(
-            coordinate,
-            multilineStringFeature,
-            sortedPointFeatures
-          );
-          if (
-            start === undefined ||
-            start === -1 ||
-            end === undefined ||
-            end === -1
-          ) {
-            return;
+          const stage = getStage(coordinate, multilineStringFeature);
+          if (stage.length) {
+            onSelectStage(stage);
           }
-          onSelectStage([start, end]);
         } else {
           onSelectPointFeature(undefined);
         }
       },
-      [map, onSelectPointFeature, onSelectStage, sortedPointFeatures]
+      [getStage, map, onSelectPointFeature, onSelectStage]
     );
 
     const onReady = useCallback(
@@ -222,7 +222,7 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     useEffect(() => {
       const source = highlightLayer.getSource();
       source.clear();
-      if (!selectedStage.length) {
+      if (!hoveredStage.length) {
         return;
       }
       const features = vectorLayer.getSource().getFeatures();
@@ -232,8 +232,8 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
       if (multilineStringFeature) {
         const coords = multilineStringFeature.getGeometry().getCoordinates()[0];
         const highlightedCoordinates = coords.slice(
-          selectedStage[0],
-          selectedStage[1]
+          hoveredStage[0],
+          hoveredStage[1]
         );
         const style = new Style({
           stroke: new Stroke({
@@ -247,7 +247,7 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
         feature.setStyle(style);
         source.addFeature(feature);
       }
-    }, [highlightLayer, selectedStage, vectorLayer]);
+    }, [highlightLayer, hoveredStage, vectorLayer]);
 
     useEffect(() => {
       vectorLayer.setStyle((feature) => {

@@ -1,4 +1,10 @@
-import { Typography } from '@material-ui/core';
+import React, {
+  forwardRef,
+  Fragment,
+  memo,
+  MouseEventHandler,
+  useState,
+} from 'react';
 import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -7,21 +13,14 @@ import IconButton from '@material-ui/core/IconButton';
 import { TransitionProps } from '@material-ui/core/transitions/transition';
 import CloseIcon from '@material-ui/icons/Close';
 
-import React, {
-  forwardRef,
-  Fragment,
-  memo,
-  MouseEventHandler,
-  useState,
-} from 'react';
 import { useImage } from '../../hooks/useImage';
 import { useStyles } from './ImageBoxStyles';
+import Typography from '@material-ui/core/Typography';
 
 export interface ImageBoxProps {
   url: string;
   label: string;
   height?: number | string;
-  fade?: boolean;
   timeout?: number;
 }
 
@@ -30,28 +29,26 @@ export interface ImageProps {
 }
 
 const Image: React.FunctionComponent<ImageProps & ImageBoxProps> = memo(
-  ({ url, label, onClick, fade, timeout, height = '100%' }) => {
+  ({ url, label, onClick, timeout, height = '100%' }) => {
     const { isLoaded } = useImage(url);
     const classes = useStyles();
-    const image = (
-      <Box
-        className={classes.root}
-        style={{
-          backgroundImage: `url("${url}")`,
-          minHeight: height,
-          position: 'relative',
-          zIndex: 999,
-        }}
-        arial-label={label}
-        onClick={onClick}
-      />
-    );
-    return fade ? (
+
+    return (
       <Fade in={isLoaded} timeout={timeout}>
-        {image}
+        <Box
+          className={classes.root}
+          style={{
+            ...(isLoaded && {
+              backgroundImage: `url("${url}")`,
+            }),
+            minHeight: height,
+            position: 'relative',
+            zIndex: 999,
+          }}
+          arial-label={label}
+          onClick={onClick}
+        ></Box>
       </Fade>
-    ) : (
-      image
     );
   }
 );
@@ -63,7 +60,7 @@ const Transition: React.FunctionComponent<
 });
 
 export const ImageBox: React.FunctionComponent<ImageBoxProps> = memo(
-  ({ url, label, height, fade = false, timeout = 800 }) => {
+  ({ url, label, height, timeout = 800 }) => {
     const classes = useStyles();
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -85,7 +82,7 @@ export const ImageBox: React.FunctionComponent<ImageBoxProps> = memo(
           url={url}
           height={height}
           onClick={handleImageClick}
-          fade={fade}
+          timeout={timeout}
         />
         <Dialog
           onClose={handleClose}
