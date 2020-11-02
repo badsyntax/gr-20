@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo } from 'react';
 import { default as OLMap } from 'ol/Map';
 import { Feature, MapBrowserEvent } from 'ol';
 import { FeatureLike } from 'ol/Feature';
@@ -7,10 +7,6 @@ import Point from 'ol/geom/Point';
 import MapBrowserEventType from 'ol/MapBrowserEventType';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import Stroke from 'ol/style/Stroke';
-import Style from 'ol/style/Style';
-import Text from 'ol/style/Text';
-import Fill from 'ol/style/Fill';
 
 import { Stage } from '../../util/types';
 import {
@@ -21,6 +17,8 @@ import {
 } from '../../util/util';
 
 import { GPX_LAYER_MULTILINE_FEATURE_ID } from '../GpxLayer/GpxSource';
+import { getTextFeatureStyle, multilineStyle } from './StageLayerStyles';
+import { Pixel } from 'ol/pixel';
 
 export const STAGE_MULTILINE_ID = 'stage-layer';
 export const STAGE_MULTILINE_ZINDEX = 2;
@@ -30,44 +28,12 @@ export const STAGE_MULTILINE_FEATURE_ID = 'stage-multiline-feature';
 export interface StageLayerProps {
   map: OLMap;
   sortedPointFeatures: Feature<Point>[];
-}
-
-const multilineStyle = new Style({
-  stroke: new Stroke({
-    color: 'orange',
-    width: 4,
-  }),
-});
-
-function getFeatureStyle(
-  name: string,
-  fontFamily = 'Calibri,sans-serif'
-): Style {
-  const textStyleOpts = new Text({
-    text: name,
-    font: `bold 13px ${fontFamily}`,
-    overflow: false,
-    offsetY: 8,
-    offsetX: 14,
-    textAlign: 'left',
-    fill: new Fill({
-      color: '#fff',
-    }),
-    stroke: new Stroke({
-      color: '#000',
-      width: 1,
-    }),
-  });
-  const style = new Style({
-    text: textStyleOpts,
-  });
-  return style;
+  selectedStage?: Stage;
+  onStageSelect: (stage: Stage) => void;
 }
 
 export const StageLayer: React.FunctionComponent<StageLayerProps> = memo(
-  ({ map, sortedPointFeatures }) => {
-    const [hoveredStage, setHoveredStage] = useState<Stage>();
-
+  ({ map, selectedStage, sortedPointFeatures, onStageSelect }) => {
     const multilineFeature = useMemo<Feature>(() => {
       const feature = new Feature();
       feature.set('id', STAGE_MULTILINE_FEATURE_ID);
@@ -103,6 +69,57 @@ export const StageLayer: React.FunctionComponent<StageLayerProps> = memo(
       [textFeature]
     );
 
+    const showTextFeature = useCallback(
+      (stage: Stage, pixel: Pixel) => {
+        if (textLayer.getVisible()) {
+          return;
+        }
+        const style = getTextFeatureStyle(
+          'Stage 4 ' + stage.startFeature.getProperties().name
+        );
+        textFeature.setStyle(style);
+        const coord = map.getCoordinateFromPixel(pixel);
+        textFeature.setGeometry(new Point(coord));
+        textLayer.setVisible(true);
+      },
+      [map, textFeature, textLayer]
+    );
+
+    const showStageMultilineFeature = useCallback(
+      (stage: Stage) => {
+        if (!stage) {
+          multilineLayer.setVisible(false);
+          return;
+        }
+        if (multilineLayer.getVisible()) {
+          return;
+        }
+        const gpxVectorLayer = map.getLayers().getArray().find(isGpxLayer);
+        if (!gpxVectorLayer) {
+          console.warn('GPX vector layer not found');
+          return;
+        }
+        const features = gpxVectorLayer.getSource().getFeatures();
+        const multilineStringFeature = features.find(
+          findMultiLineStringFeature(GPX_LAYER_MULTILINE_FEATURE_ID)
+        );
+        if (!multilineStringFeature) {
+          return;
+        }
+        multilineLayer.setVisible(true);
+        const coords = multilineStringFeature.getGeometry().getCoordinates()[0];
+        const highlightedCoordinates = coords.slice(
+          stage.coordIndexes[0],
+          stage.coordIndexes[1]
+        );
+
+        multilineFeature.setGeometry(
+          new MultiLineString([highlightedCoordinates])
+        );
+      },
+      [map, multilineFeature, multilineLayer]
+    );
+
     const onMapPointerMove = useCallback(
       (evt: MapBrowserEvent<UIEvent>) => {
         if (
@@ -128,43 +145,31 @@ export const StageLayer: React.FunctionComponent<StageLayerProps> = memo(
           (map.getTarget() as HTMLDivElement).style.cursor =
             pointFeature || multilineStringFeature ? 'pointer' : '';
 
-          // disable all features when hovering over a waypoint
-          if (pointFeature) {
-            if (hoveredStage) {
-              setHoveredStage(undefined);
-              textLayer.setVisible(false);
-            }
-          }
-          // if a stage is found then set it in stage
-          else if (multilineStringFeature && sortedPointFeatures.length) {
+          if ((pointFeature || !multilineStringFeature) && !selectedStage) {
+            multilineLayer.setVisible(false);
+            textLayer.setVisible(false);
+          } else if (multilineStringFeature && sortedPointFeatures.length) {
             const stage = getStageForCoordinate(
               coordinate,
               multilineStringFeature,
               sortedPointFeatures
             );
-            if (
-              stage &&
-              stage.coordIndexes[0] !== hoveredStage?.coordIndexes[0] &&
-              stage.coordIndexes[1] !== hoveredStage?.coordIndexes[1]
-            ) {
-              setHoveredStage(stage);
-              const style = getFeatureStyle(
-                'Stage 4 ' + stage.startFeature.getProperties().name
-              );
-              textFeature.setStyle(style);
-              const coord = map.getCoordinateFromPixel(pixel);
-              textFeature.setGeometry(new Point(coord));
-              textLayer.setVisible(true);
+            if (stage) {
+              showStageMultilineFeature(stage);
+              showTextFeature(stage, pixel);
             }
-          }
-          // if no stage is found then remove the current stage in state
-          else if (hoveredStage) {
-            setHoveredStage(undefined);
-            textLayer.setVisible(false);
           }
         }
       },
-      [hoveredStage, map, sortedPointFeatures, textFeature, textLayer]
+      [
+        map,
+        multilineLayer,
+        selectedStage,
+        showStageMultilineFeature,
+        showTextFeature,
+        sortedPointFeatures,
+        textLayer,
+      ]
     );
 
     const onMapClick = useCallback(
@@ -183,41 +188,21 @@ export const StageLayer: React.FunctionComponent<StageLayerProps> = memo(
             sortedPointFeatures
           );
           if (stage) {
-            alert('select stage');
+            onStageSelect(stage);
           }
         }
       },
-      [map, sortedPointFeatures]
+      [map, onStageSelect, sortedPointFeatures]
     );
 
     useEffect(() => {
-      if (!hoveredStage) {
+      if (selectedStage) {
+        showStageMultilineFeature(selectedStage);
+      } else {
         multilineLayer.setVisible(false);
-        return;
+        textLayer.setVisible(false);
       }
-      const gpxVectorLayer = map.getLayers().getArray().find(isGpxLayer);
-      if (!gpxVectorLayer) {
-        console.warn('GPX vector layer not found');
-        return;
-      }
-      const features = gpxVectorLayer.getSource().getFeatures();
-      const multilineStringFeature = features.find(
-        findMultiLineStringFeature(GPX_LAYER_MULTILINE_FEATURE_ID)
-      );
-      if (!multilineStringFeature) {
-        return;
-      }
-      multilineLayer.setVisible(true);
-      const coords = multilineStringFeature.getGeometry().getCoordinates()[0];
-      const highlightedCoordinates = coords.slice(
-        hoveredStage.coordIndexes[0],
-        hoveredStage.coordIndexes[1]
-      );
-
-      multilineFeature.setGeometry(
-        new MultiLineString([highlightedCoordinates])
-      );
-    }, [hoveredStage, map, multilineFeature, multilineLayer]);
+    }, [multilineLayer, selectedStage, showStageMultilineFeature, textLayer]);
 
     useEffect(() => {
       map.addLayer(multilineLayer);

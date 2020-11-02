@@ -14,8 +14,12 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { getPointFeatures, isGpxWayPoint } from '../../util/util';
-import { GpxSource } from './GpxSource';
+import {
+  findMultiLineStringFeature,
+  getPointFeatures,
+  isGpxWayPoint,
+} from '../../util/util';
+import { GpxSource, GPX_LAYER_MULTILINE_FEATURE_ID } from './GpxSource';
 import selectedPin from './selected-pin.png';
 import Icon from 'ol/style/Icon';
 import MapBrowserEventType from 'ol/MapBrowserEventType';
@@ -85,10 +89,12 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
             { hitTolerance: 4 }
           );
           const pointFeature = features.find(isGpxWayPoint);
+          const multilineStringFeature = features.find(
+            findMultiLineStringFeature(GPX_LAYER_MULTILINE_FEATURE_ID)
+          );
+          (map.getTarget() as HTMLDivElement).style.cursor =
+            pointFeature || multilineStringFeature ? 'pointer' : '';
 
-          (map.getTarget() as HTMLDivElement).style.cursor = pointFeature
-            ? 'pointer'
-            : '';
           if (pointFeature && hoveredFeature !== pointFeature) {
             setHoveredFeature(pointFeature);
           } else if (!pointFeature && hoveredFeature) {

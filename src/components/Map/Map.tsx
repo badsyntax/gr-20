@@ -145,7 +145,12 @@ export const Map: React.FunctionComponent = ({ children }) => {
           );
         }}
       </GpxLayer>
-      <StageLayer map={map} sortedPointFeatures={sortedPointFeatures} />
+      <StageLayer
+        map={map}
+        sortedPointFeatures={sortedPointFeatures}
+        selectedStage={selectedStage}
+        onStageSelect={onSelectGpxStage}
+      />
       <DetailDrawer
         isOpen={Boolean(selectedFeature || selectedStage)}
         feature={selectedFeature}
