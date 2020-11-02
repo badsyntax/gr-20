@@ -5,6 +5,7 @@ import GeometryType from 'ol/geom/GeometryType';
 import LineString from 'ol/geom/LineString';
 import MultiLineString from 'ol/geom/MultiLineString';
 import Point from 'ol/geom/Point';
+import BaseLayer from 'ol/layer/Base';
 import VectorLayer from 'ol/layer/Vector';
 import { default as OLMap } from 'ol/Map';
 import { toLonLat } from 'ol/proj';
@@ -265,4 +266,8 @@ export function getStartEndPointCoordIndexesForCoordinate(
     (pointIndex, i) => pointIndex >= coordIndex
   )[0];
   return [startIndex, endIndex];
+}
+
+export function isGpxLayer(layer: BaseLayer): layer is VectorLayer {
+  return layer.get('id') === 'gpx-vector-layer';
 }

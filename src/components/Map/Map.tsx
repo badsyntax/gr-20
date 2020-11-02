@@ -27,6 +27,7 @@ import { useStyles } from './styles';
 import { StartFinishLayer } from '../StartFinishLayer/StartFinishLayer';
 import { Stage } from '../../util/types';
 import { DetailDrawer } from '../DetailDrawer/DetailDrawer';
+import { StageLayer } from '../StageLayer/StageLayer';
 
 const initialState = {
   lat: 42.184207,
@@ -98,8 +99,7 @@ export const Map: React.FunctionComponent = ({ children }) => {
       map.setTarget(target);
       map.setView(view);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [map, mapRef]);
 
   const onGpxSourceReady = useCallback((vectorSource: VectorSource) => {
     const sortedFeatures = getSortedPointFeatures(vectorSource);
@@ -141,19 +141,11 @@ export const Map: React.FunctionComponent = ({ children }) => {
                 gpxVectorLayer={gpxVectorLayer}
                 showMarkers={showMarkers}
               />
-
-              {/* {hoveredFeature && (
-                <Popover
-                  map={map}
-                  feature={hoveredFeature}
-                  isOpen={isPopoverOpen}
-                  setIsOpen={setIsPopoverOpen}
-                />
-              )} */}
             </Fragment>
           );
         }}
       </GpxLayer>
+      <StageLayer map={map} sortedPointFeatures={sortedPointFeatures} />
       <DetailDrawer
         isOpen={Boolean(selectedFeature || selectedStage)}
         feature={selectedFeature}

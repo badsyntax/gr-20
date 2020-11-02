@@ -13,6 +13,8 @@ import { SettingsToggleControlButton } from '../ControlButtons/SettingsToggleCon
 import { useStyles } from './styles';
 import Fade from '@material-ui/core/Fade';
 import Slider from '@material-ui/core/Slider';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 export const FADE_TIMEOUT = 800;
 
@@ -26,6 +28,8 @@ export const MapControls: React.FunctionComponent<MapControlsProps> = ({
   source,
 }) => {
   const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Fragment>
       <Fade in timeout={FADE_TIMEOUT}>
@@ -64,13 +68,15 @@ export const MapControls: React.FunctionComponent<MapControlsProps> = ({
             )}
           >
             <ZoomInControlButton label="Zoom In" map={map} />
-            <div style={{ height: 100, textAlign: 'center' }}>
-              <Slider
-                orientation="vertical"
-                defaultValue={30}
-                aria-labelledby="vertical-slider"
-              />
-            </div>
+            {!isMobile && (
+              <div style={{ height: 100, textAlign: 'center' }}>
+                <Slider
+                  orientation="vertical"
+                  defaultValue={30}
+                  aria-labelledby="vertical-slider"
+                />
+              </div>
+            )}
             <ZoomOutControlButton label="Zoom Out" map={map} />
           </ButtonGroup>
         </div>

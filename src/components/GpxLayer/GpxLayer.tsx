@@ -14,22 +14,14 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import {
-  getPointFeatures,
-  getStartEndPointCoordIndexesForCoordinate,
-  isGpxWayPoint,
-  findMultiLineStringFeature,
-} from '../../util/util';
+import { getPointFeatures, isGpxWayPoint } from '../../util/util';
 import { GpxSource } from './GpxSource';
 import selectedPin from './selected-pin.png';
 import Icon from 'ol/style/Icon';
 import MapBrowserEventType from 'ol/MapBrowserEventType';
 import MapBrowserEvent from 'ol/MapBrowserEvent';
 import { getFeatureStyle } from './GpxLayerStyles';
-import Style from 'ol/style/Style';
-import Stroke from 'ol/style/Stroke';
 import { Stage } from '../../util/types';
-import { Coordinate } from 'ol/coordinate';
 
 export interface GpxLayerProps {
   map: OLMap;
@@ -64,7 +56,6 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
   }) => {
     const [gpxMarkers, setGpxMarkers] = useState<Feature<Geometry>[]>([]);
     const [hoveredFeature, setHoveredFeature] = useState<Feature<Point>>();
-    const [hoveredStage, setHoveredStage] = useState<Stage>([]);
 
     const vectorLayer = useMemo(
       () =>
@@ -82,36 +73,12 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
       []
     );
 
-    const getStage = useCallback(
-      (
-        coordinate: Coordinate,
-        multilineStringFeature: Feature<MultiLineString>
-      ): Stage => {
-        const [start, end] = getStartEndPointCoordIndexesForCoordinate(
-          coordinate,
-          multilineStringFeature,
-          sortedPointFeatures
-        );
-        if (
-          start === undefined ||
-          start === -1 ||
-          end === undefined ||
-          end === -1
-        ) {
-          return [];
-        }
-        return [start, end];
-      },
-      [sortedPointFeatures]
-    );
-
     const onMapPointerMove = useCallback(
       (evt: MapBrowserEvent<UIEvent>) => {
         if (
           (evt.originalEvent?.target as HTMLElement).nodeName.toLowerCase() ===
           'canvas'
         ) {
-          const { coordinate } = evt;
           const pixel = map.getEventPixel(evt.originalEvent);
           const features: FeatureLike[] = [];
           map.forEachFeatureAtPixel(
@@ -123,57 +90,46 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
           );
           const pointFeature = features.find(isGpxWayPoint);
 
-          const multilineStringFeature = features.find(
-            findMultiLineStringFeature('gpx-multiline-feature')
-          );
+          // const multilineStringFeature = features.find(
+          //   findMultiLineStringFeature('gpx-multiline-feature')
+          // );
 
-          (map.getTarget() as HTMLDivElement).style.cursor =
-            pointFeature || multilineStringFeature ? 'pointer' : '';
+          (map.getTarget() as HTMLDivElement).style.cursor = pointFeature
+            ? 'pointer'
+            : '';
           if (pointFeature) {
-            if (!hoveredStage.length) {
-              setHoveredFeature(pointFeature);
-              return;
-            }
+            // if (!hoveredStage.length) {
+            setHoveredFeature(pointFeature);
+            //   return;
+            // }
           } else if (hoveredFeature) {
             setHoveredFeature(undefined);
           }
 
-          if (multilineStringFeature) {
-            const stage = getStage(coordinate, multilineStringFeature);
-            if (stage.length) {
-              setHoveredStage(stage);
-            }
-          } else if (hoveredStage.length) {
-            setHoveredStage([]);
-          }
+          // if (multilineStringFeature) {
+          //   const stage = getStage(coordinate, multilineStringFeature);
+          //   if (stage.length) {
+          //     setHoveredStage(stage);
+          //   }
+          // } else if (hoveredStage.length) {
+          //   setHoveredStage([]);
+          // }
         }
       },
-      [getStage, hoveredFeature, hoveredStage.length, map]
+      [hoveredFeature, map]
     );
 
     const onMapClick = useCallback(
       (evt: MapBrowserEvent<UIEvent>) => {
-        const { coordinate } = evt;
         const features = map.getFeaturesAtPixel(evt.pixel, { hitTolerance: 4 });
         const pointFeature = features.find(isGpxWayPoint);
-        const multilineStringFeature = features.find(
-          findMultiLineStringFeature('gpx-multiline-feature')
-        );
-        if (pointFeature || multilineStringFeature) {
-          evt.preventDefault();
-        }
         if (pointFeature) {
           onSelectPointFeature(pointFeature);
-        } else if (multilineStringFeature) {
-          const stage = getStage(coordinate, multilineStringFeature);
-          if (stage.length) {
-            onSelectStage(stage);
-          }
         } else {
           onSelectPointFeature(undefined);
         }
       },
-      [getStage, map, onSelectPointFeature, onSelectStage]
+      [map, onSelectPointFeature]
     );
 
     const onReady = useCallback(
@@ -218,36 +174,6 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
       },
       [selectedFeature, showMarkers, showRoute]
     );
-
-    useEffect(() => {
-      const source = highlightLayer.getSource();
-      source.clear();
-      if (!hoveredStage.length) {
-        return;
-      }
-      const features = vectorLayer.getSource().getFeatures();
-      const multilineStringFeature = features.find(
-        findMultiLineStringFeature('gpx-multiline-feature')
-      );
-      if (multilineStringFeature) {
-        const coords = multilineStringFeature.getGeometry().getCoordinates()[0];
-        const highlightedCoordinates = coords.slice(
-          hoveredStage[0],
-          hoveredStage[1]
-        );
-        const style = new Style({
-          stroke: new Stroke({
-            color: 'orange',
-            width: 4,
-          }),
-        });
-        const feature = new Feature();
-        feature.setGeometry(new MultiLineString([highlightedCoordinates]));
-        feature.set('id', 'highlight-multiline-feature');
-        feature.setStyle(style);
-        source.addFeature(feature);
-      }
-    }, [highlightLayer, hoveredStage, vectorLayer]);
 
     useEffect(() => {
       vectorLayer.setStyle((feature) => {
