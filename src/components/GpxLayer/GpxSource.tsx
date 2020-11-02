@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { hideSpinner, showSpinner } from '../../features/spinner';
 
 const EXTENSIONS_TAG_NAME = 'gr20';
+export const GPX_LAYER_MULTILINE_FEATURE_ID = 'gpx-multiline-feature';
 
 export interface GpxSourceProps {
   gpxUrl: string;
@@ -22,7 +23,7 @@ export const GpxSource: React.FunctionComponent<GpxSourceProps> = memo(
       dispatch(showSpinner());
       const format = new GPX({
         readExtensions(feature, extensionsNode) {
-          feature.set('id', 'gpx-multiline-feature');
+          feature.set('id', GPX_LAYER_MULTILINE_FEATURE_ID);
           if (!extensionsNode) {
             return;
           }

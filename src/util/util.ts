@@ -10,7 +10,10 @@ import VectorLayer from 'ol/layer/Vector';
 import { default as OLMap } from 'ol/Map';
 import { toLonLat } from 'ol/proj';
 import VectorSource from 'ol/source/Vector';
+import { GPX_LAYER_ID } from '../components/GpxLayer/GpxLayer';
+import { GPX_LAYER_MULTILINE_FEATURE_ID } from '../components/GpxLayer/GpxSource';
 import { START_POINT_ID, FINISH_POINT_ID } from './constants';
+import { Stage } from './types';
 
 const { MULTI_LINE_STRING, POINT } = GeometryType;
 
@@ -135,7 +138,9 @@ export const getLayerById = <T>(map: OLMap, id: string): T | undefined =>
 export const getMultiLineStringFeature = (
   features: Feature<Geometry>[]
 ): Feature<MultiLineString> | undefined => {
-  return features.find(findMultiLineStringFeature('gpx-multiline-feature'));
+  return features.find(
+    findMultiLineStringFeature(GPX_LAYER_MULTILINE_FEATURE_ID)
+  );
 };
 
 export const getPointFeatures = (
@@ -243,31 +248,33 @@ export function findMultiLineStringFeature(id: string) {
   };
 }
 
-export function getStartEndPointCoordIndexesForCoordinate(
+export function getStageForCoordinate(
   coord: Coordinate,
   multiLine: Feature<MultiLineString>,
   sortedPointFeatures: Feature<Point>[]
-): number[] {
+): Stage | undefined {
   const coordIndex = getCoordIndexInMultiLine(coord, multiLine, 10);
-  const pointIndexes = sortedPointFeatures.map((feature) =>
-    getCoordIndexInMultiLine(
+  const pointCoordIndexes = sortedPointFeatures.map((feature) => ({
+    coordIndex: getCoordIndexInMultiLine(
       feature.getGeometry().getCoordinates(),
       multiLine,
       50
-    )
-  );
-  const startIndex = pointIndexes
-    .filter((pointIndex, i) => pointIndex <= coordIndex)
+    ),
+    feature,
+  }));
+  const start = pointCoordIndexes
+    .filter((pointIndex, i) => pointIndex.coordIndex <= coordIndex)
     .pop();
-  if (startIndex === undefined) {
-    return [];
+  if (start === undefined) {
+    return;
   }
-  const endIndex = pointIndexes.filter(
-    (pointIndex, i) => pointIndex >= coordIndex
+  const end = pointCoordIndexes.filter(
+    (pointIndex, i) => pointIndex.coordIndex >= coordIndex
   )[0];
-  return [startIndex, endIndex];
+  const coordIndexes = [start.coordIndex, end.coordIndex];
+  return { coordIndexes, startFeature: start.feature, endFeature: end.feature };
 }
 
 export function isGpxLayer(layer: BaseLayer): layer is VectorLayer {
-  return layer.get('id') === 'gpx-vector-layer';
+  return layer.get('id') === GPX_LAYER_ID;
 }
