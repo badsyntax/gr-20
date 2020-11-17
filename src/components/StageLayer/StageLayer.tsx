@@ -10,6 +10,7 @@ import VectorSource from 'ol/source/Vector';
 
 import { Stage } from '../../util/types';
 import {
+  FeatureWithCoordIndex,
   findMultiLineStringFeature,
   getStageForCoordinate,
   isGpxLayer,
@@ -28,12 +29,19 @@ export const STAGE_MULTILINE_FEATURE_ID = 'stage-multiline-feature';
 export interface StageLayerProps {
   map: OLMap;
   sortedPointFeatures: Feature<Point>[];
+  sortedPointFeatureIndexes: FeatureWithCoordIndex[];
   selectedStage?: Stage;
   onStageSelect: (stage: Stage) => void;
 }
 
 export const StageLayer: React.FunctionComponent<StageLayerProps> = memo(
-  ({ map, selectedStage, sortedPointFeatures, onStageSelect }) => {
+  ({
+    map,
+    selectedStage,
+    sortedPointFeatures,
+    sortedPointFeatureIndexes,
+    onStageSelect,
+  }) => {
     const multilineFeature = useMemo<Feature>(() => {
       const feature = new Feature();
       feature.set('id', STAGE_MULTILINE_FEATURE_ID);
@@ -87,13 +95,6 @@ export const StageLayer: React.FunctionComponent<StageLayerProps> = memo(
 
     const showStageMultilineFeature = useCallback(
       (stage: Stage) => {
-        if (!stage) {
-          multilineLayer.setVisible(false);
-          return;
-        }
-        if (multilineLayer.getVisible()) {
-          return;
-        }
         const gpxVectorLayer = map.getLayers().getArray().find(isGpxLayer);
         if (!gpxVectorLayer) {
           console.warn('GPX vector layer not found');
@@ -112,7 +113,6 @@ export const StageLayer: React.FunctionComponent<StageLayerProps> = memo(
           stage.coordIndexes[0],
           stage.coordIndexes[1]
         );
-
         multilineFeature.setGeometry(
           new MultiLineString([highlightedCoordinates])
         );
@@ -121,12 +121,15 @@ export const StageLayer: React.FunctionComponent<StageLayerProps> = memo(
     );
 
     const onMapPointerMove = useCallback(
-      (evt: MapBrowserEvent<UIEvent>) => {
+      (evt: MapBrowserEvent<MouseEvent>) => {
         if (
           (evt.originalEvent?.target as HTMLElement).nodeName.toLowerCase() ===
           'canvas'
         ) {
-          const { coordinate } = evt;
+          if (evt.dragging) {
+            return;
+          }
+          const coordinate = map.getEventCoordinate(evt.originalEvent);
           const pixel = map.getEventPixel(evt.originalEvent);
           const features: FeatureLike[] = [];
           map.forEachFeatureAtPixel(
@@ -152,7 +155,7 @@ export const StageLayer: React.FunctionComponent<StageLayerProps> = memo(
             const stage = getStageForCoordinate(
               coordinate,
               multilineStringFeature,
-              sortedPointFeatures
+              sortedPointFeatureIndexes
             );
             if (stage) {
               showStageMultilineFeature(stage);
@@ -167,7 +170,8 @@ export const StageLayer: React.FunctionComponent<StageLayerProps> = memo(
         selectedStage,
         showStageMultilineFeature,
         showTextFeature,
-        sortedPointFeatures,
+        sortedPointFeatureIndexes,
+        sortedPointFeatures.length,
         textLayer,
       ]
     );
@@ -185,14 +189,14 @@ export const StageLayer: React.FunctionComponent<StageLayerProps> = memo(
           const stage = getStageForCoordinate(
             coordinate,
             multilineStringFeature,
-            sortedPointFeatures
+            sortedPointFeatureIndexes
           );
           if (stage) {
             onStageSelect(stage);
           }
         }
       },
-      [map, onStageSelect, sortedPointFeatures]
+      [map, onStageSelect, sortedPointFeatureIndexes]
     );
 
     useEffect(() => {

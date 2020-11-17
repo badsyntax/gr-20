@@ -97,7 +97,7 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
 
           if (pointFeature && hoveredFeature !== pointFeature) {
             setHoveredFeature(pointFeature);
-          } else if (!pointFeature && hoveredFeature) {
+          } else if (hoveredFeature && !pointFeature) {
             setHoveredFeature(undefined);
           }
         }
@@ -155,7 +155,6 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
             })
           );
         }
-        style.setZIndex(2);
         feature.setStyle(style);
       },
       [selectedFeature, showMarkers, showRoute]
@@ -181,8 +180,8 @@ export const GpxLayer: React.FunctionComponent<GpxLayerProps> = memo(
     }, [resetPoints, selectedFeature, setHoveredOrSelectedStyle]);
 
     useEffect(() => {
+      resetPoints();
       if (!hoveredFeature) {
-        resetPoints();
         return;
       }
       setHoveredOrSelectedStyle(hoveredFeature);

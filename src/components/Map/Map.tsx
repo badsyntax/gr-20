@@ -16,8 +16,10 @@ import React, {
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import {
+  FeatureWithCoordIndex,
   getNextFeature,
   getPrevFeature,
+  getSortedPointFeatureIndexes,
   getSortedPointFeatures,
 } from '../../util/util';
 import { GpxLayer } from '../GpxLayer/GpxLayer';
@@ -45,6 +47,10 @@ export const Map: React.FunctionComponent = ({ children }) => {
   const [sortedPointFeatures, setSortedPointFeatures] = useState<
     Feature<Point>[]
   >([]);
+  const [sortedPointFeatureIndexes, setSortedPointFeatureIndexes] = useState<
+    FeatureWithCoordIndex[]
+  >([]);
+
   const {
     mapUrl,
     gpxUrl,
@@ -103,7 +109,12 @@ export const Map: React.FunctionComponent = ({ children }) => {
 
   const onGpxSourceReady = useCallback((vectorSource: VectorSource) => {
     const sortedFeatures = getSortedPointFeatures(vectorSource);
+    const sortedPointFeatureIndexes = getSortedPointFeatureIndexes(
+      vectorSource,
+      sortedFeatures
+    );
     setSortedPointFeatures(sortedFeatures);
+    setSortedPointFeatureIndexes(sortedPointFeatureIndexes);
   }, []);
 
   // useEffect(() => {
@@ -148,9 +159,11 @@ export const Map: React.FunctionComponent = ({ children }) => {
       <StageLayer
         map={map}
         sortedPointFeatures={sortedPointFeatures}
+        sortedPointFeatureIndexes={sortedPointFeatureIndexes}
         selectedStage={selectedStage}
         onStageSelect={onSelectGpxStage}
       />
+      <TileLayer map={map} mapUrl={mapUrl} />
       <DetailDrawer
         isOpen={Boolean(selectedFeature || selectedStage)}
         feature={selectedFeature}
@@ -162,7 +175,6 @@ export const Map: React.FunctionComponent = ({ children }) => {
         sortedPointFeatures={sortedPointFeatures}
         stage={selectedStage}
       />
-      <TileLayer map={map} mapUrl={mapUrl} />
     </div>
   );
 };

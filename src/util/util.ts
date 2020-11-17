@@ -118,12 +118,16 @@ export const getMultiCoordsFromNextFeature = (
   }
   const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
   const featureIndex = getCoordIndexInMultiLine(
-    feature.getGeometry().getCoordinates(),
     multiLine
+      .getGeometry()
+      .getClosestPoint(feature.getGeometry().getCoordinates()),
+    multiLineCoords
   );
   const nextFeatureIndex = getCoordIndexInMultiLine(
-    nextFeature.getGeometry().getCoordinates(),
     multiLine
+      .getGeometry()
+      .getClosestPoint(nextFeature.getGeometry().getCoordinates()),
+    multiLineCoords
   );
   const multiCoords = multiLineCoords.slice(featureIndex, nextFeatureIndex);
   return getDataFromMultiCoords(multiCoords);
@@ -151,26 +155,10 @@ export const getPointFeatures = (
   ) as Feature<Point>[];
 
 export interface SortedPointFeature {
-  featurePoint: Feature<Point>;
-  closestPointInMultiLine: Coordinate;
-  index: number;
+  feature: Feature<Point>;
+  // closestPointInMultiLine: Coordinate;
+  coordIndex: number;
 }
-
-export const getCoordIndexInMultiLine = (
-  coords: Coordinate,
-  multiLine: Feature<MultiLineString>,
-  margin = 0 //meters
-): number => {
-  const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
-  const closestPointInMultiLine = multiLine
-    .getGeometry()
-    .getClosestPoint(coords);
-  const closesPointIndex = multiLineCoords.findIndex(
-    (coord) =>
-      new LineString([coord, closestPointInMultiLine]).getLength() < margin
-  );
-  return closesPointIndex;
-};
 
 export const getSortedPointFeatures = (
   vectorSource: VectorSource
@@ -182,10 +170,13 @@ export const getSortedPointFeatures = (
       'getSortedPointFeatures: unable to find multiLine feature in gpx vector layer'
     );
   }
+  const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
   const pointsInMultiLine = points.map((point) => {
     const featureIndex = getCoordIndexInMultiLine(
-      point.getGeometry().getCoordinates(),
-      multiLine,
+      multiLine
+        .getGeometry()
+        .getClosestPoint(point.getGeometry().getCoordinates()),
+      multiLineCoords,
       50
     );
     return {
@@ -197,7 +188,43 @@ export const getSortedPointFeatures = (
   const sortedPointsInMultiline = pointsInMultiLine.sort(
     (a, b) => a.index - b.index
   );
-  return sortedPointsInMultiline.map(({ featurePoint }) => featurePoint);
+
+  const sortedPointFeatures = sortedPointsInMultiline.map(
+    ({ featurePoint }) => featurePoint
+  );
+
+  return sortedPointFeatures;
+};
+
+export interface FeatureWithCoordIndex {
+  coordIndex: number;
+  feature: Feature<Point>;
+}
+
+export const getSortedPointFeatureIndexes = (
+  vectorSource: VectorSource,
+  sortedPointFeatures: Feature<Point>[]
+): FeatureWithCoordIndex[] => {
+  const multiLine = getMultiLineStringFeature(vectorSource.getFeatures());
+  if (!multiLine) {
+    throw new Error(
+      'getSortedPointFeatures: unable to find multiLine feature in gpx vector layer'
+    );
+  }
+  const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
+  const sortedPointFeaturesWithCoordIndex = sortedPointFeatures.map(
+    (feature) => ({
+      coordIndex: getCoordIndexInMultiLine(
+        multiLine
+          .getGeometry()
+          .getClosestPoint(feature.getGeometry().getCoordinates()),
+        multiLineCoords,
+        50
+      ),
+      feature,
+    })
+  );
+  return sortedPointFeaturesWithCoordIndex;
 };
 
 export const sampleCoordinates = (
@@ -251,29 +278,40 @@ export function findMultiLineStringFeature(id: string) {
 export function getStageForCoordinate(
   coord: Coordinate,
   multiLine: Feature<MultiLineString>,
-  sortedPointFeatures: Feature<Point>[]
+  sortedPointFeatureIndexes: FeatureWithCoordIndex[]
 ): Stage | undefined {
-  const coordIndex = getCoordIndexInMultiLine(coord, multiLine, 10);
-  const pointCoordIndexes = sortedPointFeatures.map((feature) => ({
-    coordIndex: getCoordIndexInMultiLine(
-      feature.getGeometry().getCoordinates(),
-      multiLine,
-      50
-    ),
-    feature,
-  }));
-  const start = pointCoordIndexes
+  const multiLineCoords = multiLine.getGeometry().getCoordinates()[0];
+  const closestPoint = multiLine.getGeometry().getClosestPoint(coord);
+  const coordIndex = getCoordIndexInMultiLine(
+    closestPoint,
+    multiLineCoords,
+    10
+  );
+
+  const start = sortedPointFeatureIndexes
     .filter((pointIndex, i) => pointIndex.coordIndex <= coordIndex)
     .pop();
   if (start === undefined) {
     return;
   }
-  const end = pointCoordIndexes.filter(
+  const end = sortedPointFeatureIndexes.filter(
     (pointIndex, i) => pointIndex.coordIndex >= coordIndex
   )[0];
   const coordIndexes = [start.coordIndex, end.coordIndex];
   return { coordIndexes, startFeature: start.feature, endFeature: end.feature };
 }
+
+export const getCoordIndexInMultiLine = (
+  closestPointInMultiLine: Coordinate,
+  multiLineCoords: Coordinate[],
+  margin = 0 //meters
+): number => {
+  const closesPointIndex = multiLineCoords.findIndex(
+    (coord) =>
+      new LineString([coord, closestPointInMultiLine]).getLength() < margin
+  );
+  return closesPointIndex;
+};
 
 export function isGpxLayer(layer: BaseLayer): layer is VectorLayer {
   return layer.get('id') === GPX_LAYER_ID;
